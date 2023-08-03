@@ -17,7 +17,7 @@
 #region U S A G E S
 
 using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Extensions.Common;
+using AggregatedGenericResultMessage.Web.Extensions.Internal;
 using Microsoft.AspNetCore.Mvc;
 
 // ReSharper disable RedundantCast
