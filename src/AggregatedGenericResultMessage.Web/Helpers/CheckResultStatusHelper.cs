@@ -19,7 +19,7 @@
 using System;
 using System.Net;
 using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal;
+using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
 using AggregatedGenericResultMessage.Web.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -45,7 +45,7 @@ namespace AggregatedGenericResultMessage.Web.Helpers
 
             var isValidStatus = statusCode.ToInt() >= StatusCodes.Status100Continue && statusCode.ToInt() < StatusCodes.Status400BadRequest;
 
-            return isValidStatus
+            return isValidStatus.IsTrue()
                 ? Result.Success()
                 : Result.Failure(MessageStore.HttpStatusCodeNotInSuccessfullyRange);
         }
@@ -64,7 +64,7 @@ namespace AggregatedGenericResultMessage.Web.Helpers
 
             var isValidStatus = statusCode.ToInt() >= StatusCodes.Status100Continue && statusCode.ToInt() < StatusCodes.Status400BadRequest;
 
-            return isValidStatus
+            return isValidStatus.IsTrue()
                 ? Result<T>.Success()
                 : Result<T>.Failure(MessageStore.HttpStatusCodeNotInSuccessfullyRange);
         }
@@ -82,7 +82,7 @@ namespace AggregatedGenericResultMessage.Web.Helpers
 
             var isValidStatus = statusCode.ToInt() >= StatusCodes.Status400BadRequest;
 
-            return isValidStatus == false
+            return isValidStatus.IsFalse()
                 ? Result.Success()
                 : Result.Failure(MessageStore.HttpStatusCodeNotInErrorRange);
         }
@@ -101,7 +101,7 @@ namespace AggregatedGenericResultMessage.Web.Helpers
 
             var isValidStatus = statusCode.ToInt() >= StatusCodes.Status400BadRequest;
 
-            return isValidStatus == false
+            return isValidStatus.IsFalse()
                 ? Result<T>.Success()
                 : Result<T>.Failure(MessageStore.HttpStatusCodeNotInErrorRange);
         }
@@ -120,7 +120,12 @@ namespace AggregatedGenericResultMessage.Web.Helpers
             var httpStatusCode = statusCode.ToInt();
             var isSuccessCode = httpStatusCode >= StatusCodes.Status100Continue && httpStatusCode < StatusCodes.Status400BadRequest;
 
-            return Result<CheckHttpStatus>.Success(new CheckHttpStatus { IsSuccess = isSuccessCode, IsError = !isSuccessCode });
+            return Result<CheckHttpStatus>.Success(
+                new CheckHttpStatus
+                {
+                    IsSuccess = isSuccessCode.IsTrue(),
+                    IsError = isSuccessCode.IsFalse()
+                });
         }
     }
 }

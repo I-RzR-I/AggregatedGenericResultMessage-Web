@@ -19,7 +19,8 @@
 using System.Linq;
 using System.Net;
 using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal;
+using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
+using AggregatedGenericResultMessage.Web.Extensions.Internal.Result;
 using AggregatedGenericResultMessage.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,10 +47,10 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         {
             _httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-           
-            return !statusCodeCheck.IsSuccess || statusCodeCheck.Response.IsError
+
+            return statusCodeCheck.IsNoSuccess()
                 ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
-                : result.IsSuccess && statusCodeCheck.Response.IsSuccess
+                : result.IsWithSuccess(statusCodeCheck)
                     ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
                     : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
         }
@@ -66,9 +67,9 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
             _httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
-            return !statusCodeCheck.IsSuccess || statusCodeCheck.Response.IsError
+            return statusCodeCheck.IsNoSuccess()
                 ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
-                : result.IsSuccess && statusCodeCheck.Response.IsSuccess
+                : result.IsWithSuccess(statusCodeCheck)
                     ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
                     : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
         }
@@ -85,10 +86,10 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         {
             _httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-            
-            return !statusCodeCheck.IsSuccess || statusCodeCheck.Response.IsError
+
+            return statusCodeCheck.IsNoSuccess()
                 ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
-                : result.IsSuccess && statusCodeCheck.Response.IsSuccess
+                : result.IsWithSuccess(statusCodeCheck)
                     ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
                     : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
         }
@@ -105,10 +106,10 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         {
             _httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-            
-            return !statusCodeCheck.IsSuccess || statusCodeCheck.Response.IsError
+
+            return statusCodeCheck.IsNoSuccess()
                 ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
-                : result.IsSuccess && statusCodeCheck.Response.IsSuccess
+                : result.IsWithSuccess(statusCodeCheck)
                     ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
                     : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
         }
@@ -124,10 +125,10 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         {
             _httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-            
-            return !statusCodeCheck.IsSuccess || statusCodeCheck.Response.IsError
+
+            return statusCodeCheck.IsNoSuccess()
                 ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
-                : result.IsSuccess && statusCodeCheck.Response.IsSuccess
+                : result.IsWithSuccess(statusCodeCheck)
                     ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
                     : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
         }
@@ -143,10 +144,10 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         {
             _httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-           
-            return !statusCodeCheck.IsSuccess || statusCodeCheck.Response.IsError
+
+            return statusCodeCheck.IsNoSuccess()
                 ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
-                : result.IsSuccess && statusCodeCheck.Response.IsSuccess
+                : result.IsWithSuccess(statusCodeCheck)
                     ? (IActionResult)new StatusCodeResult(_httpStatusCode)
                     : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
         }
@@ -163,10 +164,10 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         {
             _httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-           
-            return !statusCodeCheck.IsSuccess || statusCodeCheck.Response.IsError
+
+            return statusCodeCheck.IsNoSuccess()
                 ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
-                : result.IsSuccess && statusCodeCheck.Response.IsSuccess
+                : result.IsWithSuccess(statusCodeCheck)
                     ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
                     : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
         }
@@ -183,10 +184,10 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         {
             _httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-            
-            return !statusCodeCheck.IsSuccess || statusCodeCheck.Response.IsError
+
+            return statusCodeCheck.IsNoSuccess()
                 ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
-                : result.IsSuccess && statusCodeCheck.Response.IsSuccess
+                : result.IsWithSuccess(statusCodeCheck)
                     ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
                     : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
         }

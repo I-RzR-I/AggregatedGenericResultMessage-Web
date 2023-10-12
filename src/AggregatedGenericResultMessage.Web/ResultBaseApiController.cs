@@ -17,7 +17,7 @@
 #region U S A G E S
 
 using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal;
+using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
 using Microsoft.AspNetCore.Mvc;
 
 // ReSharper disable RedundantCast
@@ -46,7 +46,7 @@ namespace AggregatedGenericResultMessage.Web
         ///     Status code 400 with errors collection if IsSuccess is false.
         /// </returns>
         protected virtual IActionResult JsonResult<T>(IResult<T> response)
-            => response.IsSuccess
+            => response.IsSuccess.IsTrue()
                 ? (IActionResult)Json(response.Response)
                 : BadRequest(response.Messages);
 
@@ -62,7 +62,7 @@ namespace AggregatedGenericResultMessage.Web
         ///     Status code 400 with errors collection if IsSuccess is false.
         /// </returns>
         protected virtual IActionResult JsonResultWithNullCheck<T>(IResult<T> response)
-            => response.IsSuccess
+            => response.IsSuccess.IsTrue()
                 ? response.Response.IsNull() ? (IActionResult)NoContent() : Json(response.Response)
                 : BadRequest(response.Messages);
 
@@ -76,7 +76,7 @@ namespace AggregatedGenericResultMessage.Web
         ///     Status code 400 with errors collection if IsSuccess is false.
         /// </returns>
         protected virtual IActionResult JsonResult(IResult response)
-            => response.IsSuccess
+            => response.IsSuccess.IsTrue()
                 ? (IActionResult)NoContent()
                 : BadRequest(response.Messages);
 
@@ -92,7 +92,7 @@ namespace AggregatedGenericResultMessage.Web
         /// <typeparam name="T">Result response type</typeparam>
         /// <remarks></remarks>
         protected virtual IActionResult JsonWholeResult<T>(IResult<T> response)
-            => response.IsSuccess
+            => response.IsSuccess.IsTrue()
                 ? (IActionResult)Json(response)
                 : (IActionResult)BadRequest(response.Messages);
 
@@ -108,7 +108,7 @@ namespace AggregatedGenericResultMessage.Web
         /// <typeparam name="T">Result response type</typeparam>
         /// <remarks></remarks>
         protected virtual IActionResult JsonWholeResultWithNullCheck<T>(IResult<T> response)
-            => response.IsSuccess
+            => response.IsSuccess.IsTrue()
                 ? response.Response.IsNull() ? (IActionResult)NoContent() : Json(response)
                 : (IActionResult)BadRequest(response.Messages);
 
@@ -123,7 +123,7 @@ namespace AggregatedGenericResultMessage.Web
         /// </returns>
         /// <remarks></remarks>
         protected virtual IActionResult JsonWholeResult(IResult response)
-            => response.IsSuccess
+            => response.IsSuccess.IsTrue()
                 ? (IActionResult)NoContent()
                 : (IActionResult)BadRequest(response.Messages);
     }
