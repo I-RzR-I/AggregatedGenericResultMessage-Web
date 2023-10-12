@@ -18,7 +18,8 @@
 
 using System.Net;
 using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal;
+using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
+using AggregatedGenericResultMessage.Web.Extensions.Internal.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,7 +63,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static ObjectResult AsSuccessObjectResult<T>(this Result<T> result, int statusCode)
-            => statusCode == StatusCodes.Status204NoContent || result.IsNull()
+            => statusCode.IsSuccessHttpStatus() || result.IsNull()
                 ? new ObjectResult(null) { StatusCode = statusCode }
                 : new ObjectResult(result.Response) { StatusCode = statusCode };
 
@@ -75,7 +76,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static ObjectResult AsSuccessObjectResult<T>(this Result<T> result, HttpStatusCode statusCode)
-            => statusCode.ToInt() == StatusCodes.Status204NoContent || result.IsNull()
+            => statusCode.IsOkNoContent() || result.IsNull()
                 ? new ObjectResult(null) { StatusCode = statusCode.ToInt() }
                 : new ObjectResult(result.Response) { StatusCode = statusCode.ToInt() };
 
@@ -88,7 +89,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static ObjectResult AsSuccessObjectResult<T>(this IResult<T> result, int statusCode)
-            => statusCode == StatusCodes.Status204NoContent || result.IsNull()
+            => statusCode.IsSuccessHttpNoContentStatus() || result.IsNull()
                 ? new ObjectResult(null) { StatusCode = statusCode }
                 : new ObjectResult(result.Response) { StatusCode = statusCode };
 
@@ -101,7 +102,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static ObjectResult AsSuccessObjectResult<T>(this IResult<T> result, HttpStatusCode statusCode)
-            => statusCode.ToInt() == StatusCodes.Status204NoContent
+            => statusCode.IsOkNoContent()
                 ? new ObjectResult(null) { StatusCode = statusCode.ToInt() }
                 : new ObjectResult(result.Response) { StatusCode = statusCode.ToInt() };
     }

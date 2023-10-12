@@ -18,6 +18,7 @@
 
 using System.Linq;
 using AggregatedGenericResultMessage.Abstractions;
+using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,7 +43,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// </returns>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this Result result)
-            => result.IsSuccess
+            => result.IsSuccess.IsTrue()
                 ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
                 : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
 
@@ -57,7 +58,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// </returns>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult(this Result result)
-            => result.IsSuccess
+            => result.IsSuccess.IsTrue()
                 ? (IActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
                 : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
 
@@ -73,7 +74,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this Result<T> result)
-            => result.IsSuccess
+            => result.IsSuccess.IsTrue()
                 ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
                 : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
 
@@ -89,7 +90,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult<T>(this Result<T> result)
-            => result.IsSuccess
+            => result.IsSuccess.IsTrue()
                 ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
                 : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
 
@@ -104,7 +105,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// </returns>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this IResult result)
-            => result.IsSuccess
+            => result.IsSuccess.IsTrue()
                 ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
                 : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
 
@@ -119,7 +120,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// </returns>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult(this IResult result)
-            => result.IsSuccess
+            => result.IsSuccess.IsTrue()
                 ? (IActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
                 : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
 
@@ -135,7 +136,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this IResult<T> result)
-            => result.IsSuccess
+            => result.IsSuccess.IsTrue()
                 ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
                 : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
 
@@ -151,7 +152,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult<T>(this IResult<T> result)
-            => result.IsSuccess
+            => result.IsSuccess.IsTrue()
                 ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
                 : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
     }

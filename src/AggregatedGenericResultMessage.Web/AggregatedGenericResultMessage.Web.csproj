@@ -40,7 +40,7 @@
     <Compile Include="..\shared\GeneralAssemblyInfo.cs" Link="Properties\GeneralAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AggregatedGenericResultMessage" Version="1.2.1" />
+    <PackageReference Include="AggregatedGenericResultMessage" Version="1.2.2.2040" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
   </ItemGroup>
 

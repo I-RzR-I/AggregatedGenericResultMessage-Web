@@ -16,7 +16,7 @@
 
 using CodeSource;
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal
+namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
 {
     /// <summary>
     ///     Null extensions

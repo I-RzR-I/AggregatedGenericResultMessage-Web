@@ -21,7 +21,7 @@ using CodeSource;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal
+namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
 {
     /// <summary>
     ///     Enum extensions
