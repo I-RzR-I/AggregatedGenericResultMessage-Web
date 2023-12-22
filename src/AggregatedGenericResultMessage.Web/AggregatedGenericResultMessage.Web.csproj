@@ -40,7 +40,7 @@
     <Compile Include="..\shared\GeneralAssemblyInfo.cs" Link="Properties\GeneralAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AggregatedGenericResultMessage" Version="1.2.2.2040" />
+    <PackageReference Include="AggregatedGenericResultMessage" Version="1.3.1.6141" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
   </ItemGroup>
 
@@ -60,8 +60,8 @@
       <UserProperties BuildVersion_StartDate="2023/6/10" />
     </VisualStudio>
   </ProjectExtensions>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="PowerShell -NoProfile -ExecutionPolicy unrestricted -file $(SolutionDir)../build/pack.ps1 $(ConfigurationName)" />
-  </Target>
+  </Target>-->
 
 </Project>
