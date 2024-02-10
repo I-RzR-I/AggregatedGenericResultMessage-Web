@@ -8,3 +8,7 @@
 
 ### **v1.0.3.6912** 
 -> Update reference package version.
+
+### **v1.0.4.7652** 
+-> Update reference package version.
+-> Fix some warnings.
