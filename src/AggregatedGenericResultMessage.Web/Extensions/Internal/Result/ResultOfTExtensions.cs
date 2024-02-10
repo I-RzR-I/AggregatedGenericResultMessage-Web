@@ -37,6 +37,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.Internal.Result
         /// <returns></returns>
         internal static bool IsWithSuccess<T>(this IResult<T> result, IResult<CheckHttpStatus> resultData)
             => result.IsSuccess.IsTrue() && resultData.Response.IsSuccess.IsTrue();
+
         /// <summary>
         ///     Check if IResult is executed with success
         /// </summary>
