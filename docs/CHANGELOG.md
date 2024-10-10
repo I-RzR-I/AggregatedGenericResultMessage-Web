@@ -10,5 +10,8 @@
 -> Update reference package version.
 
 ### **v1.0.4.7652** 
--> Update reference package version.
+-> Update reference package version. <br />
 -> Fix some warnings.
+
+### **v1.0.5.5444** 
+-> Update reference package version, fixing CVE (`CVE-2024-43485`).
