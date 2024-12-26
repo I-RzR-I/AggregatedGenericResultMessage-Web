@@ -20,6 +20,7 @@ using System;
 using System.Net;
 using AggregatedGenericResultMessage.Abstractions;
 using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
+using AggregatedGenericResultMessage.Web.Helpers.Store;
 using AggregatedGenericResultMessage.Web.Models;
 using Microsoft.AspNetCore.Http;
 

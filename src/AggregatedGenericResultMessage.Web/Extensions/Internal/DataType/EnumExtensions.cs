@@ -36,8 +36,8 @@ namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
         /// <returns></returns>
         /// <typeparam name="T"></typeparam>
         /// <remarks></remarks>
-        [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR",
-            "DomainCommonExtensions.CommonExtensions.EnumExtensions", 1)]
+        [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR", 
+            "DomainCommonExtensions.CommonExtensions.EnumExtensions.ToInt", 1)]
         internal static int ToInt<T>(this T source) where T : IConvertible
             => !typeof(T).IsEnum
                 ? throw new ArgumentException("T must be an enumerated type")
