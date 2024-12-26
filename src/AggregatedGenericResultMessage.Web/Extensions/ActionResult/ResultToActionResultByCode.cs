@@ -24,6 +24,8 @@ using AggregatedGenericResultMessage.Web.Extensions.Internal.Result;
 using AggregatedGenericResultMessage.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
+// ReSharper disable RedundantCast
+
 #endregion
 
 namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
