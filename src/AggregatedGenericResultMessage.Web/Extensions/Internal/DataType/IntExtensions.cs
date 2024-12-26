@@ -4,17 +4,21 @@
 //  Created On       : 2023-10-11 17:41
 // 
 //  Last Modified By : RzR
-//  Last Modified On : 2023-10-11 17:41
+//  Last Modified On : 2024-12-25 17:41
 // ***********************************************************************
-//  <copyright file="IntExtensions.cs" company="">
-//   Copyright (c) RzR. All rights reserved.
+//  <copyright file="IntExtensions.cs" company="RzR SOFT & TECH">
+//   Copyright © RzR. All rights reserved.
 //  </copyright>
 // 
 //  <summary>
 //  </summary>
 // ***********************************************************************
 
+#region U S A G E S
+
 using Microsoft.AspNetCore.Http;
+
+#endregion
 
 namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
 {
