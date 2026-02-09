@@ -35,7 +35,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
     {
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     An IResult extension method that converts this object to to problem details.
+        ///     An IResult extension method that converts this object to problem details.
         /// </summary>
         /// <typeparam name="T">Generic type parameter.</typeparam>
         /// <param name="result">The result to act on.</param>
@@ -48,7 +48,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
         ///     An ObjectResult.
         /// </returns>
         /// =================================================================================================
-        public static ObjectResult AsToProblemDetails<T>(
+        public static ObjectResult AsProblemDetails<T>(
             this Result<T> result,
             HttpStatusCode statusCode,
             string message = null,
@@ -59,7 +59,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     An IResult extension method that converts this object to to problem details.
+        ///     An IResult extension method that converts this object to problem details.
         /// </summary>
         /// <typeparam name="T">Generic type parameter.</typeparam>
         /// <param name="result">The result to act on.</param>
@@ -72,7 +72,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
         ///     An ObjectResult.
         /// </returns>
         /// =================================================================================================
-        public static ObjectResult AsToProblemDetails(
+        public static ObjectResult AsProblemDetails(
             this Result result,
             HttpStatusCode statusCode,
             string message = null,
@@ -96,7 +96,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
         ///     An ObjectResult.
         /// </returns>
         /// =================================================================================================
-        public static ObjectResult AsToProblemDetails<T>(
+        public static ObjectResult AsProblemDetails<T>(
             this IResult<T> result,
             HttpStatusCode statusCode,
             string message = null,
@@ -120,7 +120,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
         ///     An ObjectResult.
         /// </returns>
         /// =================================================================================================
-        public static ObjectResult AsToProblemDetails(
+        public static ObjectResult AsProblemDetails(
             this IResult result,
             HttpStatusCode statusCode,
             string message = null,
