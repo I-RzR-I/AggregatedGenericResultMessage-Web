@@ -42,7 +42,7 @@ namespace TestWebApi.Controllers
         {
             var res = await _weatherService.GetCollectionAsync();
 
-            return res.AsToProblemDetails(HttpStatusCode.OK);
+            return res.AsProblemDetails(HttpStatusCode.OK);
         }
 
         [HttpPost(nameof(AsToProblemDetailsWithNoContent))]
@@ -50,7 +50,7 @@ namespace TestWebApi.Controllers
         {
             var res = await _weatherService.GetResultAsync();
 
-            return res.AsToProblemDetails(HttpStatusCode.NoContent);
+            return res.AsProblemDetails(HttpStatusCode.NoContent);
         }
 
         [HttpPost(nameof(AsToProblemDetailsWithBadRequest))]
@@ -61,7 +61,7 @@ namespace TestWebApi.Controllers
             res.WithError(new MessageDataModel("Error message", "Error code"))
                 .WithMessage(new MessageDataModel("Message info", "Message detail"), MessageType.Error);
 
-            return res.AsToProblemDetails(HttpStatusCode.BadRequest);
+            return res.AsProblemDetails(HttpStatusCode.BadRequest);
         }
 
         [HttpPost(nameof(AsToProblemDetailsWithBadRequestInstance))]
@@ -73,7 +73,7 @@ namespace TestWebApi.Controllers
             res.WithError(new MessageDataModel("Error message", "Error code"))
                 .WithMessage(new MessageDataModel("Message info", "Message detail"), MessageType.Error);
 
-            return res.AsToProblemDetails(HttpStatusCode.BadRequest, accessedResourceUri: uri);
+            return res.AsProblemDetails(HttpStatusCode.BadRequest, accessedResourceUri: uri);
         }
     }
 }
