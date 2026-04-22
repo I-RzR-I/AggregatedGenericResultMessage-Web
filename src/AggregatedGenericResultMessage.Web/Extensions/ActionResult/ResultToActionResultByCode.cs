@@ -36,8 +36,6 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
     /// </summary>
     public static partial class ToActionResult
     {
-        private static int _httpStatusCode = 200;
-
         /// <summary>
         ///     Result to ActionResult
         /// </summary>
@@ -47,14 +45,14 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this Result result, HttpStatusCode statusCode)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
-                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
+                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(httpStatusCode)
+                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = httpStatusCode };
         }
 
         /// <summary>
@@ -66,14 +64,14 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <remarks></remarks>
         public static IActionResult AsIActionResult(this Result result, HttpStatusCode statusCode)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
-                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
+                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(httpStatusCode)
+                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = httpStatusCode };
         }
 
         /// <summary>
@@ -86,14 +84,14 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this Result<T> result, HttpStatusCode statusCode)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
-                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
+                    ? new ObjectResult(result.Response) { StatusCode = httpStatusCode }
+                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = httpStatusCode };
         }
 
         /// <summary>
@@ -106,14 +104,14 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <remarks></remarks>
         public static IActionResult AsIActionResult<T>(this Result<T> result, HttpStatusCode statusCode)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
-                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
+                    ? new ObjectResult(result.Response) { StatusCode = httpStatusCode }
+                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = httpStatusCode };
         }
 
         /// <summary>
@@ -125,14 +123,14 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this IResult result, HttpStatusCode statusCode)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
-                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
+                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(httpStatusCode)
+                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = httpStatusCode };
         }
 
         /// <summary>
@@ -144,14 +142,14 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <remarks></remarks>
         public static IActionResult AsIActionResult(this IResult result, HttpStatusCode statusCode)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? (IActionResult)new StatusCodeResult(_httpStatusCode)
-                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
+                    ? (IActionResult)new StatusCodeResult(httpStatusCode)
+                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = httpStatusCode };
         }
 
         /// <summary>
@@ -164,14 +162,14 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this IResult<T> result, HttpStatusCode statusCode)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
-                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
+                    ? new ObjectResult(result.Response) { StatusCode = httpStatusCode }
+                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = httpStatusCode };
         }
 
         /// <summary>
@@ -184,14 +182,14 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <remarks></remarks>
         public static IActionResult AsIActionResult<T>(this IResult<T> result, HttpStatusCode statusCode)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
-                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
+                    ? new ObjectResult(result.Response) { StatusCode = httpStatusCode }
+                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = httpStatusCode };
         }
     }
 }
