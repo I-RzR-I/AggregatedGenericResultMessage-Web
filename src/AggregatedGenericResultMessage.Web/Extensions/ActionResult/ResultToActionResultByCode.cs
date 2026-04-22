@@ -21,7 +21,6 @@ using RzR.ResultMessage.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Extensions.Internal.Result;
 using RzR.ResultMessage.Web.Helpers;
-using System.Linq;
 using System.Net;
 
 // ReSharper disable RedundantCast
@@ -44,7 +43,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <returns>Return <see cref="ActionResult" /> from <see cref="Result" /></returns>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this Result result, HttpStatusCode statusCode)
-            => BuildActionResult(result, statusCode, result.GetFirstMessage());
+            => BuildActionResult((IResult)result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to IActionResult
@@ -54,7 +53,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <returns>Return <see cref="IActionResult" /> from <see cref="Result" /></returns>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult(this Result result, HttpStatusCode statusCode)
-            => BuildActionResult(result, statusCode, result.GetFirstMessage());
+            => BuildActionResult((IResult)result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to ActionResult
@@ -65,7 +64,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this Result<T> result, HttpStatusCode statusCode)
-            => BuildActionResult(result, statusCode, result.GetFirstMessage());
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to IActionResult
@@ -76,7 +75,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult<T>(this Result<T> result, HttpStatusCode statusCode)
-            => BuildActionResult(result, statusCode, result.GetFirstMessage());
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to ActionResult
@@ -86,7 +85,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <returns>Return <see cref="ActionResult" /> from <see cref="IResult" /></returns>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this IResult result, HttpStatusCode statusCode)
-            => BuildActionResult(result, statusCode, result.Messages.FirstOrDefault()?.Message);
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to IActionResult
@@ -96,7 +95,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <returns>Return <see cref="IActionResult" /> from <see cref="IResult" /></returns>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult(this IResult result, HttpStatusCode statusCode)
-            => BuildActionResult(result, statusCode, result.Messages.FirstOrDefault()?.Message);
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to ActionResult
@@ -107,7 +106,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this IResult<T> result, HttpStatusCode statusCode)
-            => BuildActionResult(result, statusCode, result.Messages.FirstOrDefault()?.Message);
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to IActionResult
@@ -118,7 +117,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult<T>(this IResult<T> result, HttpStatusCode statusCode)
-            => BuildActionResult(result, statusCode, result.Messages.FirstOrDefault()?.Message);
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Builds an <see cref="Microsoft.AspNetCore.Mvc.ActionResult"/> from a non-generic result

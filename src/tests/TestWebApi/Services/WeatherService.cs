@@ -20,6 +20,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using RzR.ResultMessage;
 using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Extensions.Result;
+using RzR.ResultMessage.Models;
 using TestWebApi.Models;
 
 namespace TestWebApi.Services
@@ -76,6 +78,25 @@ namespace TestWebApi.Services
         public async Task<Result> GetResultFailAsync()
         {
             var result = new Result { IsSuccess = false };
+
+            return await Task.FromResult(result);
+        }
+
+        public async Task<IResult> GetResultMultiFailAsync()
+        {
+            var result = new Result { IsSuccess = false };
+            result.WithError(new MessageDataModel("First validation error", "E001-First validation error"), "c-E001");
+            result.WithError(new MessageDataModel("Second validation error", "E002-Second validation error"), "c-E002");
+            result.WithError(new MessageDataModel("Third validation error", "E003-Third validation error"));
+
+            return await Task.FromResult(result);
+        }
+
+        public async Task<IResult<IEnumerable<WeatherForecast>>> GetCollectionMultiFailAsync()
+        {
+            var result = Result<IEnumerable<WeatherForecast>>.Failure("x-c-e000", "Forecast service unavailable");
+            result.WithError(new MessageDataModel("Upstream timed out", "E100-Upstream timed out"));
+            result.WithError(new MessageDataModel("Cache miss", "E101-Cache miss", "Cache error!"));
 
             return await Task.FromResult(result);
         }

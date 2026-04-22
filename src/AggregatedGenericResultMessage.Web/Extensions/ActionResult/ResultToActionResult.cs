@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RzR.ResultMessage.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
-using System.Linq;
 
 #endregion
 
@@ -45,7 +44,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this Result result)
             => result.IsSuccess.IsTrue()
                 ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
-                : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
+                : new ObjectResult(result.Messages) { StatusCode = StatusCodes.Status400BadRequest };
 
         /// <summary>
         ///     Result to ActionResult
@@ -60,7 +59,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         public static IActionResult AsIActionResult(this Result result)
             => result.IsSuccess.IsTrue()
                 ? (IActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
-                : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
+                : new ObjectResult(result.Messages) { StatusCode = StatusCodes.Status400BadRequest };
 
         /// <summary>
         ///     Result to ActionResult
@@ -76,7 +75,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this Result<T> result)
             => result.IsSuccess.IsTrue()
                 ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
-                : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
+                : new ObjectResult(result.Messages) { StatusCode = StatusCodes.Status400BadRequest };
 
         /// <summary>
         ///     Result to ActionResult
@@ -92,7 +91,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         public static IActionResult AsIActionResult<T>(this Result<T> result)
             => result.IsSuccess.IsTrue()
                 ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
-                : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
+                : new ObjectResult(result.Messages) { StatusCode = StatusCodes.Status400BadRequest };
 
         /// <summary>
         ///     Result to ActionResult
@@ -107,7 +106,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this IResult result)
             => result.IsSuccess.IsTrue()
                 ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
-                : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
+                : new ObjectResult(result.Messages) { StatusCode = StatusCodes.Status400BadRequest };
 
         /// <summary>
         ///     Result to ActionResult
@@ -122,7 +121,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         public static IActionResult AsIActionResult(this IResult result)
             => result.IsSuccess.IsTrue()
                 ? (IActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
-                : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
+                : new ObjectResult(result.Messages) { StatusCode = StatusCodes.Status400BadRequest };
 
         /// <summary>
         ///     Result to ActionResult
@@ -138,7 +137,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this IResult<T> result)
             => result.IsSuccess.IsTrue()
                 ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
-                : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
+                : new ObjectResult(result.Messages) { StatusCode = StatusCodes.Status400BadRequest };
 
         /// <summary>
         ///     Result to ActionResult
@@ -154,6 +153,6 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         public static IActionResult AsIActionResult<T>(this IResult<T> result)
             => result.IsSuccess.IsTrue()
                 ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
-                : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
+                : new ObjectResult(result.Messages) { StatusCode = StatusCodes.Status400BadRequest };
     }
 }
