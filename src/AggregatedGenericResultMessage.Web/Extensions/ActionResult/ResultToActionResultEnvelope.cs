@@ -20,8 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RzR.ResultMessage.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
-using RzR.ResultMessage.Web.Extensions.Internal.Result;
-using RzR.ResultMessage.Web.Helpers;
+using RzR.ResultMessage.Web.Mappers;
 using System.Net;
 
 // ReSharper disable RedundantCast
@@ -50,7 +49,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// =================================================================================================
         public static Microsoft.AspNetCore.Mvc.ActionResult AsEnvelopeActionResult(this IResult result)
             => BuildEnvelopeActionResult(result,
-                result.IsSuccess.IsTrue() ? HttpStatusCode.OK : HttpStatusCode.BadRequest);
+                ResultStatusCodeMapper.Current.Map(result, hasResponseBody: true));
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
@@ -79,7 +78,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// =================================================================================================
         public static Microsoft.AspNetCore.Mvc.ActionResult AsEnvelopeActionResult<T>(this IResult<T> result)
             => BuildEnvelopeActionResult(result,
-                result.IsSuccess.IsTrue() ? HttpStatusCode.OK : HttpStatusCode.BadRequest);
+                ResultStatusCodeMapper.Current.Map(result, hasResponseBody: true));
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
