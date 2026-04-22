@@ -42,6 +42,6 @@ namespace RzR.ResultMessage.Web.Models
         ///     The extensions.
         /// </value>
         /// =================================================================================================
-        public IDictionary<string, object> Extensions { get; } = new Dictionary<string, object>(StringComparer.Ordinal);
+        public new IDictionary<string, object> Extensions { get; } = new Dictionary<string, object>(StringComparer.Ordinal);
     }
 }
