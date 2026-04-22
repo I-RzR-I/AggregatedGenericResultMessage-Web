@@ -1,10 +1,10 @@
 ﻿// ***********************************************************************
 //  Assembly         : RzR.Shared.ResultMessage.AggregatedGenericResultMessage.Web
 //  Author           : RzR
-//  Created On       : 2024-12-25 13:42
+//  Created On       : 2024-12-26 21:12
 // 
 //  Last Modified By : RzR
-//  Last Modified On : 2024-12-25 17:43
+//  Last Modified On : 2026-04-22 21:25
 // ***********************************************************************
 //  <copyright file="ResultProblemDetailsHelper.cs" company="RzR SOFT & TECH">
 //   Copyright © RzR. All rights reserved.
@@ -18,8 +18,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using RzR.ResultMessage.Abstractions;
-using RzR.ResultMessage.Web.Extensions.Internal.DataType;
-using RzR.ResultMessage.Web.Helpers.Store;
+using RzR.ResultMessage.Web.Factories;
 using RzR.ResultMessage.Web.Models;
 using System.Collections.Generic;
 using System.Net;
@@ -35,20 +34,13 @@ namespace RzR.ResultMessage.Web.Helpers
     /// =================================================================================================
     internal static class ResultProblemDetailsHelper
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Builds object result.
+        ///     Builds object result by delegating to <see cref="ProblemDetailsResultFactory.Current" />
+        ///     so global defaults configured via DI are honored. Per-call overrides
+        ///     (<paramref name="message" />, <paramref name="detailMessage" />,
+        ///     <paramref name="accessedResourceUri" />, <paramref name="additionInformation" />)
+        ///     still win over the factory defaults.
         /// </summary>
-        /// <param name="result">The result.</param>
-        /// <param name="statusCode">The status code.</param>
-        /// <param name="message">(Optional) The message.</param>
-        /// <param name="detailMessage">(Optional) Message describing the detail.</param>
-        /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition.</param>
-        /// <returns>
-        ///     An ObjectResult.
-        /// </returns>
-        /// =================================================================================================
         internal static ObjectResult BuildObjectResult(
             IResult result,
             HttpStatusCode statusCode,
@@ -56,40 +48,22 @@ namespace RzR.ResultMessage.Web.Helpers
             string detailMessage = null,
             string accessedResourceUri = null,
             IDictionary<string, object> additionInformation = null)
-        {
-            var httpCode = statusCode.ToInt();
-            if (result.IsSuccess.IsTrue() && httpCode.IsSuccessHttpStatus())
-                return new ObjectResult(null) { StatusCode = httpCode };
+            => ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
+            {
+                Result = result,
+                StatusCode = statusCode,
+                HasResponseBody = false,
+                Response = null,
+                Message = message,
+                DetailMessage = detailMessage,
+                AccessedResourceUri = accessedResourceUri,
+                AdditionInformation = additionInformation
+            });
 
-            var fistMessage = result.GetFirstMessageWithDetails();
-
-            var problemDetails = BuildBaseResultMessageProblemDetails(
-                statusCode,
-                message.IfIsMissing(fistMessage?.Info),
-                detailMessage.IfIsMissing(fistMessage?.ToString()),
-                accessedResourceUri
-            );
-
-            BuildProblemDetailsExtensionInfo(ref problemDetails, result, additionInformation);
-
-            return new ObjectResult(problemDetails) { StatusCode = httpCode };
-        }
-
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Builds object result.
+        ///     Generic overload of <see cref="BuildObjectResult(IResult,HttpStatusCode,string,string,string,IDictionary{string,object})" />
+        ///     that carries the <c>Result&lt;T&gt;.Response</c> for the success path.
         /// </summary>
-        /// <typeparam name="T">Generic type parameter.</typeparam>
-        /// <param name="result">The result.</param>
-        /// <param name="statusCode">The status code.</param>
-        /// <param name="message">(Optional) The message.</param>
-        /// <param name="detailMessage">(Optional) Message describing the detail.</param>
-        /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition.</param>
-        /// <returns>
-        ///     An ObjectResult.
-        /// </returns>
-        /// =================================================================================================
         internal static ObjectResult BuildObjectResult<T>(
             IResult<T> result,
             HttpStatusCode statusCode,
@@ -97,80 +71,16 @@ namespace RzR.ResultMessage.Web.Helpers
             string detailMessage = null,
             string accessedResourceUri = null,
             IDictionary<string, object> additionInformation = null)
-        {
-            var httpCode = statusCode.ToInt();
-            if (result.IsSuccess.IsTrue() && httpCode.IsSuccessHttpStatus())
-                return new ObjectResult(result.Response) { StatusCode = httpCode };
-
-            var fistMessage = result.GetFirstMessageWithDetails();
-
-            var problemDetails = BuildBaseResultMessageProblemDetails(
-                statusCode,
-                message.IfIsMissing(fistMessage?.Info),
-                detailMessage.IfIsMissing(fistMessage?.ToString()),
-                accessedResourceUri
-            );
-
-            BuildProblemDetailsExtensionInfo(ref problemDetails, result, additionInformation);
-
-            return new ObjectResult(problemDetails) { StatusCode = httpCode };
-        }
-
-        /// -------------------------------------------------------------------------------------------------
-        /// <summary>
-        ///     Builds base result message problem details.
-        /// </summary>
-        /// <param name="statusCode">The status code.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="detailMessage">(Optional) Message describing the detail.</param>
-        /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <returns>
-        ///     The ResultMessageProblemDetails.
-        /// </returns>
-        /// =================================================================================================
-        private static ResultMessageProblemDetails BuildBaseResultMessageProblemDetails(
-            HttpStatusCode statusCode,
-            string message,
-            string detailMessage = null,
-            string accessedResourceUri = null)
-        {
-            var httpCode = statusCode.ToString();
-
-            var problemDetails = new ResultMessageProblemDetails
+            => ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
             {
-                Status = statusCode.ToInt(),
-                Title = message,
-                Type = RfcTypeHttpCodeDictionary.RfcHttpStatusCodeInfo.TryGetValue(httpCode, out var rfcType)
-                    ? rfcType
-                    : "about:blank",
-                Detail = detailMessage,
-                Instance = accessedResourceUri
-            };
-
-            return problemDetails;
-        }
-
-        /// -------------------------------------------------------------------------------------------------
-        /// <summary>
-        ///     Builds problem details extension information.
-        /// </summary>
-        /// <param name="problem">[in,out] The problem.</param>
-        /// <param name="result">The result.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition.</param>
-        /// <returns>
-        ///     The ResultMessageProblemDetails.
-        /// </returns>
-        /// =================================================================================================
-        private static void BuildProblemDetailsExtensionInfo(
-            ref ResultMessageProblemDetails problem,
-            IResult result,
-            IDictionary<string, object> additionInformation = null)
-        {
-            if (additionInformation.IsNullOrEmptyEnumerable().IsFalse())
-                foreach (var addInfo in additionInformation!)
-                    problem.Extensions[addInfo.Key] = addInfo.Value;
-
-            problem.Extensions["ResultMessages"] = result.Messages;
-        }
+                Result = result,
+                StatusCode = statusCode,
+                HasResponseBody = true,
+                Response = result == null ? null : result.Response,
+                Message = message,
+                DetailMessage = detailMessage,
+                AccessedResourceUri = accessedResourceUri,
+                AdditionInformation = additionInformation
+            });
     }
 }

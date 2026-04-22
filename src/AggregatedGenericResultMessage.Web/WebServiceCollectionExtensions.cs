@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RzR.ResultMessage.Web.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Factories;
 using RzR.ResultMessage.Web.Mappers;
 using System;
 
@@ -102,11 +103,70 @@ namespace RzR.ResultMessage.Web
         {
             if (services.IsNull())
                 throw new ArgumentNullException(nameof(services));
-            if (mapper.IsNull()) 
+            if (mapper.IsNull())
                 throw new ArgumentNullException(nameof(mapper));
 
             services.TryAddSingleton(mapper);
             ResultStatusCodeMapper.Current = mapper;
+
+            return services;
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Registers <typeparamref name="TFactory" /> as the singleton
+        ///     <see cref="IProblemDetailsResultFactory" /> and immediately wires an instance into
+        ///     <see cref="ProblemDetailsResultFactory.Current" /> so the static
+        ///     <c>AsProblemDetails</c> extensions can use it without DI plumbing. This lets callers
+        ///     configure <c>type</c> / <c>title</c> / <c>instance</c> / extension defaults globally.
+        /// 
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when one or more required arguments are null.
+        /// </exception>
+        /// <typeparam name="TFactory">Concrete factory implementation.</typeparam>
+        /// <param name="services">The services to act on.</param>
+        /// <returns>
+        ///     An <see cref="IServiceCollection" /> for chaining.
+        /// </returns>
+        /// =================================================================================================
+        public static IServiceCollection AddProblemDetailsResultFactory<TFactory>(this IServiceCollection services)
+            where TFactory : class, IProblemDetailsResultFactory, new()
+        {
+            if (services.IsNull())
+                throw new ArgumentNullException(nameof(services));
+
+            services.TryAddSingleton<IProblemDetailsResultFactory, TFactory>();
+            ProblemDetailsResultFactory.Current = new TFactory();
+
+            return services;
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Registers a caller-provided <paramref name="factory" /> instance as the singleton
+        ///     <see cref="IProblemDetailsResultFactory" /> and wires it into
+        ///     <see cref="ProblemDetailsResultFactory.Current" />.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when one or more required arguments are null.
+        /// </exception>
+        /// <param name="services">The services to act on.</param>
+        /// <param name="factory">The factory instance.</param>
+        /// <returns>
+        ///     An <see cref="IServiceCollection" /> for chaining.
+        /// </returns>
+        /// =================================================================================================
+        public static IServiceCollection AddProblemDetailsResultFactory(
+            this IServiceCollection services, IProblemDetailsResultFactory factory)
+        {
+            if (services.IsNull())
+                throw new ArgumentNullException(nameof(services));
+            if (factory.IsNull())
+                throw new ArgumentNullException(nameof(factory));
+
+            services.TryAddSingleton(factory);
+            ProblemDetailsResultFactory.Current = factory;
 
             return services;
         }

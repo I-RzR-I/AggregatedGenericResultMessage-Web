@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using RzR.ResultMessage.Web;
+using RzR.ResultMessage.Web.Abstractions;
+using TestWebApi.ProblemDetails;
 using TestWebApi.Services;
 
 namespace TestWebApi
@@ -27,6 +31,13 @@ namespace TestWebApi
             });
 
             services.AddScoped<WeatherService>();
+
+            // Branded ProblemDetails defaults applied globally to every AsProblemDetails(...) call.
+            // HttpContextAccessor uses a static AsyncLocal, so a manual instance still
+            // observes the current request once UseRouting/middleware runs.
+            services.AddHttpContextAccessor();
+            services.AddProblemDetailsResultFactory(
+                new BrandedProblemDetailsResultFactory(new HttpContextAccessor()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
