@@ -140,7 +140,9 @@ namespace RzR.ResultMessage.Web.Helpers
             {
                 Status = statusCode.ToInt(),
                 Title = message,
-                Type = RfcTypeHttpCodeDictionary.RfcHttpStatusCodeInfo[httpCode],
+                Type = RfcTypeHttpCodeDictionary.RfcHttpStatusCodeInfo.TryGetValue(httpCode, out var rfcType)
+                    ? rfcType
+                    : "about:blank",
                 Detail = detailMessage,
                 Instance = accessedResourceUri
             };
