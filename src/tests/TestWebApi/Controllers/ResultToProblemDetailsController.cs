@@ -18,11 +18,10 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Threading;
-using AggregatedGenericResultMessage.Enums;
-using AggregatedGenericResultMessage.Extensions.Result;
-using AggregatedGenericResultMessage.Models;
-using AggregatedGenericResultMessage.Web.Extensions.ProblemDetail;
-using Microsoft.AspNetCore.Http;
+using RzR.ResultMessage.Enums;
+using RzR.ResultMessage.Extensions.Result;
+using RzR.ResultMessage.Models;
+using RzR.ResultMessage.Web.Extensions.ProblemDetail;
 using TestWebApi.Services;
 
 namespace TestWebApi.Controllers

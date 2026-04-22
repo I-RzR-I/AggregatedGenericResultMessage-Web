@@ -16,12 +16,12 @@
 
 #region U S A G E S
 
+using RzR.Core.CodeSource;
 using System;
-using CodeSource;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
+namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
 {
     /// <summary>
     ///     Enum extensions
@@ -37,7 +37,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
         /// <typeparam name="T"></typeparam>
         /// <remarks></remarks>
         [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR", 
-            "DomainCommonExtensions.CommonExtensions.EnumExtensions.ToInt", 1)]
+            "DomainCommonExtensions.CommonExtensions.EnumExtensions.ToInt", "1.0")]
         internal static int ToInt<T>(this T source) where T : IConvertible
             => !typeof(T).IsEnum
                 ? throw new ArgumentException("T must be an enumerated type")

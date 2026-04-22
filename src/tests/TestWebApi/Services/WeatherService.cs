@@ -18,8 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AggregatedGenericResultMessage;
-using AggregatedGenericResultMessage.Abstractions;
+using RzR.ResultMessage;
+using RzR.ResultMessage.Abstractions;
 using TestWebApi.Models;
 
 namespace TestWebApi.Services

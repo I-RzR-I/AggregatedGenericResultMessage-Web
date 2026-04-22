@@ -16,9 +16,9 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using AggregatedGenericResultMessage.Web;
-using AggregatedGenericResultMessage.Web.Extensions.ActionResult;
 using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage.Web;
+using RzR.ResultMessage.Web.Extensions.ActionResult;
 using TestWebApi.Services;
 
 namespace TestWebApi.Controllers

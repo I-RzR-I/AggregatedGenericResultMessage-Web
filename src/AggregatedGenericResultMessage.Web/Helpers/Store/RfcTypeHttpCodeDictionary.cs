@@ -21,7 +21,7 @@ using System.Net;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Helpers.Store
+namespace RzR.ResultMessage.Web.Helpers.Store
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>

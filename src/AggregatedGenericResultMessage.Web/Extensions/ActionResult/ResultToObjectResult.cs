@@ -16,12 +16,12 @@
 
 #region U S A G E S
 
-using System.Net;
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Extensions.Internal.Http;
+using System.Net;
 
 #pragma warning disable IDE0060
 #pragma warning disable IDE0090
@@ -29,7 +29,7 @@ using Microsoft.AspNetCore.Mvc;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
+namespace RzR.ResultMessage.Web.Extensions.ActionResult
 {
     /// <summary>
     ///     Result to Action/Object Result

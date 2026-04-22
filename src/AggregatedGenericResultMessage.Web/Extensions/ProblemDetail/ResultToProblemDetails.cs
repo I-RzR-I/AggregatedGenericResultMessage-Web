@@ -16,15 +16,15 @@
 
 #region U S A G E S
 
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Helpers;
 using System.Collections.Generic;
 using System.Net;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
+namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>
@@ -61,7 +61,6 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
         /// <summary>
         ///     An IResult extension method that converts this object to problem details.
         /// </summary>
-        /// <typeparam name="T">Generic type parameter.</typeparam>
         /// <param name="result">The result to act on.</param>
         /// <param name="statusCode">The HTTP status code.</param>
         /// <param name="message">(Optional) The custom `ProblemDetails` message.</param>
@@ -83,7 +82,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     An IResult extension method that converts this object to to problem details.
+        ///     An IResult extension method that converts this object to problem details.
         /// </summary>
         /// <typeparam name="T">Generic type parameter.</typeparam>
         /// <param name="result">The result to act on.</param>
@@ -107,9 +106,8 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ProblemDetail
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     An IResult extension method that converts this object to to problem details.
+        ///     An IResult extension method that converts this object to problem details.
         /// </summary>
-        /// <typeparam name="T">Generic type parameter.</typeparam>
         /// <param name="result">The result to act on.</param>
         /// <param name="statusCode">The HTTP status code.</param>
         /// <param name="message">(Optional) The custom `ProblemDetails` message.</param>

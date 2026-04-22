@@ -16,19 +16,19 @@
 
 #region U S A G E S
 
+using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Extensions.Internal.Result;
+using RzR.ResultMessage.Web.Helpers;
 using System.Linq;
 using System.Net;
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.Result;
-using AggregatedGenericResultMessage.Web.Helpers;
-using Microsoft.AspNetCore.Mvc;
 
 // ReSharper disable RedundantCast
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
+namespace RzR.ResultMessage.Web.Extensions.ActionResult
 {
     /// <summary>
     ///     Result to Action/Object Result

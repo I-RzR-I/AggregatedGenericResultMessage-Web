@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Models
+namespace RzR.ResultMessage.Web.Models
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>

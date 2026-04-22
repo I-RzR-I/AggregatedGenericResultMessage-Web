@@ -16,13 +16,13 @@
 
 #region U S A G E S
 
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
-using AggregatedGenericResultMessage.Web.Models;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Models;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.Result
+namespace RzR.ResultMessage.Web.Extensions.Internal.Result
 {
     /// <summary>
     ///     Result &lt;CheckHttpStatus&gt; extensions

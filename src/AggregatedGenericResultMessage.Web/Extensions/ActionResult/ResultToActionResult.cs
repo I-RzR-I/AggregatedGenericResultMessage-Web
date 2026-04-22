@@ -16,15 +16,15 @@
 
 #region U S A G E S
 
-using System.Linq;
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using System.Linq;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
+namespace RzR.ResultMessage.Web.Extensions.ActionResult
 {
     /// <summary>
     ///     Result to Action/Object Result

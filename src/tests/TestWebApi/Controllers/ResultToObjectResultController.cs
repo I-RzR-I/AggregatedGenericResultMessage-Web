@@ -17,11 +17,11 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using AggregatedGenericResultMessage;
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.ActionResult;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.ActionResult;
 using TestWebApi.Services;
 
 namespace TestWebApi.Controllers
