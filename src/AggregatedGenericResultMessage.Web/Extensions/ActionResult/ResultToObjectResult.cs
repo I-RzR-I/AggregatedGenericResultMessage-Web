@@ -22,6 +22,7 @@ using RzR.ResultMessage.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Extensions.Internal.Http;
 using System.Net;
+using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 #pragma warning disable IDE0060
 #pragma warning disable IDE0090

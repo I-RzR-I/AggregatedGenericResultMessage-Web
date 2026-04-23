@@ -22,6 +22,7 @@ using RzR.ResultMessage.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Mappers;
 using System.Net;
+using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 // ReSharper disable RedundantCast
 
@@ -53,8 +54,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Returns the full <see cref="IResult" /> envelope as the response body with a caller-
-        ///     supplied HTTP status code.
+        ///     Returns the full <see cref="IResult" /> envelope as the response body with HTTP status code.
         /// </summary>
         /// <param name="result">Common result.</param>
         /// <param name="statusCode">HTTP status code applied to the response.</param>
@@ -82,8 +82,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Returns the full <see cref="IResult{T}" /> envelope as the response body with a caller-
-        ///     supplied HTTP status code.
+        ///     Returns the full <see cref="IResult{T}" /> envelope as the response body with HTTP status code.
         /// </summary>
         /// <typeparam name="T">Result response type.</typeparam>
         /// <param name="result">Common result.</param>

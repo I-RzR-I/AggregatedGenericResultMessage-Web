@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using RzR.ResultMessage.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Mappers;
+using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 #endregion
 

@@ -23,6 +23,7 @@ using RzR.ResultMessage.Web.Helpers.Store;
 using RzR.ResultMessage.Web.Models;
 using System;
 using System.Net;
+using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 #endregion
 
