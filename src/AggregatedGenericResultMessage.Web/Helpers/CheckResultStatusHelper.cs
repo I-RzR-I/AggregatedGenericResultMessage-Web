@@ -16,17 +16,18 @@
 
 #region U S A G E S
 
+using Microsoft.AspNetCore.Http;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Helpers.Store;
+using RzR.ResultMessage.Web.Models;
 using System;
 using System.Net;
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
-using AggregatedGenericResultMessage.Web.Helpers.Store;
-using AggregatedGenericResultMessage.Web.Models;
-using Microsoft.AspNetCore.Http;
+using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Helpers
+namespace RzR.ResultMessage.Web.Helpers
 {
     /// <summary>
     ///     Check result status helper

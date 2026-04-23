@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Http;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
+namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
 {
     /// <summary>
     ///     Int32 extensions

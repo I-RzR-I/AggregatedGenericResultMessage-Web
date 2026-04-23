@@ -2,29 +2,30 @@
 //  Assembly         : RzR.Shared.ResultMessage.AggregatedGenericResultMessage.Web
 //  Author           : RzR
 //  Created On       : 2023-06-07 00:42
-// 
+//
 //  Last Modified By : RzR
-//  Last Modified On : 2023-06-08 18:20
+//  Last Modified On : 2026-04-22 19:46
 // ***********************************************************************
 //  <copyright file="ResultToActionResult.cs" company="">
 //   Copyright (c) RzR. All rights reserved.
 //  </copyright>
-// 
+//
 //  <summary>
 //  </summary>
 // ***********************************************************************
 
 #region U S A G E S
 
-using System.Linq;
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Mappers;
+using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
+namespace RzR.ResultMessage.Web.Extensions.ActionResult
 {
     /// <summary>
     ///     Result to Action/Object Result
@@ -33,127 +34,69 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
     public static partial class ToActionResult
     {
         /// <summary>
-        ///     Result to ActionResult
+        ///     Result to ActionResult.
         /// </summary>
-        /// <param name="result">Common result</param>
-        /// <returns>
-        ///     Return api response in JSON format.
-        ///     Status code 204 if IsSuccess is true.
-        ///     Status code 400 with error if IsSuccess is false.
-        /// </returns>
-        /// <remarks></remarks>
+        /// <remarks>
+        ///     Status code is resolved by <see cref="ResultStatusCodeMapper.Current" />.
+        ///     Defaults: 204 NoContent on success, 400 BadRequest on failure.
+        /// </remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this Result result)
-            => result.IsSuccess.IsTrue()
-                ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
-                : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
+            => BuildDefault(result, hasResponseBody: false, successBody: null, failureBody: result.Messages);
 
-        /// <summary>
-        ///     Result to ActionResult
-        /// </summary>
-        /// <param name="result">Common result</param>
-        /// <returns>
-        ///     Return api response in JSON format.
-        ///     Status code 204 if IsSuccess is true.
-        ///     Status code 400 with error if IsSuccess is false.
-        /// </returns>
-        /// <remarks></remarks>
+        /// <inheritdoc cref="AsActionResult(Result)" />
         public static IActionResult AsIActionResult(this Result result)
-            => result.IsSuccess.IsTrue()
-                ? (IActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
-                : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
+            => BuildDefault(result, hasResponseBody: false, successBody: null, failureBody: result.Messages);
 
         /// <summary>
-        ///     Result to ActionResult
+        ///     Result&lt;T&gt; to ActionResult.
         /// </summary>
-        /// <param name="result">Common result</param>
-        /// <returns>
-        ///     Return api response in JSON format.
-        ///     Status code 200 if IsSuccess is true.
-        ///     Status code 400 with error if IsSuccess is false.
-        /// </returns>
-        /// <typeparam name="T">Common result type</typeparam>
-        /// <remarks></remarks>
+        /// <remarks>
+        ///     Status code is resolved by <see cref="ResultStatusCodeMapper.Current" />.
+        ///     Defaults: 200 OK on success (with Response as body), 400 BadRequest with all
+        ///     messages on failure.
+        /// </remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this Result<T> result)
-            => result.IsSuccess.IsTrue()
-                ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
-                : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
+            => BuildDefault(result, hasResponseBody: true, successBody: result.Response, failureBody: result.Messages);
 
-        /// <summary>
-        ///     Result to ActionResult
-        /// </summary>
-        /// <param name="result">Common result</param>
-        /// <returns>
-        ///     Return api response in JSON format.
-        ///     Status code 200 if IsSuccess is true.
-        ///     Status code 400 with error if IsSuccess is false.
-        /// </returns>
-        /// <typeparam name="T">Common result type</typeparam>
-        /// <remarks></remarks>
+        /// <inheritdoc cref="AsActionResult{T}(Result{T})" />
         public static IActionResult AsIActionResult<T>(this Result<T> result)
-            => result.IsSuccess.IsTrue()
-                ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
-                : new ObjectResult(result.GetFirstMessage()) { StatusCode = StatusCodes.Status400BadRequest };
+            => BuildDefault(result, hasResponseBody: true, successBody: result.Response, failureBody: result.Messages);
 
-        /// <summary>
-        ///     Result to ActionResult
-        /// </summary>
-        /// <param name="result">Common result</param>
-        /// <returns>
-        ///     Return api response in JSON format.
-        ///     Status code 204 if IsSuccess is true.
-        ///     Status code 400 with error if IsSuccess is false.
-        /// </returns>
-        /// <remarks></remarks>
+        /// <inheritdoc cref="AsActionResult(Result)" />
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this IResult result)
-            => result.IsSuccess.IsTrue()
-                ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
-                : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
+            => BuildDefault(result, hasResponseBody: false, successBody: null, failureBody: result.Messages);
 
-        /// <summary>
-        ///     Result to ActionResult
-        /// </summary>
-        /// <param name="result">Common result</param>
-        /// <returns>
-        ///     Return api response in JSON format.
-        ///     Status code 204 if IsSuccess is true.
-        ///     Status code 400 with error if IsSuccess is false.
-        /// </returns>
-        /// <remarks></remarks>
+        /// <inheritdoc cref="AsActionResult(Result)" />
         public static IActionResult AsIActionResult(this IResult result)
-            => result.IsSuccess.IsTrue()
-                ? (IActionResult)new StatusCodeResult(StatusCodes.Status204NoContent)
-                : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
+            => BuildDefault(result, hasResponseBody: false, successBody: null, failureBody: result.Messages);
 
-        /// <summary>
-        ///     Result to ActionResult
-        /// </summary>
-        /// <param name="result">Common result</param>
-        /// <returns>
-        ///     Return api response in JSON format.
-        ///     Status code 200 if IsSuccess is true.
-        ///     Status code 400 with error if IsSuccess is false.
-        /// </returns>
-        /// <typeparam name="T">Common result type</typeparam>
-        /// <remarks></remarks>
+        /// <inheritdoc cref="AsActionResult{T}(Result{T})" />
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this IResult<T> result)
-            => result.IsSuccess.IsTrue()
-                ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
-                : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
+            => BuildDefault(result, hasResponseBody: true, successBody: result.Response, failureBody: result.Messages);
+
+        /// <inheritdoc cref="AsActionResult{T}(Result{T})" />
+        public static IActionResult AsIActionResult<T>(this IResult<T> result)
+            => BuildDefault(result, hasResponseBody: true, successBody: result.Response, failureBody: result.Messages);
 
         /// <summary>
-        ///     Result to ActionResult
+        ///     Resolves the response status from <see cref="ResultStatusCodeMapper.Current" /> and
+        ///     builds the corresponding <see cref="Microsoft.AspNetCore.Mvc.ActionResult" />.
+        ///     A 204 success short-circuits to a body-less <see cref="StatusCodeResult" />.
         /// </summary>
-        /// <param name="result">Common result</param>
-        /// <returns>
-        ///     Return api response in JSON format.
-        ///     Status code 200 if IsSuccess is true.
-        ///     Status code 400 with error if IsSuccess is false.
-        /// </returns>
-        /// <typeparam name="T">Common result type</typeparam>
-        /// <remarks></remarks>
-        public static IActionResult AsIActionResult<T>(this IResult<T> result)
-            => result.IsSuccess.IsTrue()
-                ? new ObjectResult(result.Response) { StatusCode = StatusCodes.Status200OK }
-                : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = StatusCodes.Status400BadRequest };
+        private static Microsoft.AspNetCore.Mvc.ActionResult BuildDefault(
+            IResult result, bool hasResponseBody, object successBody, object failureBody)
+        {
+            var statusCode = ResultStatusCodeMapper.Current.Map(result, hasResponseBody).ToInt();
+            var isSuccess = result.IsSuccess.IsTrue();
+
+            if (isSuccess)
+            {
+                return statusCode == StatusCodes.Status204NoContent
+                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(statusCode)
+                    : new ObjectResult(successBody) { StatusCode = statusCode };
+            }
+
+            return new ObjectResult(failureBody) { StatusCode = statusCode };
+        }
     }
 }

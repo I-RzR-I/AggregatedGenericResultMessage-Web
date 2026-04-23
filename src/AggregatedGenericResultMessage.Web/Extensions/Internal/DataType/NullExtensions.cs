@@ -16,11 +16,11 @@
 
 #region U S A G E S
 
-using CodeSource;
+using RzR.Core.CodeSource;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
+namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
 {
     /// <summary>
     ///     Null extensions
@@ -34,7 +34,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
         /// <param name="obj">Source data</param>
         /// <returns></returns>
         [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR", 
-            "DomainCommonExtensions.CommonExtensions.NullExtensions.IsNull", 1)]
+            "DomainCommonExtensions.CommonExtensions.NullExtensions.IsNull", "1.0")]
         internal static bool IsNull(this object obj) => obj == null;
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
         /// <param name="obj">Object to be checked</param>
         /// <returns></returns>
         [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR", 
-            "DomainCommonExtensions.CommonExtensions.NullExtensions.IsNotNull", 1)]
+            "DomainCommonExtensions.CommonExtensions.NullExtensions.IsNotNull", "1.0")]
         public static bool IsNotNull(this object obj) => obj != null;
     }
 }

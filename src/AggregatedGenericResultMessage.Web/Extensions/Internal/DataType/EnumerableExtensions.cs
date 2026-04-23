@@ -16,13 +16,13 @@
 
 #region U S A G E S
 
-using CodeSource;
+using RzR.Core.CodeSource;
 using System.Collections.Generic;
 using System.Linq;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
+namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>
@@ -43,7 +43,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
         /// </returns>
         /// =================================================================================================
         [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR",
-            "DomainCommonExtensions.ArraysExtensions.EnumerableExtensions.IsNullOrEmptyEnumerable", 1)]
+            "DomainCommonExtensions.ArraysExtensions.EnumerableExtensions.IsNullOrEmptyEnumerable", "1.0")]
         internal static bool IsNullOrEmptyEnumerable<T>(this IEnumerable<T> source)
             => source.IsNull() || !source.Any();
     }

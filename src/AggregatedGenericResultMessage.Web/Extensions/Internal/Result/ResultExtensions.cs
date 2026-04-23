@@ -16,13 +16,13 @@
 
 #region U S A G E S
 
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
-using AggregatedGenericResultMessage.Web.Models;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Models;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.Result
+namespace RzR.ResultMessage.Web.Extensions.Internal.Result
 {
     /// <summary>
     ///     Result extensions
@@ -44,7 +44,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.Internal.Result
         /// <param name="result">IResult&lt;T&gt; result</param>
         /// <param name="resultData">IResult&lt;CheckHttpStatus&gt; result data</param>
         /// <returns></returns>
-        internal static bool IsWithSuccess(this AggregatedGenericResultMessage.Result result, IResult<CheckHttpStatus> resultData)
+        internal static bool IsWithSuccess(this ResultMessage.Result result, IResult<CheckHttpStatus> resultData)
             => result.IsSuccess.IsTrue() && resultData.Response.IsSuccess.IsTrue();
     }
 }

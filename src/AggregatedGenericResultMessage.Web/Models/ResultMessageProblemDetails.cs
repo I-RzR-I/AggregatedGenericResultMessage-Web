@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Models
+namespace RzR.ResultMessage.Web.Models
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>
@@ -42,6 +42,6 @@ namespace AggregatedGenericResultMessage.Web.Models
         ///     The extensions.
         /// </value>
         /// =================================================================================================
-        public IDictionary<string, object> Extensions { get; } = new Dictionary<string, object>(StringComparer.Ordinal);
+        public new IDictionary<string, object> Extensions { get; } = new Dictionary<string, object>(StringComparer.Ordinal);
     }
 }

@@ -16,19 +16,18 @@
 
 #region U S A G E S
 
-using System.Linq;
-using System.Net;
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.Result;
-using AggregatedGenericResultMessage.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Extensions.Internal.Result;
+using RzR.ResultMessage.Web.Helpers;
+using System.Net;
 
 // ReSharper disable RedundantCast
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
+namespace RzR.ResultMessage.Web.Extensions.ActionResult
 {
     /// <summary>
     ///     Result to Action/Object Result
@@ -36,8 +35,6 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
     /// </summary>
     public static partial class ToActionResult
     {
-        private static int _httpStatusCode = 200;
-
         /// <summary>
         ///     Result to ActionResult
         /// </summary>
@@ -46,16 +43,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <returns>Return <see cref="ActionResult" /> from <see cref="Result" /></returns>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this Result result, HttpStatusCode statusCode)
-        {
-            _httpStatusCode = statusCode.ToInt();
-            var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-
-            return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
-                : result.IsWithSuccess(statusCodeCheck)
-                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
-                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
-        }
+            => BuildActionResult((IResult)result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to IActionResult
@@ -65,16 +53,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <returns>Return <see cref="IActionResult" /> from <see cref="Result" /></returns>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult(this Result result, HttpStatusCode statusCode)
-        {
-            _httpStatusCode = statusCode.ToInt();
-            var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-
-            return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
-                : result.IsWithSuccess(statusCodeCheck)
-                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
-                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
-        }
+            => BuildActionResult((IResult)result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to ActionResult
@@ -85,16 +64,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this Result<T> result, HttpStatusCode statusCode)
-        {
-            _httpStatusCode = statusCode.ToInt();
-            var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-
-            return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
-                : result.IsWithSuccess(statusCodeCheck)
-                    ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
-                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
-        }
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to IActionResult
@@ -105,16 +75,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult<T>(this Result<T> result, HttpStatusCode statusCode)
-        {
-            _httpStatusCode = statusCode.ToInt();
-            var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-
-            return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode }
-                : result.IsWithSuccess(statusCodeCheck)
-                    ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
-                    : new ObjectResult(result.GetFirstMessage()) { StatusCode = _httpStatusCode };
-        }
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to ActionResult
@@ -124,16 +85,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <returns>Return <see cref="ActionResult" /> from <see cref="IResult" /></returns>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult(this IResult result, HttpStatusCode statusCode)
-        {
-            _httpStatusCode = statusCode.ToInt();
-            var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-
-            return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
-                : result.IsWithSuccess(statusCodeCheck)
-                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(_httpStatusCode)
-                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
-        }
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to IActionResult
@@ -143,16 +95,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <returns>Return <see cref="IActionResult" /> from <see cref="IResult" /></returns>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult(this IResult result, HttpStatusCode statusCode)
-        {
-            _httpStatusCode = statusCode.ToInt();
-            var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-
-            return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
-                : result.IsWithSuccess(statusCodeCheck)
-                    ? (IActionResult)new StatusCodeResult(_httpStatusCode)
-                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
-        }
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to ActionResult
@@ -163,16 +106,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static Microsoft.AspNetCore.Mvc.ActionResult AsActionResult<T>(this IResult<T> result, HttpStatusCode statusCode)
-        {
-            _httpStatusCode = statusCode.ToInt();
-            var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
-
-            return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
-                : result.IsWithSuccess(statusCodeCheck)
-                    ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
-                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
-        }
+            => BuildActionResult(result, statusCode, result.Messages);
 
         /// <summary>
         ///     Result to IActionResult
@@ -183,15 +117,55 @@ namespace AggregatedGenericResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static IActionResult AsIActionResult<T>(this IResult<T> result, HttpStatusCode statusCode)
+            => BuildActionResult(result, statusCode, result.Messages);
+
+        /// <summary>
+        ///     Builds an <see cref="Microsoft.AspNetCore.Mvc.ActionResult"/> from a non-generic result
+        ///     and an HTTP status code.
+        /// </summary>
+        /// <param name="result">Common result.</param>
+        /// <param name="statusCode">HTTP status code.</param>
+        /// <param name="failurePayload">Payload to return on failure or invalid status code.</param>
+        /// <returns>
+        ///     <see cref="StatusCodeResult"/> on success, or an <see cref="ObjectResult"/> /
+        ///     <see cref="BadRequestObjectResult"/> containing the failure payload otherwise.
+        /// </returns>
+        private static Microsoft.AspNetCore.Mvc.ActionResult BuildActionResult(
+            IResult result, HttpStatusCode statusCode, object failurePayload)
         {
-            _httpStatusCode = statusCode.ToInt();
+            var httpStatusCode = statusCode.ToInt();
             var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
 
             return statusCodeCheck.IsNoSuccess()
-                ? new BadRequestObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode }
+                ? new BadRequestObjectResult(failurePayload) { StatusCode = httpStatusCode }
                 : result.IsWithSuccess(statusCodeCheck)
-                    ? new ObjectResult(result.Response) { StatusCode = _httpStatusCode }
-                    : new ObjectResult(result.Messages.FirstOrDefault()?.Message) { StatusCode = _httpStatusCode };
+                    ? (Microsoft.AspNetCore.Mvc.ActionResult)new StatusCodeResult(httpStatusCode)
+                    : new ObjectResult(failurePayload) { StatusCode = httpStatusCode };
+        }
+
+        /// <summary>
+        ///     Builds an <see cref="Microsoft.AspNetCore.Mvc.ActionResult"/> from a generic result
+        ///     and an HTTP status code.
+        /// </summary>
+        /// <typeparam name="T">Result response type.</typeparam>
+        /// <param name="result">Common result.</param>
+        /// <param name="statusCode">HTTP status code.</param>
+        /// <param name="failurePayload">Payload to return on failure or invalid status code.</param>
+        /// <returns>
+        ///     <see cref="ObjectResult"/> wrapping <see cref="IResult{T}.Response"/> on success, or an
+        ///     <see cref="ObjectResult"/> / <see cref="BadRequestObjectResult"/> containing the failure payload otherwise.
+        /// </returns>
+        private static Microsoft.AspNetCore.Mvc.ActionResult BuildActionResult<T>(
+            IResult<T> result, HttpStatusCode statusCode, object failurePayload)
+        {
+            var httpStatusCode = statusCode.ToInt();
+            var statusCodeCheck = CheckResultStatusHelper.CheckStatusCode(statusCode);
+
+            return statusCodeCheck.IsNoSuccess()
+                ? new BadRequestObjectResult(failurePayload) { StatusCode = httpStatusCode }
+                : result.IsWithSuccess(statusCodeCheck)
+                    ? new ObjectResult(result.Response) { StatusCode = httpStatusCode }
+                    : new ObjectResult(failurePayload) { StatusCode = httpStatusCode };
         }
     }
 }

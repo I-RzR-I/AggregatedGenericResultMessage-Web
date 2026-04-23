@@ -16,16 +16,16 @@
 
 #region U S A G E S
 
-using AggregatedGenericResultMessage.Abstractions;
-using AggregatedGenericResultMessage.Web.Extensions.Internal.DataType;
 using Microsoft.AspNetCore.Mvc;
+using RzR.ResultMessage.Abstractions;
+using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 
 // ReSharper disable RedundantCast
 #pragma warning disable IDE0004
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web
+namespace RzR.ResultMessage.Web
 {
     /// <summary>
     ///     Result controller base.

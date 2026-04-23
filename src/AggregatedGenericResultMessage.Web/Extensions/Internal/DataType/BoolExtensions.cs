@@ -14,7 +14,7 @@
 //  </summary>
 // ***********************************************************************
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
+namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
 {
     /// <summary>
     ///     Boolean extensions

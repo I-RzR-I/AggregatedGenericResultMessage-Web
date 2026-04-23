@@ -14,7 +14,7 @@
 //  </summary>
 // ***********************************************************************
 
-namespace AggregatedGenericResultMessage.Web.Helpers.Store
+namespace RzR.ResultMessage.Web.Helpers.Store
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>

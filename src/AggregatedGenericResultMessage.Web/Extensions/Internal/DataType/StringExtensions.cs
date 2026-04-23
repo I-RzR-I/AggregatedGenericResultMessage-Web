@@ -16,11 +16,11 @@
 
 #region U S A G E S
 
-using CodeSource;
+using RzR.Core.CodeSource;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
+namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>
@@ -57,7 +57,7 @@ namespace AggregatedGenericResultMessage.Web.Extensions.Internal.DataType
         /// </returns>
         /// =================================================================================================
         [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR",
-            "DomainCommonExtensions.DataTypeExtensions.StringExtensions.IsMissing", 1)]
+            "DomainCommonExtensions.DataTypeExtensions.StringExtensions.IsMissing", "1.0")]
         internal static bool IsMissing(this string source) => string.IsNullOrWhiteSpace(source);
     }
 }

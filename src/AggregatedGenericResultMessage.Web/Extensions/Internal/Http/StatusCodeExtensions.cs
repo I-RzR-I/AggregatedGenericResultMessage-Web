@@ -20,7 +20,7 @@ using System.Net;
 
 #endregion
 
-namespace AggregatedGenericResultMessage.Web.Extensions.Internal.Http
+namespace RzR.ResultMessage.Web.Extensions.Internal.Http
 {
     /// <summary>
     ///     HTTP status code extensions

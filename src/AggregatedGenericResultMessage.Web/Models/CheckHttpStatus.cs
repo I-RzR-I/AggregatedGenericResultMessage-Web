@@ -14,7 +14,7 @@
 //  </summary>
 // ***********************************************************************
 
-namespace AggregatedGenericResultMessage.Web.Models
+namespace RzR.ResultMessage.Web.Models
 {
     /// <summary>
     ///     Check HTTP status code model

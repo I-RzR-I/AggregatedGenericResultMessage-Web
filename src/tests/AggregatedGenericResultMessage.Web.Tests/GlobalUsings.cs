@@ -1,0 +1,16 @@
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.VisualStudio.TestTools.UnitTesting;
+global using RzR.ResultMessage;
+global using RzR.ResultMessage.Abstractions;
+global using RzR.ResultMessage.Extensions.Result;
+global using RzR.ResultMessage.Web;
+global using RzR.ResultMessage.Web.Extensions.ActionResult;
+global using RzR.ResultMessage.Web.Extensions.ProblemDetail;
+global using RzR.ResultMessage.Web.Models;
+global using System;
+global using System.Collections;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Net;
+global using IResult = RzR.ResultMessage.Abstractions.IResult;
