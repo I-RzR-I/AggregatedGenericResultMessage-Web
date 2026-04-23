@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RzR.ResultMessage.Web.Abstractions;
 using RzR.ResultMessage.Web.Factories;
 using RzR.ResultMessage.Web.Tests.Factories;
+using RzR.ResultMessage.Web.WebDependencyInjection;
 
 #endregion
 

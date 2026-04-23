@@ -16,17 +16,21 @@
 
 #region U S A G E S
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RzR.ResultMessage.Web.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Factories;
+using RzR.ResultMessage.Web.Filters;
 using RzR.ResultMessage.Web.Mappers;
+using RzR.ResultMessage.Web.Middlewares;
+using RzR.ResultMessage.Web.Models;
 using System;
 
 #endregion
 
-namespace RzR.ResultMessage.Web
+namespace RzR.ResultMessage.Web.WebDependencyInjection
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>
@@ -35,7 +39,7 @@ namespace RzR.ResultMessage.Web
     ///     <c>AsActionResult</c> / <c>AsEnvelopeActionResult</c> extensions.
     /// </summary>
     /// =================================================================================================
-    public static class WebServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
@@ -48,8 +52,8 @@ namespace RzR.ResultMessage.Web
         ///     An IServiceCollection.
         /// </returns>
         /// =================================================================================================
-        public static IServiceCollection AddResultMessageWeb(this IServiceCollection services)
-            => services.AddResultMessageWeb<DefaultResultStatusCodeMapper>();
+        public static IServiceCollection AddWebResultMessageMapper(this IServiceCollection services)
+            => services.AddWebResultMessageMapper<DefaultResultStatusCodeMapper>();
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
@@ -67,7 +71,7 @@ namespace RzR.ResultMessage.Web
         ///     An IServiceCollection.
         /// </returns>
         /// =================================================================================================
-        public static IServiceCollection AddResultMessageWeb<TMapper>(this IServiceCollection services)
+        public static IServiceCollection AddWebResultMessageMapper<TMapper>(this IServiceCollection services)
             where TMapper : class, IResultStatusCodeMapper, new()
         {
             if (services.IsNull())
@@ -98,7 +102,7 @@ namespace RzR.ResultMessage.Web
         ///     An IServiceCollection.
         /// </returns>
         /// =================================================================================================
-        public static IServiceCollection AddResultMessageWeb(
+        public static IServiceCollection AddWebResultMessageMapper(
             this IServiceCollection services, IResultStatusCodeMapper mapper)
         {
             if (services.IsNull())
@@ -167,6 +171,63 @@ namespace RzR.ResultMessage.Web
 
             services.TryAddSingleton(factory);
             ProblemDetailsResultFactory.Current = factory;
+
+            return services;
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Registers <see cref="WebResultExceptionFilter" /> as a global MVC exception filter so any
+        ///     unhandled <see cref="Exceptions.WebResultException" /> thrown from a controller action is
+        ///     auto-converted to a ProblemDetails response by the configured
+        ///     <see cref="ProblemDetailsResultFactory.Current" />. This avoids to call
+        ///     <c>.AsProblemDetails()</c> explicitly.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when <paramref name="services" /> is null.
+        /// </exception>
+        /// <param name="services">The services to act on.</param>
+        /// <returns>An <see cref="IServiceCollection" /> for chaining.</returns>
+        /// =================================================================================================
+        public static IServiceCollection AddWebResultExceptionFilter(this IServiceCollection services)
+        {
+            if (services.IsNull())
+                throw new ArgumentNullException(nameof(services));
+
+            services.TryAddSingleton<WebResultExceptionFilter>();
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.AddService<WebResultExceptionFilter>();
+            });
+
+            return services;
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Configures the <see cref="WebResultExceptionMiddleware" /> options used by
+        ///     <c>UseResultExceptionMiddleware()</c> to render ProblemDetails responses for
+        ///     unhandled exceptions (both <see cref="Exceptions.WebResultException" /> and any other
+        ///     <see cref="Exception" />).
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when <paramref name="services" /> is null.
+        /// </exception>
+        /// <param name="services">The services to act on.</param>
+        /// <param name="configure">(Optional) options configuration callback.</param>
+        /// <returns>An <see cref="IServiceCollection" /> for chaining.</returns>
+        /// =================================================================================================
+        public static IServiceCollection AddResultExceptionMiddleware(
+            this IServiceCollection services,
+            Action<WebResultExceptionMiddlewareOptions> configure = null)
+        {
+            if (services.IsNull())
+                throw new ArgumentNullException(nameof(services));
+
+            if (configure.IsNull())
+                services.AddOptions<WebResultExceptionMiddlewareOptions>();
+            else
+                services.Configure(configure);
 
             return services;
         }

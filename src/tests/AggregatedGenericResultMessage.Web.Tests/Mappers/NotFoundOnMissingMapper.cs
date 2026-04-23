@@ -16,7 +16,6 @@
 
 #region U S A G E S
 
-using System;
 using RzR.ResultMessage.Web.Abstractions;
 
 #endregion

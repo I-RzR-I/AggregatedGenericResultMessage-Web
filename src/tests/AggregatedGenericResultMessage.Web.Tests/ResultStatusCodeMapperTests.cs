@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RzR.ResultMessage.Web.Abstractions;
 using RzR.ResultMessage.Web.Mappers;
 using RzR.ResultMessage.Web.Tests.Mappers;
+using RzR.ResultMessage.Web.WebDependencyInjection;
 
 #endregion
 
@@ -119,11 +120,11 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AddResultMessageWeb_GenericRegistersAndSetsCurrent()
+        public void AddWebResultMessageMapper_GenericRegistersAndSetsCurrent()
         {
             var services = new ServiceCollection();
 
-            services.AddResultMessageWeb<NotFoundOnMissingMapper>();
+            services.AddWebResultMessageMapper<NotFoundOnMissingMapper>();
 
             using var provider = services.BuildServiceProvider();
             var resolved = provider.GetRequiredService<IResultStatusCodeMapper>();
@@ -133,12 +134,12 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AddResultMessageWeb_InstanceOverloadRegistersAndSetsCurrent()
+        public void AddWebResultMessageMapper_InstanceOverloadRegistersAndSetsCurrent()
         {
             var services = new ServiceCollection();
             var mapper = new ConflictOnDuplicateMapper();
 
-            services.AddResultMessageWeb(mapper);
+            services.AddWebResultMessageMapper(mapper);
 
             using var provider = services.BuildServiceProvider();
             var resolved = provider.GetRequiredService<IResultStatusCodeMapper>();

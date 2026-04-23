@@ -5,8 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using RzR.ResultMessage.Web;
 using RzR.ResultMessage.Web.Abstractions;
+using RzR.ResultMessage.Web.Middlewares;
+using RzR.ResultMessage.Web.WebDependencyInjection;
 using TestWebApi.ProblemDetails;
 using TestWebApi.Services;
 
@@ -38,6 +39,9 @@ namespace TestWebApi
             services.AddHttpContextAccessor();
             services.AddProblemDetailsResultFactory(
                 new BrandedProblemDetailsResultFactory(new HttpContextAccessor()));
+
+            // Auto-convert any thrown ResultException into a branded ProblemDetails response.
+            services.AddWebResultExceptionFilter();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +53,10 @@ namespace TestWebApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestWebApi v1"));
             }
+
+            // Pipeline-wide ResultException -> ProblemDetails handler. Place it before
+            // UseRouting so it covers middleware-level exceptions too.
+            app.UseResultExceptionMiddleware();
 
             app.UseRouting();
 
