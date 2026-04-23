@@ -7,7 +7,7 @@
 //  Last Modified On : 2026-04-23 12:26
 // ***********************************************************************
 //  <copyright file="ResultToHttpResultTests.cs" company="RzR SOFT & TECH">
-//   Copyright © RzR. All rights reserved.
+//   Copyright ï¿½ RzR. All rights reserved.
 //  </copyright>
 // 
 //  <summary>
@@ -144,6 +144,39 @@ namespace RzR.ResultMessage.Web.Tests
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             StringAssert.Contains(await response.Content.ReadAsStringAsync(), "hello");
+        }
+
+        [TestMethod]
+        public async Task ToHttpResult_AutoPopulates_TraceId_When_HttpContext_Provided()
+        {
+            using var host = await BuildHost(ep => ep.MapGet("/x", (HttpContext http) =>
+            {
+                http.TraceIdentifier = "minimal-trace-42";
+                var result = new Result { IsSuccess = false }.WithError("nope");
+
+                return result.ToHttpResult(httpContext: http);
+            }));
+
+            var response = await host.GetTestClient().GetAsync("/x");
+            var problem = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            Assert.AreEqual("minimal-trace-42", problem["extensions"]?.Value<string>("traceId"));
+        }
+
+        [TestMethod]
+        public async Task ToHttpResult_WithoutHttpContext_DoesNotEmit_TraceId()
+        {
+            using var host = await BuildHost(ep => ep.MapGet("/x", () =>
+            {
+                var result = new Result { IsSuccess = false }.WithError("nope");
+
+                return result.ToHttpResult();
+            }));
+
+            var problem = JObject.Parse(
+                await (await host.GetTestClient().GetAsync("/x")).Content.ReadAsStringAsync());
+
+            Assert.IsNull(problem["extensions"]?["traceId"]);
         }
 
         private static Task<IHost> BuildHost(Action<IEndpointRouteBuilder> mapEndpoints)

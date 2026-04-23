@@ -135,6 +135,12 @@ namespace RzR.ResultMessage.Web.Factories
 
             if (context.Result.IsNotNull())
                 problem.Extensions["ResultMessages"] = context.Result.Messages;
+
+            if (context.HttpContext.IsNotNull()
+                && !problem.Extensions.ContainsKey("traceId"))
+            {
+                problem.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+            }
         }
     }
 }

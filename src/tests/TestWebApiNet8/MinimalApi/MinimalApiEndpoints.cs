@@ -54,11 +54,11 @@ namespace TestWebApiNet8.MinimalApi
                 })
                 .WithName("Empty_NoContent");
 
-            group.MapGet("/validation", async (WeatherService weather) =>
+            group.MapGet("/validation", async (WeatherService weather, HttpContext http) =>
                 {
                     var result = await weather.GetMultiFailAsync();
 
-                    return result.ToHttpResult();
+                    return result.ToHttpResult(httpContext: http);
                 })
                 .WithName("Validation_BadRequest");
 
@@ -68,18 +68,19 @@ namespace TestWebApiNet8.MinimalApi
                         .WithError(new MessageDataModel("Order not found", "E404"), "E404");
 
                     return result.ToHttpResult(
-                        HttpStatusCode.NotFound,
-                        "Order not found",
-                        $"No order matched id '{id}'.",
-                        http.Request.Path);
+                        statusCode: HttpStatusCode.NotFound,
+                        message: "Order not found",
+                        detailMessage: $"No order matched id '{id}'.",
+                        accessedResourceUri: http.Request.Path,
+                        httpContext: http);
                 })
                 .WithName("Orders_NotFound");
 
-            group.MapGet("/from-facade", async (WeatherService weather) =>
+            group.MapGet("/from-facade", async (WeatherService weather, HttpContext http) =>
                 {
                     var result = await weather.GetCollectionMultiFailAsync();
 
-                    return ResultMessageHttpResults.From(result);
+                    return ResultMessageHttpResults.From(result, httpContext: http);
                 })
                 .WithName("Facade_From");
 

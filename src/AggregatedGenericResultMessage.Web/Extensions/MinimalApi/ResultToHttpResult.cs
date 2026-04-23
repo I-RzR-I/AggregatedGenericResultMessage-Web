@@ -67,6 +67,12 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="additionInformation">
         ///     (Optional) Per-call ProblemDetails extension members.
         /// </param>
+        /// <param name="httpContext">
+        ///     (Optional) Ambient <see cref="HttpContext" /> used by the configured
+        ///     <see cref="ProblemDetailsResultFactory.Current" /> for correlation (e.g. auto-populating
+        ///     <c>traceId</c>). Pass the request's <see cref="HttpContext" /> from the Minimal-API
+        ///     handler when correlation is desired.
+        /// </param>
         /// <returns>
         ///     The given data converted to a HttpIResult.
         /// </returns>
@@ -77,7 +83,8 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
+            IDictionary<string, object> additionInformation = null,
+            HttpContext httpContext = null)
         {
             var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, false);
 
@@ -89,7 +96,8 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
                 message,
                 detailMessage,
                 accessedResourceUri,
-                additionInformation);
+                additionInformation,
+                httpContext);
         }
 
         /// -------------------------------------------------------------------------------------------------
@@ -104,6 +112,10 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
         /// <param name="additionInformation">(Optional) The additional information.</param>
+        /// <param name="httpContext">
+        ///     (Optional) Ambient <see cref="HttpContext" /> for correlation. See the non-generic
+        ///     overload for details.
+        /// </param>
         /// <returns>
         ///     The given data converted to a HttpIResult.
         /// </returns>
@@ -114,7 +126,8 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
+            IDictionary<string, object> additionInformation = null,
+            HttpContext httpContext = null)
         {
             var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, true);
 
@@ -126,7 +139,8 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
                 message,
                 detailMessage,
                 accessedResourceUri,
-                additionInformation);
+                additionInformation,
+                httpContext);
         }
 
         /// -------------------------------------------------------------------------------------------------
@@ -143,6 +157,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="detailMessage">Message describing the detail.</param>
         /// <param name="accessedResourceUri">URI of the accessed resource.</param>
         /// <param name="additionInformation">The additional information.</param>
+        /// <param name="httpContext">Ambient HttpContext for correlation (can be null).</param>
         /// <returns>
         ///     A HttpIResult.
         /// </returns>
@@ -155,7 +170,8 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message,
             string detailMessage,
             string accessedResourceUri,
-            IDictionary<string, object> additionInformation)
+            IDictionary<string, object> additionInformation,
+            HttpContext httpContext)
         {
             var objectResult = ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
             {
@@ -166,7 +182,8 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
                 Message = message,
                 DetailMessage = detailMessage,
                 AccessedResourceUri = accessedResourceUri,
-                AdditionInformation = additionInformation
+                AdditionInformation = additionInformation,
+                HttpContext = httpContext
             });
 
             var resolvedStatus = objectResult.StatusCode ?? statusCode.ToInt();
@@ -182,5 +199,4 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         }
     }
 }
-
 #endif

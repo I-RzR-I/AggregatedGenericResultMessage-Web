@@ -21,6 +21,8 @@ using RzR.ResultMessage.Web.Abstractions;
 using System.Collections.Generic;
 using System.Net;
 
+using HttpContext = Microsoft.AspNetCore.Http.HttpContext;
+
 #endregion
 
 namespace RzR.ResultMessage.Web.Models
@@ -115,5 +117,17 @@ namespace RzR.ResultMessage.Web.Models
         /// </value>
         /// =================================================================================================
         public IDictionary<string, object> AdditionInformation { get; set; }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Ambient <see cref="Microsoft.AspNetCore.Http.HttpContext" /> for the request that produced
+        ///     this result, when one is available. Used by
+        ///     <see cref="RzR.ResultMessage.Web.Factories.DefaultProblemDetailsResultFactory" /> to
+        ///     auto-populate <c>traceId</c> in <c>ProblemDetails.Extensions</c> and may be consumed
+        ///     by custom factories for additional correlation data. <see langword="null" /> when the
+        ///     call site has no HttpContext (e.g. unit tests, controller extension methods).
+        /// </summary>
+        /// =================================================================================================
+        public HttpContext HttpContext { get; set; }
     }
 }

@@ -63,7 +63,8 @@ namespace RzR.ResultMessage.Web.Filters
                 Message = resultException.ProblemTitle,
                 DetailMessage = resultException.ProblemDetail,
                 AccessedResourceUri = instance,
-                AdditionInformation = resultException.AdditionInformation
+                AdditionInformation = resultException.AdditionInformation,
+                HttpContext = context.HttpContext
             });
 
             context.Result = objectResult;

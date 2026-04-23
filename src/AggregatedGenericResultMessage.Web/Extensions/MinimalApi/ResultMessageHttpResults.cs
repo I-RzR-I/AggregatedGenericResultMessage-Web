@@ -22,6 +22,7 @@ using RzR.ResultMessage.Abstractions;
 using System.Collections.Generic;
 using System.Net;
 
+using HttpContext = Microsoft.AspNetCore.Http.HttpContext;
 using HttpIResult = Microsoft.AspNetCore.Http.IResult;
 using IResult = RzR.ResultMessage.Abstractions.IResult;
 
@@ -40,7 +41,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Equivalent to
-        ///     <see cref="ResultToHttpResult.ToHttpResult(IResult, HttpStatusCode?, string, string, string, IDictionary{string, object})" />
+        ///     <see cref="ResultToHttpResult.ToHttpResult(IResult, HttpStatusCode?, string, string, string, IDictionary{string, object}, HttpContext)" />
         ///     .
         /// </summary>
         /// <param name="result">The result.</param>
@@ -49,6 +50,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
         /// <param name="additionInformation">(Optional) Information describing the addition.</param>
+        /// <param name="httpContext">(Optional) Context for the HTTP.</param>
         /// <returns>
         ///     A HttpIResult.
         /// </returns>
@@ -59,13 +61,14 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
-            => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionInformation);
+            IDictionary<string, object> additionInformation = null,
+            HttpContext httpContext = null)
+            => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionInformation, httpContext);
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Generic overload of
-        ///     <see cref="From(IResult, HttpStatusCode?, string, string, string, IDictionary{string, object})" />
+        ///     <see cref="From(IResult, HttpStatusCode?, string, string, string, IDictionary{string, object}, HttpContext)" />
         ///     .
         /// </summary>
         /// <typeparam name="T">Generic type parameter.</typeparam>
@@ -75,6 +78,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
         /// <param name="additionInformation">(Optional) Information describing the addition.</param>
+        /// <param name="httpContext">(Optional) Context for the HTTP.</param>
         /// <returns>
         ///     A HttpIResult.
         /// </returns>
@@ -85,8 +89,9 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
-            => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionInformation);
+            IDictionary<string, object> additionInformation = null,
+            HttpContext httpContext = null)
+            => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionInformation, httpContext);
     }
 }
 #endif

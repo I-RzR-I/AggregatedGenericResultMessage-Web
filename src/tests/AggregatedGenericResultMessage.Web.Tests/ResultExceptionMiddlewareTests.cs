@@ -190,6 +190,55 @@ namespace RzR.ResultMessage.Web.Tests
             Assert.AreEqual("stamped", problem["extensions"]?.Value<string>("stamp"));
         }
 
+        [TestMethod]
+        public async Task ResultException_AutoPopulates_TraceId_FromHttpContext()
+        {
+            using var host = await BuildHost(ctx =>
+            {
+                ctx.TraceIdentifier = "trace-abc-123";
+                var result = new Result { IsSuccess = false }.WithError("nope");
+                throw new WebResultException(result);
+            });
+            var client = host.GetTestClient();
+
+            var problem = JObject.Parse(await (await client.GetAsync("/x")).Content.ReadAsStringAsync());
+
+            Assert.AreEqual("trace-abc-123", problem["extensions"]?.Value<string>("traceId"));
+        }
+
+        [TestMethod]
+        public async Task UnhandledException_AutoPopulates_TraceId_FromHttpContext()
+        {
+            using var host = await BuildHost(ctx =>
+            {
+                ctx.TraceIdentifier = "trace-xyz-999";
+                throw new InvalidOperationException("boom");
+            });
+            var client = host.GetTestClient();
+
+            var problem = JObject.Parse(await (await client.GetAsync("/x")).Content.ReadAsStringAsync());
+
+            Assert.AreEqual("trace-xyz-999", problem["extensions"]?.Value<string>("traceId"));
+        }
+
+        [TestMethod]
+        public async Task TraceId_NotOverridden_When_CallerSuppliesItInAdditionInformation()
+        {
+            using var host = await BuildHost(ctx =>
+            {
+                ctx.TraceIdentifier = "ambient-trace";
+                var result = new Result { IsSuccess = false }.WithError("nope");
+                throw new WebResultException(
+                    result,
+                    additionInformation: new Dictionary<string, object> { ["traceId"] = "caller-trace" });
+            });
+            var client = host.GetTestClient();
+
+            var problem = JObject.Parse(await (await client.GetAsync("/x")).Content.ReadAsStringAsync());
+
+            Assert.AreEqual("caller-trace", problem["extensions"]?.Value<string>("traceId"));
+        }
+
         private static Task<IHost> BuildHost(
             Action<HttpContext> terminalMiddleware,
             Action<WebResultExceptionMiddlewareOptions> configure = null)

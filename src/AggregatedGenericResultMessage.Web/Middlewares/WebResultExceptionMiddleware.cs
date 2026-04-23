@@ -146,7 +146,8 @@ namespace RzR.ResultMessage.Web.Middlewares
                 Message = ex.ProblemTitle,
                 DetailMessage = ex.ProblemDetail,
                 AccessedResourceUri = instance,
-                AdditionInformation = ex.AdditionInformation
+                AdditionInformation = ex.AdditionInformation,
+                HttpContext = context
             });
 
             await ExecuteResultAsync(context, objectResult).ConfigureAwait(false);
@@ -192,7 +193,8 @@ namespace RzR.ResultMessage.Web.Middlewares
                 Message = _options.DefaultUnhandledTitle,
                 DetailMessage = detail,
                 AccessedResourceUri = context.Request?.Path.Value,
-                AdditionInformation = extras
+                AdditionInformation = extras,
+                HttpContext = context
             });
 
             await ExecuteResultAsync(context, objectResult).ConfigureAwait(false);
@@ -219,7 +221,7 @@ namespace RzR.ResultMessage.Web.Middlewares
             if (executor.IsNull())
             {
                 throw new InvalidOperationException(
-                    "ResultExceptionMiddleware requires MVC services. Call services.AddControllers() (or AddMvcCore) before UseResultExceptionMiddleware().");
+                    "WebResultExceptionMiddleware requires MVC services. Call services.AddControllers() (or AddMvcCore) before UseResultExceptionMiddleware().");
             }
 
             var actionContext = new ActionContext(
