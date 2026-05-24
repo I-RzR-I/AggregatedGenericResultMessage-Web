@@ -38,7 +38,7 @@ namespace RzR.ResultMessage.Web.Helpers
         ///     Builds object result by delegating to <see cref="ProblemDetailsResultFactory.Current" />
         ///     so global defaults configured via DI are honored. Per-call overrides
         ///     (<paramref name="message" />, <paramref name="detailMessage" />,
-        ///     <paramref name="accessedResourceUri" />, <paramref name="additionInformation" />)
+        ///     <paramref name="accessedResourceUri" />, <paramref name="additionalInformation" />)
         ///     still win over the factory defaults.
         /// </summary>
         internal static ObjectResult BuildObjectResult(
@@ -47,7 +47,7 @@ namespace RzR.ResultMessage.Web.Helpers
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
+            IDictionary<string, object> additionalInformation = null)
             => ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
             {
                 Result = result,
@@ -57,7 +57,7 @@ namespace RzR.ResultMessage.Web.Helpers
                 Message = message,
                 DetailMessage = detailMessage,
                 AccessedResourceUri = accessedResourceUri,
-                AdditionInformation = additionInformation
+                AdditionalInformation = additionalInformation
             });
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace RzR.ResultMessage.Web.Helpers
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
+            IDictionary<string, object> additionalInformation = null)
             => ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
             {
                 Result = result,
@@ -80,7 +80,7 @@ namespace RzR.ResultMessage.Web.Helpers
                 Message = message,
                 DetailMessage = detailMessage,
                 AccessedResourceUri = accessedResourceUri,
-                AdditionInformation = additionInformation
+                AdditionalInformation = additionalInformation
             });
     }
 }

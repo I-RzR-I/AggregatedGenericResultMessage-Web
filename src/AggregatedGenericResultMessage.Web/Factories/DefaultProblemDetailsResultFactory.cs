@@ -117,7 +117,7 @@ namespace RzR.ResultMessage.Web.Factories
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Merges caller-supplied <see cref="ResultProblemDetailsContext.AdditionInformation" /> and
+        ///     Merges caller-supplied <see cref="ResultProblemDetailsContext.AdditionalInformation" /> and
         ///     the canonical <c>ResultMessages</c> entry into the problem-details
         ///     <c>Extensions</c> dictionary. Override to inject additional global extensions
         ///     (e.g. <c>traceId</c>).
@@ -127,9 +127,9 @@ namespace RzR.ResultMessage.Web.Factories
         /// =================================================================================================
         protected virtual void ApplyExtensions(ResultMessageProblemDetails problem, ResultProblemDetailsContext context)
         {
-            if (context.AdditionInformation.IsNullOrEmptyEnumerable().IsFalse())
+            if (context.AdditionalInformation.IsNullOrEmptyEnumerable().IsFalse())
             {
-                foreach (var kvp in context.AdditionInformation!)
+                foreach (var kvp in context.AdditionalInformation!)
                     problem.Extensions[kvp.Key] = kvp.Value;
             }
 

@@ -113,7 +113,7 @@ namespace TestWebApi.Controllers
 
             return ((Result)res).AsProblemDetails(
                 HttpStatusCode.UnprocessableEntity,
-                additionInformation: extras);
+                additionalInformation: extras);
         }
 
         /// <summary>

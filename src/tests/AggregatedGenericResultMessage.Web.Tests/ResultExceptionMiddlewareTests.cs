@@ -222,7 +222,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task TraceId_NotOverridden_When_CallerSuppliesItInAdditionInformation()
+        public async Task TraceId_NotOverridden_When_CallerSuppliesItInAdditionalInformation()
         {
             using var host = await BuildHost(ctx =>
             {
@@ -230,7 +230,7 @@ namespace RzR.ResultMessage.Web.Tests
                 var result = new Result { IsSuccess = false }.WithError("nope");
                 throw new WebResultException(
                     result,
-                    additionInformation: new Dictionary<string, object> { ["traceId"] = "caller-trace" });
+                    additionalInformation: new Dictionary<string, object> { ["traceId"] = "caller-trace" });
             });
             var client = host.GetTestClient();
 

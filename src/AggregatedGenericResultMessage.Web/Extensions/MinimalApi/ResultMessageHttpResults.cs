@@ -49,7 +49,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="message">(Optional) The message.</param>
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition.</param>
+        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
         /// <param name="httpContext">(Optional) Context for the HTTP.</param>
         /// <returns>
         ///     A HttpIResult.
@@ -61,9 +61,9 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null,
+            IDictionary<string, object> additionalInformation = null,
             HttpContext httpContext = null)
-            => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionInformation, httpContext);
+            => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionalInformation, httpContext);
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
@@ -77,7 +77,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="message">(Optional) The message.</param>
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition.</param>
+        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
         /// <param name="httpContext">(Optional) Context for the HTTP.</param>
         /// <returns>
         ///     A HttpIResult.
@@ -89,9 +89,9 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null,
+            IDictionary<string, object> additionalInformation = null,
             HttpContext httpContext = null)
-            => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionInformation, httpContext);
+            => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionalInformation, httpContext);
     }
 }
 #endif

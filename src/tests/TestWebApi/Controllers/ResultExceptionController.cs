@@ -91,7 +91,7 @@ namespace TestWebApi.Controllers
             throw new WebResultException(
                 (Result)res,
                 HttpStatusCode.UnprocessableEntity,
-                additionInformation: extras);
+                additionalInformation: extras);
         }
     }
 }
