@@ -22,6 +22,7 @@ using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Factories;
 using RzR.ResultMessage.Web.Mappers;
 using RzR.ResultMessage.Web.Models;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -29,18 +30,36 @@ namespace RzR.ResultMessage.Web.Filters
 {
     /// -------------------------------------------------------------------------------------------------
     /// <summary>
-    ///     MVC <see cref="IExceptionFilter" /> that auto-converts an unhandled
-    ///     <see cref="WebResultException" /> into a ProblemDetails response built by the
-    ///     configured <see cref="ProblemDetailsResultFactory.Current" />. User can simply
-    ///     <c>throw new ResultException(result)</c> from any controller action and the response
-    ///     pipeline does the conversion, no need for per-call <c>.AsProblemDetails()</c> invoke.
+    ///     MVC exception filter that auto-converts an unhandled <see cref="WebResultException" />
+    ///     into a ProblemDetails response built by the configured
+    ///     <see cref="ProblemDetailsResultFactory.Current" />. Users can simply
+    ///     <c>throw new WebResultException(result)</c> from any controller action and the filter
+    ///     handles the conversion — no per-call <c>.AsProblemDetails()</c> call needed.
+    ///     <para>
+    ///         Implements both <see cref="IAsyncExceptionFilter" /> (preferred by the ASP.NET Core
+    ///         pipeline in high-throughput scenarios) and <see cref="IExceptionFilter" /> (retained
+    ///         for backward compatibility). When both interfaces are present the runtime always
+    ///         dispatches to <see cref="OnExceptionAsync" />.
+    ///     </para>
     /// </summary>
-    /// <seealso cref="T:Microsoft.AspNetCore.Mvc.Filters.IExceptionFilter" />
+    /// <seealso cref="T:Microsoft.AspNetCore.Mvc.Filters.IAsyncExceptionFilter"/>
+    /// <seealso cref="T:Microsoft.AspNetCore.Mvc.Filters.IExceptionFilter"/>
     /// =================================================================================================
-    public sealed class WebResultExceptionFilter : IExceptionFilter
+    public sealed class WebResultExceptionFilter : IAsyncExceptionFilter, IExceptionFilter
     {
         /// <inheritdoc />
-        public void OnException(ExceptionContext context)
+        public Task OnExceptionAsync(ExceptionContext context)
+        {
+            HandleException(context);
+
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc />
+        public void OnException(ExceptionContext context) 
+            => HandleException(context);
+
+        private static void HandleException(ExceptionContext context)
         {
             if (context.IsNull() || context.Exception.IsNull())
                 return;
@@ -63,7 +82,7 @@ namespace RzR.ResultMessage.Web.Filters
                 Message = resultException.ProblemTitle,
                 DetailMessage = resultException.ProblemDetail,
                 AccessedResourceUri = instance,
-                AdditionInformation = resultException.AdditionInformation,
+                AdditionalInformation = resultException.AdditionalInformation,
                 HttpContext = context.HttpContext
             });
 

@@ -146,7 +146,7 @@ namespace RzR.ResultMessage.Web.Middlewares
                 Message = ex.ProblemTitle,
                 DetailMessage = ex.ProblemDetail,
                 AccessedResourceUri = instance,
-                AdditionInformation = ex.AdditionInformation,
+                AdditionalInformation = ex.AdditionalInformation,
                 HttpContext = context
             });
 
@@ -193,7 +193,7 @@ namespace RzR.ResultMessage.Web.Middlewares
                 Message = _options.DefaultUnhandledTitle,
                 DetailMessage = detail,
                 AccessedResourceUri = context.Request?.Path.Value,
-                AdditionInformation = extras,
+                AdditionalInformation = extras,
                 HttpContext = context
             });
 

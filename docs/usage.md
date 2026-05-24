@@ -62,14 +62,14 @@ AsProblemDetails(this IResult result, HttpStatusCode statusCode)
 AsProblemDetails(this IResult result, HttpStatusCode statusCode,
     string message = null, string detailMessage = null,
     string accessedResourceUri = null,
-    IDictionary<string, object> additionInformation = null)
+    IDictionary<string, object> additionalInformation = null)
 
 AsProblemDetails<T>(this IResult<T> result)
 AsProblemDetails<T>(this IResult<T> result, HttpStatusCode statusCode)
 AsProblemDetails<T>(this IResult<T> result, HttpStatusCode statusCode,
     string message = null, string detailMessage = null,
     string accessedResourceUri = null,
-    IDictionary<string, object> additionInformation = null)
+    IDictionary<string, object> additionalInformation = null)
 ```
 
 Failure bodies are `ResultMessageProblemDetails` (a `Microsoft.AspNetCore.Mvc.ProblemDetails` extension) with an additional `ResultMessages` array and, when an ambient `HttpContext` is available, an auto-populated `traceId`.
@@ -134,7 +134,7 @@ public sealed class MyStatusCodeMapper : IResultStatusCodeMapper
 
 ### Custom `IProblemDetailsResultFactory`
 
-Subclass `DefaultProblemDetailsResultFactory` and override the `Resolve*` hooks, or implement `IProblemDetailsResultFactory` from scratch. Per-call values from `ResultProblemDetailsContext` always win over resolved defaults; `traceId` is auto-added from `HttpContext.TraceIdentifier` unless the caller supplied one via `AdditionInformation`.
+Subclass `DefaultProblemDetailsResultFactory` and override the `Resolve*` hooks, or implement `IProblemDetailsResultFactory` from scratch. Per-call values from `ResultProblemDetailsContext` always win over resolved defaults; `traceId` is auto-added from `HttpContext.TraceIdentifier` unless the caller supplied one via `AdditionalInformation`.
 
 ---
 
@@ -168,9 +168,9 @@ app.MapPost("/orders", (OrderDto dto, HttpContext http, IOrderService svc)
 Signatures:
 
 ```csharp
-IResult ToHttpResult (this IResult result, HttpStatusCode? statusCode = null, string message = null, string detailMessage = null, string accessedResourceUri = null, IDictionary<string, object> additionInformation = null, HttpContext httpContext = null);
+IResult ToHttpResult (this IResult result, HttpStatusCode? statusCode = null, string message = null, string detailMessage = null, string accessedResourceUri = null, IDictionary<string, object> additionalInformation = null, HttpContext httpContext = null);
 
-IResult ToHttpResult<T>(this IResult<T> result, HttpStatusCode? statusCode = null, string message = null, string detailMessage = null, string accessedResourceUri = null, IDictionary<string, object> additionInformation = null, HttpContext httpContext = null);
+IResult ToHttpResult<T>(this IResult<T> result, HttpStatusCode? statusCode = null, string message = null, string detailMessage = null, string accessedResourceUri = null, IDictionary<string, object> additionalInformation = null, HttpContext httpContext = null);
 
 ResultMessageHttpResults.From(IResult   result, /* same options */);
 ResultMessageHttpResults.From(IResult<T> result, /* same options */);
@@ -190,7 +190,7 @@ When an `HttpContext` is available (filter, middleware, or passed explicitly to 
 }
 ```
 
-…into the ProblemDetails `Extensions` dictionary, but only if the caller has not already supplied a `traceId` via `additionInformation`. Caller-supplied values always win.
+…into the ProblemDetails `Extensions` dictionary, but only if the caller has not already supplied a `traceId` via `additionalInformation`. Caller-supplied values always win.
 
 ---
 

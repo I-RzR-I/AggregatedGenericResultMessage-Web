@@ -31,7 +31,7 @@ namespace RzR.ResultMessage.Web.Models
     /// <summary>
     ///     Per-call inputs handed to <see cref="IProblemDetailsResultFactory" />. Per-call values (<see cref="Message" />
     ///     , <see cref="DetailMessage" />,
-    ///     <see cref="AccessedResourceUri" />, <see cref="AdditionInformation" />) are intended to
+    ///     <see cref="AccessedResourceUri" />, <see cref="AdditionalInformation" />) are intended to
     ///     win over factory-supplied defaults when present.
     /// </summary>
     /// =================================================================================================
@@ -113,10 +113,10 @@ namespace RzR.ResultMessage.Web.Models
         ///     Optional caller-supplied extension members merged into the response.
         /// </summary>
         /// <value>
-        ///     Information describing the addition.
+        ///     Additional extension members merged into the ProblemDetails response.
         /// </value>
         /// =================================================================================================
-        public IDictionary<string, object> AdditionInformation { get; set; }
+        public IDictionary<string, object> AdditionalInformation { get; set; }
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>

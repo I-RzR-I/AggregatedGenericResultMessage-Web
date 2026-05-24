@@ -131,12 +131,12 @@ If you had already emitted `IResult` bodies manually via `Results.Json(result, s
 New in v2, zero configuration.
 
 * Filter path, middleware path, and Minimal-API path all forward the ambient `HttpContext` to `DefaultProblemDetailsResultFactory`, which sets `problem.Extensions["traceId"] = HttpContext.TraceIdentifier`.
-* If your code passes a `traceId` via `additionInformation`, that value is preserved (no overwrite).
+* If your code passes a `traceId` via `additionalInformation`, that value is preserved (no overwrite).
 * To opt out, register a factory that overrides `ApplyExtensions` and skips the `traceId` injection.
 
 If you previously carried correlation on your own, either:
 * Remove your bespoke injection and let the library handle it, **or**
-* Pre-populate `additionInformation["traceId"]` yourself — the library will not overwrite it.
+* Pre-populate `additionalInformation["traceId"]` yourself — the library will not overwrite it.
 
 ---
 

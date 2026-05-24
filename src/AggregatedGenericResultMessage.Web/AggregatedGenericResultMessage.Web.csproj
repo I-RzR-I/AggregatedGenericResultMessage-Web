@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.1;net5.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<Authors>RzR</Authors>
 		<Copyright>RzR</Copyright>
@@ -24,6 +24,7 @@
 		<Language>en-US</Language>
 		
 		<RootNamespace>RzR.ResultMessage.Web</RootNamespace>
+		<AssemblyName>RzR.ResultMessage.Web</AssemblyName>
 		
 		<PackageReleaseNotes>
 
@@ -42,7 +43,7 @@
 		<Compile Include="..\shared\GeneralAssemblyInfo.cs" Link="Properties\GeneralAssemblyInfo.cs" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="AggregatedGenericResultMessage" Version="2.0.0.4127" />
+		<PackageReference Include="RzR.ResultMessage" Version="3.0.0.6928" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
@@ -51,7 +52,8 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="
-			   '$(TargetFramework)' == 'net6.0' 
+			   '$(TargetFramework)' == 'net5.0' 
+			   Or '$(TargetFramework)' == 'net6.0' 
 			   Or '$(TargetFramework)' == 'net7.0' 
 			   Or '$(TargetFramework)' == 'net8.0' 
 			   Or '$(TargetFramework)' == 'net9.0'">

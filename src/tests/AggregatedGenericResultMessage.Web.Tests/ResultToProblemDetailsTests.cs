@@ -7,7 +7,7 @@
 //  Last Modified On : 2026-04-22 19:48
 // ***********************************************************************
 //  <copyright file="ResultToProblemDetailsTests.cs" company="RzR SOFT & TECH">
-//   Copyright © RzR. All rights reserved.
+//   Copyright ï¿½ RzR. All rights reserved.
 //  </copyright>
 // 
 //  <summary>
@@ -72,7 +72,7 @@ namespace RzR.ResultMessage.Web.Tests
 
             var result = sut.AsProblemDetails(
                 HttpStatusCode.BadRequest,
-                additionInformation: new Dictionary<string, object>
+                additionalInformation: new Dictionary<string, object>
                 {
                     ["traceId"] = "abc-123"
                 });

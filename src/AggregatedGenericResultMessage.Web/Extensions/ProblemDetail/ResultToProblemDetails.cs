@@ -43,7 +43,7 @@ namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
         /// <param name="message">(Optional) The custom `ProblemDetails` message.</param>
         /// <param name="detailMessage">(Optional) The custom message `ProblemDetails` describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition `ProblemDetails` objects.</param>
+        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
         /// <returns>
         ///     An ObjectResult.
         /// </returns>
@@ -54,8 +54,8 @@ namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
-            => ResultProblemDetailsHelper.BuildObjectResult(result, statusCode, message, detailMessage, accessedResourceUri, additionInformation);
+            IDictionary<string, object> additionalInformation = null)
+            => ResultProblemDetailsHelper.BuildObjectResult(result, statusCode, message, detailMessage, accessedResourceUri, additionalInformation);
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
@@ -66,7 +66,7 @@ namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
         /// <param name="message">(Optional) The custom `ProblemDetails` message.</param>
         /// <param name="detailMessage">(Optional) The custom message `ProblemDetails` describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition `ProblemDetails` objects.</param>
+        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
         /// <returns>
         ///     An ObjectResult.
         /// </returns>
@@ -77,8 +77,8 @@ namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
-            => ResultProblemDetailsHelper.BuildObjectResult(result, statusCode, message, detailMessage, accessedResourceUri, additionInformation);
+            IDictionary<string, object> additionalInformation = null)
+            => ResultProblemDetailsHelper.BuildObjectResult(result, statusCode, message, detailMessage, accessedResourceUri, additionalInformation);
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
@@ -90,7 +90,7 @@ namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
         /// <param name="message">(Optional) The custom `ProblemDetails` message.</param>
         /// <param name="detailMessage">(Optional) The custom message `ProblemDetails` describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition `ProblemDetails` objects.</param>
+        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
         /// <returns>
         ///     An ObjectResult.
         /// </returns>
@@ -101,8 +101,8 @@ namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
-            => ResultProblemDetailsHelper.BuildObjectResult(result, statusCode, message, detailMessage, accessedResourceUri, additionInformation);
+            IDictionary<string, object> additionalInformation = null)
+            => ResultProblemDetailsHelper.BuildObjectResult(result, statusCode, message, detailMessage, accessedResourceUri, additionalInformation);
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
@@ -113,7 +113,7 @@ namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
         /// <param name="message">(Optional) The custom `ProblemDetails` message.</param>
         /// <param name="detailMessage">(Optional) The custom message `ProblemDetails` describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) Information describing the addition `ProblemDetails` objects.</param>
+        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
         /// <returns>
         ///     An ObjectResult.
         /// </returns>
@@ -124,7 +124,7 @@ namespace RzR.ResultMessage.Web.Extensions.ProblemDetail
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null)
-            => ResultProblemDetailsHelper.BuildObjectResult(result, statusCode, message, detailMessage, accessedResourceUri, additionInformation);
+            IDictionary<string, object> additionalInformation = null)
+            => ResultProblemDetailsHelper.BuildObjectResult(result, statusCode, message, detailMessage, accessedResourceUri, additionalInformation);
     }
 }

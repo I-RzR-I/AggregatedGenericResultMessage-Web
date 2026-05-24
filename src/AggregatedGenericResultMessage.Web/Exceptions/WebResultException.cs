@@ -94,10 +94,10 @@ namespace RzR.ResultMessage.Web.Exceptions
         ///     (Optional) Per-call additional ProblemDetails extensions.
         /// </summary>
         /// <value>
-        ///     Information describing the addition.
+        ///     Additional extension members merged into the ProblemDetails response.
         /// </value>
         /// =================================================================================================
-        public IDictionary<string, object> AdditionInformation { get; }
+        public IDictionary<string, object> AdditionalInformation { get; }
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
@@ -118,9 +118,8 @@ namespace RzR.ResultMessage.Web.Exceptions
         ///     (Optional)
         ///     The accessed resource URI.
         /// </param>
-        /// <param name="additionInformation">
-        ///     (Optional)
-        ///     Information describing the addition.
+        /// <param name="additionalInformation">
+        ///     (Optional) Additional extension members to merge into the ProblemDetails response.
         /// </param>
         /// <param name="innerException">(Optional) The inner exception.</param>
         /// =================================================================================================
@@ -130,7 +129,7 @@ namespace RzR.ResultMessage.Web.Exceptions
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null,
+            IDictionary<string, object> additionalInformation = null,
             Exception innerException = null)
             : base(message ?? "Result-bound failure raised as exception.", innerException)
         {
@@ -139,7 +138,7 @@ namespace RzR.ResultMessage.Web.Exceptions
             ProblemTitle = message;
             ProblemDetail = detailMessage;
             AccessedResourceUri = accessedResourceUri;
-            AdditionInformation = additionInformation;
+            AdditionalInformation = additionalInformation;
         }
     }
 }

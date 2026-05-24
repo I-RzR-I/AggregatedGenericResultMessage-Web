@@ -64,7 +64,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="accessedResourceUri">
         ///     (Optional) Per-call ProblemDetails instance override.
         /// </param>
-        /// <param name="additionInformation">
+        /// <param name="additionalInformation">
         ///     (Optional) Per-call ProblemDetails extension members.
         /// </param>
         /// <param name="httpContext">
@@ -83,7 +83,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null,
+            IDictionary<string, object> additionalInformation = null,
             HttpContext httpContext = null)
         {
             var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, false);
@@ -96,7 +96,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
                 message,
                 detailMessage,
                 accessedResourceUri,
-                additionInformation,
+                additionalInformation,
                 httpContext);
         }
 
@@ -111,7 +111,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="message">(Optional) The message.</param>
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionInformation">(Optional) The additional information.</param>
+        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
         /// <param name="httpContext">
         ///     (Optional) Ambient <see cref="HttpContext" /> for correlation. See the non-generic
         ///     overload for details.
@@ -126,7 +126,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionInformation = null,
+            IDictionary<string, object> additionalInformation = null,
             HttpContext httpContext = null)
         {
             var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, true);
@@ -139,7 +139,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
                 message,
                 detailMessage,
                 accessedResourceUri,
-                additionInformation,
+                additionalInformation,
                 httpContext);
         }
 
@@ -156,7 +156,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="message">The message.</param>
         /// <param name="detailMessage">Message describing the detail.</param>
         /// <param name="accessedResourceUri">URI of the accessed resource.</param>
-        /// <param name="additionInformation">The additional information.</param>
+        /// <param name="additionalInformation">Additional extension members to merge into the ProblemDetails response.</param>
         /// <param name="httpContext">Ambient HttpContext for correlation (can be null).</param>
         /// <returns>
         ///     A HttpIResult.
@@ -170,7 +170,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             string message,
             string detailMessage,
             string accessedResourceUri,
-            IDictionary<string, object> additionInformation,
+            IDictionary<string, object> additionalInformation,
             HttpContext httpContext)
         {
             var objectResult = ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
@@ -182,7 +182,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
                 Message = message,
                 DetailMessage = detailMessage,
                 AccessedResourceUri = accessedResourceUri,
-                AdditionInformation = additionInformation,
+                AdditionalInformation = additionalInformation,
                 HttpContext = httpContext
             });
 
