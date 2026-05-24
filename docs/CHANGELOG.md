@@ -1,3 +1,11 @@
+### **v3.0.0.7978** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 24-05-2026
+* [80d1431] (RzR) -> **[BREAKING]** Rename `additionInformation` → `additionalInformation` across all public APIs: `ResultProblemDetailsContext.AdditionalInformation`, `WebResultException.AdditionalInformation`, `ResultToProblemDetails` overloads, `ResultToHttpResult` overloads, `ResultMessageHttpResults.From` overloads, `ResultProblemDetailsHelper` overloads, `DefaultProblemDetailsResultFactory`, `WebResultExceptionFilter`, `WebResultExceptionMiddleware` (14 files total).
+* [80d1431] (RzR) -> Fix `ResultMessageProblemDetails.Extensions` shadow property: guard the property declaration with `#if NETSTANDARD2_1` since `Microsoft.AspNetCore.Mvc 2.1.3` (netstandard2.1 target) does not expose `ProblemDetails.Extensions`; net5.0+ already has it on the base class.
+* [80d1431] (RzR) -> Add `net5.0` target framework: add `net5.0` to `<TargetFrameworks>` with `<FrameworkReference Include="Microsoft.AspNetCore.App" />` alongside the existing net6.0–net9.0 targets.
+* [80d1431] (RzR) -> Add `ResultMessageProblemDetailsConverter` (net5.0+): custom `System.Text.Json` `JsonConverter<ResultMessageProblemDetails>` that serializes `Extensions` entries under a nested `"extensions"` JSON property instead of the top-level promotion performed by the inherited `ProblemDetailsJsonConverter`. Applied via `[JsonConverter]` attribute on `ResultMessageProblemDetails` for net5.0+.
+* [80d1431] (RzR) -> `WebResultExceptionFilter`: implement `IAsyncExceptionFilter` alongside `IExceptionFilter`. Extracted handling logic into `private static HandleException`; ASP.NET Core always dispatches the async path when both interfaces are present, avoiding unnecessary thread-pool blocking in high-throughput scenarios.
+* [80d1431] (RzR) -> Fix docs: rename `additionInformation` → `additionalInformation` in `docs/usage.md` (4 occurrences) and `docs/migration-v2.md` (2 occurrences).
+
 ### **v2.0.0.7588** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 23-04-2026
 * [525a26a] (RzR) -> Auto commit uncommited files
 * [2fa8d49] (RzR) -> Adapt the documentation.
