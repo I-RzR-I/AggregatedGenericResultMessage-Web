@@ -1,3 +1,7 @@
+### **v3.1.0.7713** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 02-07-2026
+* [a092d01] (RzR) -> Auto commit uncommited files
+* [6138651] (RzR) -> Unify MVC and Minimal-API problem-details responses.
+
 ### **v3.0.0.7978** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 24-05-2026
 * [80d1431] (RzR) -> **[BREAKING]** Rename `additionInformation` → `additionalInformation` across all public APIs: `ResultProblemDetailsContext.AdditionalInformation`, `WebResultException.AdditionalInformation`, `ResultToProblemDetails` overloads, `ResultToHttpResult` overloads, `ResultMessageHttpResults.From` overloads, `ResultProblemDetailsHelper` overloads, `DefaultProblemDetailsResultFactory`, `WebResultExceptionFilter`, `WebResultExceptionMiddleware` (14 files total).
 * [80d1431] (RzR) -> Fix `ResultMessageProblemDetails.Extensions` shadow property: guard the property declaration with `#if NETSTANDARD2_1` since `Microsoft.AspNetCore.Mvc 2.1.3` (netstandard2.1 target) does not expose `ProblemDetails.Extensions`; net5.0+ already has it on the base class.

@@ -64,7 +64,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static ObjectResult AsSuccessObjectResult<T>(this Result<T> result, int statusCode)
-            => statusCode.IsSuccessHttpStatus() || result.IsNull()
+            => statusCode.IsSuccessHttpNoContentStatus() || result.IsNull()
                 ? new ObjectResult(null) { StatusCode = statusCode }
                 : new ObjectResult(result.Response) { StatusCode = statusCode };
 
@@ -103,7 +103,7 @@ namespace RzR.ResultMessage.Web.Extensions.ActionResult
         /// <typeparam name="T">Common result type</typeparam>
         /// <remarks></remarks>
         public static ObjectResult AsSuccessObjectResult<T>(this IResult<T> result, HttpStatusCode statusCode)
-            => statusCode.IsOkNoContent()
+            => statusCode.IsOkNoContent() || result.IsNull()
                 ? new ObjectResult(null) { StatusCode = statusCode.ToInt() }
                 : new ObjectResult(result.Response) { StatusCode = statusCode.ToInt() };
     }

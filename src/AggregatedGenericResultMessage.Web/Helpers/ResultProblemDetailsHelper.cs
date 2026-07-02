@@ -16,12 +16,16 @@
 
 #region U S A G E S
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RzR.ResultMessage.Abstractions;
 using RzR.ResultMessage.Web.Factories;
+using RzR.ResultMessage.Web.Mappers;
 using RzR.ResultMessage.Web.Models;
 using System.Collections.Generic;
 using System.Net;
+
+using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 #endregion
 
@@ -39,48 +43,77 @@ namespace RzR.ResultMessage.Web.Helpers
         ///     so global defaults configured via DI are honored. Per-call overrides
         ///     (<paramref name="message" />, <paramref name="detailMessage" />,
         ///     <paramref name="accessedResourceUri" />, <paramref name="additionalInformation" />)
-        ///     still win over the factory defaults.
+        ///     still win over the factory defaults. When <paramref name="statusCode" /> is
+        ///     <see langword="null" />, <see cref="ResultStatusCodeMapper.Current" /> resolves it.
         /// </summary>
         internal static ObjectResult BuildObjectResult(
             IResult result,
-            HttpStatusCode statusCode,
+            HttpStatusCode? statusCode = null,
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionalInformation = null)
-            => ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
+            IDictionary<string, object> additionalInformation = null,
+            HttpContext httpContext = null)
+        {
+            var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, false);
+
+            var objectResult = ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
             {
                 Result = result,
-                StatusCode = statusCode,
+                StatusCode = resolvedStatus,
                 HasResponseBody = false,
                 Response = null,
                 Message = message,
                 DetailMessage = detailMessage,
                 AccessedResourceUri = accessedResourceUri,
-                AdditionalInformation = additionalInformation
+                AdditionalInformation = additionalInformation,
+                HttpContext = httpContext
             });
 
+            // Guarantee the resolved status is carried on the ObjectResult so every downstream
+            // consumer (MVC ExecuteResultAsync, Minimal-API wrap) agrees on the status even when a
+            // custom factory returns an ObjectResult without setting StatusCode.
+            objectResult.StatusCode ??= (int)resolvedStatus;
+
+            return objectResult;
+        }
+
         /// <summary>
-        ///     Generic overload of <see cref="BuildObjectResult(IResult,HttpStatusCode,string,string,string,IDictionary{string,object})" />
-        ///     that carries the <c>Result&lt;T&gt;.Response</c> for the success path.
+        ///     Generic overload of <see cref="BuildObjectResult(IResult,HttpStatusCode?,string,string,string,IDictionary{string,object},HttpContext)" />
+        ///     that carries the <c>Result&lt;T&gt;.Response</c> for the success path. When
+        ///     <paramref name="statusCode" /> is <see langword="null" />,
+        ///     <see cref="ResultStatusCodeMapper.Current" /> resolves it.
         /// </summary>
         internal static ObjectResult BuildObjectResult<T>(
             IResult<T> result,
-            HttpStatusCode statusCode,
+            HttpStatusCode? statusCode = null,
             string message = null,
             string detailMessage = null,
             string accessedResourceUri = null,
-            IDictionary<string, object> additionalInformation = null)
-            => ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
+            IDictionary<string, object> additionalInformation = null,
+            HttpContext httpContext = null)
+        {
+            var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, true);
+
+            var objectResult = ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
             {
                 Result = result,
-                StatusCode = statusCode,
+                StatusCode = resolvedStatus,
                 HasResponseBody = true,
                 Response = result == null ? null : result.Response,
                 Message = message,
                 DetailMessage = detailMessage,
                 AccessedResourceUri = accessedResourceUri,
-                AdditionalInformation = additionalInformation
+                AdditionalInformation = additionalInformation,
+                HttpContext = httpContext
             });
+
+            // Guarantee the resolved status is carried on the ObjectResult so every downstream
+            // consumer (MVC ExecuteResultAsync, Minimal-API wrap) agrees on the status even when a
+            // custom factory returns an ObjectResult without setting StatusCode.
+            objectResult.StatusCode ??= (int)resolvedStatus;
+
+            return objectResult;
+        }
     }
 }

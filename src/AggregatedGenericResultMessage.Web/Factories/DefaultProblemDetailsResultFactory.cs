@@ -43,8 +43,7 @@ namespace RzR.ResultMessage.Web.Factories
         {
             var httpCode = context.StatusCode.ToInt();
 
-            // Success + a successful HTTP code => write the payload (or null) directly.
-            if (context.Result.IsNotNull() && context.Result.IsSuccess.IsTrue() && httpCode.IsSuccessHttpStatus())
+            if (context.Result.IsNotNull() && context.Result.IsSuccess.IsTrue() && httpCode.IsSuccessHttpStatusRange())
                 return new ObjectResult(context.HasResponseBody ? context.Response : null) { StatusCode = httpCode };
 
             var problem = new ResultMessageProblemDetails

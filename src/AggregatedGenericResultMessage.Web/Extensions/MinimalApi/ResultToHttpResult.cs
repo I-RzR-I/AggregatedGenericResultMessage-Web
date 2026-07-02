@@ -19,9 +19,9 @@
 #region U S A G E S
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using RzR.ResultMessage.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
+using RzR.ResultMessage.Web.Extensions.Unified;
 using RzR.ResultMessage.Web.Factories;
 using RzR.ResultMessage.Web.Mappers;
 using RzR.ResultMessage.Web.Models;
@@ -69,7 +69,7 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// </param>
         /// <param name="httpContext">
         ///     (Optional) Ambient <see cref="HttpContext" /> used by the configured
-        ///     <see cref="ProblemDetailsResultFactory.Current" /> for correlation (e.g. auto-populating
+        ///     <see cref="ProblemDetailsResultFactory.Current" /> for correlation (e.g. autopopulating
         ///     <c>traceId</c>). Pass the request's <see cref="HttpContext" /> from the Minimal-API
         ///     handler when correlation is desired.
         /// </param>
@@ -187,15 +187,8 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
             });
 
             var resolvedStatus = objectResult.StatusCode ?? statusCode.ToInt();
-            var body = objectResult.Value;
 
-            if (body.IsNull())
-                return Results.StatusCode(resolvedStatus);
-
-            // Failure path: use application/problem+json so spec-aware clients see it correctly.
-            var contentType = body is ProblemDetails ? "application/problem+json" : null;
-
-            return Results.Json(body, statusCode: resolvedStatus, contentType: contentType);
+            return MinimalApiResultWrapper.Wrap(objectResult.Value, resolvedStatus);
         }
     }
 }
