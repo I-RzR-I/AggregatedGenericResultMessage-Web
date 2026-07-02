@@ -1,18 +1,19 @@
-// ***********************************************************************
-//  Assembly         : RzR.Shared.ResultMessage.AggregatedGenericResultMessage.Web.Tests
-//  Author           : RzR
-//  Created On       : 2026-04-22 19:04
+ï»¿// ***********************************************************************
+//  Assembly          : RzR.Shared.ResultMessage.AggregatedGenericResultMessage.Web.Tests
+//  Author            : RzR
+//  Created           : 23-04-2026 21:04
 // 
 //  Last Modified By : RzR
-//  Last Modified On : 2026-04-22 19:48
-// ***********************************************************************
+//  Last Modified On : 02-07-2026 19:48
+//  ***********************************************************************
 //  <copyright file="ResultToObjectResultTests.cs" company="RzR SOFT & TECH">
-//   Copyright © RzR. All rights reserved.
+//      Copyright (c) RzR. All rights reserved.
 //  </copyright>
-// 
-//  <summary>
-//  </summary>
-// ***********************************************************************
+//  <contact>
+//      https://iamrzr.dev/contact
+//  </contact>
+//  <summary></summary>
+//  ***********************************************************************
 
 namespace RzR.ResultMessage.Web.Tests
 {
@@ -83,6 +84,28 @@ namespace RzR.ResultMessage.Web.Tests
 
             Assert.AreEqual(StatusCodes.Status201Created, result.StatusCode);
             Assert.AreEqual("value", result.Value);
+        }
+
+        [TestMethod]
+        public void AsSuccessObjectResult_ResultOfT_WithIntStatusCode200_ReturnsResponseAsBody()
+        {
+            var sut = Result<string>.Success("payload");
+
+            var result = sut.AsSuccessObjectResult(StatusCodes.Status200OK);
+
+            Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+            Assert.AreEqual("payload", result.Value);
+        }
+
+        [TestMethod]
+        public void AsSuccessObjectResult_IResultOfT_WithHttpStatusCode_NullResult_ReturnsNullBody()
+        {
+            IResult<int> sut = null;
+
+            var result = sut.AsSuccessObjectResult(HttpStatusCode.OK);
+
+            Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+            Assert.IsNull(result.Value);
         }
     }
 }
