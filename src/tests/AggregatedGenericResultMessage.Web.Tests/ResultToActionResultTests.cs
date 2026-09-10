@@ -20,7 +20,7 @@ namespace RzR.ResultMessage.Web.Tests
     public class ResultToActionResultTests
     {
         [TestMethod]
-        public void AsActionResult_ResultSuccess_Returns204()
+        public void AsActionResult_ResultSuccess_Returns204_Test()
         {
             var sut = new Result { IsSuccess = true };
 
@@ -31,7 +31,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_ResultFailure_Returns400_WithAllMessages()
+        public void AsActionResult_ResultFailure_Returns400_WithAllMessages_Test()
         {
             var sut = new Result { IsSuccess = false }
                 .WithError("first")
@@ -48,7 +48,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsIActionResult_ResultSuccess_Returns204()
+        public void AsIActionResult_ResultSuccess_Returns204_Test()
         {
             var sut = new Result { IsSuccess = true };
 
@@ -59,7 +59,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_ResultOfTSuccess_Returns200_WithBody()
+        public void AsActionResult_ResultOfTSuccess_Returns200_WithBody_Test()
         {
             var sut = Result<int>.Success(42);
 
@@ -71,7 +71,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_ResultOfTFailure_Returns400_WithAllMessages()
+        public void AsActionResult_ResultOfTFailure_Returns400_WithAllMessages_Test()
         {
             var sut = Result<string>.Failure("first").WithError("second");
 
@@ -85,7 +85,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsIActionResult_ResultOfTSuccess_Returns200_WithBody()
+        public void AsIActionResult_ResultOfTSuccess_Returns200_WithBody_Test()
         {
             var sut = Result<string>.Success("payload");
 
@@ -97,7 +97,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_IResultSuccess_Returns204()
+        public void AsActionResult_IResultSuccess_Returns204_Test()
         {
             IResult sut = new Result { IsSuccess = true };
 
@@ -108,7 +108,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_IResultFailure_Returns400_WithAllMessages()
+        public void AsActionResult_IResultFailure_Returns400_WithAllMessages_Test()
         {
             IResult sut = new Result { IsSuccess = false }
                 .WithError("e1")
@@ -124,7 +124,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsIActionResult_IResultOfTFailure_Returns400_WithAllMessages()
+        public void AsIActionResult_IResultOfTFailure_Returns400_WithAllMessages_Test()
         {
             IResult<int> sut =
                 Result<int>.Failure("e1").WithError("e2").WithError("e3");

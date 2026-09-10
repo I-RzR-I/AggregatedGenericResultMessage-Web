@@ -23,7 +23,8 @@ The important thing about this repository is to offer the possibility to manage 
 ## Highlights (v2.x)
 * Multi-target: `netstandard2.1` / `net5.0` / `net6.0` / `net7.0` / `net8.0` / `net9.0` from a single package.
 * Pluggable `IResultStatusCodeMapper` — centralize status-code resolution, swap globally via `AddWebResultMessageMapper(...)`.
-* Pluggable `IProblemDetailsResultFactory` — control ProblemDetails `type` / `title` / `detail` / `instance` / extensions in one place, swap via `AddProblemDetailsResultFactory(...)`.
+* Pluggable `IProblemDetailsResultFactory` — control ProblemDetails `type` / `title` / `detail` / `instance` / `code` / extensions in one place, swap via `AddProblemDetailsResultFactory(...)`.
+* Machine-readable [`code`](docs/usage.md#error-code) on failure bodies — the `Key` of the same message that supplies `title` / `detail`, validated against `[A-Za-z0-9._-]{1,64}`, omitted when it is missing or does not match.
 * MVC exception filter (`AddWebResultExceptionFilter()`) + generalized middleware (`UseResultExceptionMiddleware()`) — auto-translate unhandled exceptions (including `WebResultException`) to ProblemDetails, no per-action `try/catch`.
 * Minimal-API adapters (net6.0+): `IResult.ToHttpResult(...)` and `ResultMessageHttpResults.From(...)` — identical wire format as MVC.
 * Automatic correlation: `traceId` emitted from `HttpContext.TraceIdentifier` unless explicitly overridden by the caller.

@@ -8,9 +8,9 @@ v2 focuses on three things: **multi-target frameworks**, **pluggable strategies*
 
 | v1.x            | v2.x                                                         |
 |-----------------|--------------------------------------------------------------|
-| `netstandard2.1` only | `netstandard2.1`, `net6.0`, `net7.0`, `net8.0`, `net9.0` |
+| `netstandard2.1` only | `netstandard2.1`, `net5.0`, `net6.0`, `net7.0`, `net8.0`, `net9.0` |
 
-The `netstandard2.1`, still depends on `Microsoft.AspNetCore.Mvc 2.1.3` (unchanged). The `net6.0+` TFMs use `<FrameworkReference Include="Microsoft.AspNetCore.App" />` — **do not** add explicit `Microsoft.AspNetCore.*` package references on those target framerowks; remove them from your `.csproj` if present.
+The `netstandard2.1` TFM still depends on `Microsoft.AspNetCore.Mvc`, but the pin moves from `2.1.3` to `2.3.13`. The `net5.0+` TFMs use `<FrameworkReference Include="Microsoft.AspNetCore.App" />` — **do not** add explicit `Microsoft.AspNetCore.*` package references on those target frameworks; remove them from your `.csproj` if present.
 
 ---
 
@@ -97,10 +97,13 @@ Per-call arguments to `AsProblemDetails(...)` / `ToHttpResult(...)` still overri
 services.AddWebResultExceptionFilter();
 
 // Whole-pipeline middleware (recommended; also catches middleware-level exceptions)
+// The middleware catches every exception; these options only shape the response
+// for exceptions that are NOT a WebResultException.
 services.AddResultExceptionMiddleware(o =>
 {
-    o.IncludeUnhandledExceptions = true;  // catch non-WebResultException too
-    o.DefaultStatusCode = 500;
+    o.DefaultUnhandledStatusCode = HttpStatusCode.InternalServerError; // default
+    o.DefaultUnhandledTitle = "Unhandled exception";                   // default
+    o.IncludeExceptionMessageInDetail = false; // default — keep false in production
 });
 
 app.UseResultExceptionMiddleware(); // before UseRouting()
@@ -151,16 +154,16 @@ No breaking namespace or public-type renames. Newly added public types:
 | `RzR.ResultMessage.Web.Mappers`                     | `DefaultResultStatusCodeMapper`, `ResultStatusCodeMapper` (ambient) |
 | `RzR.ResultMessage.Web.Factories`                   | `DefaultProblemDetailsResultFactory`, `ProblemDetailsResultFactory` (ambient) |
 | `RzR.ResultMessage.Web.Filters`                     | `WebResultExceptionFilter`             |
-| `RzR.ResultMessage.Web.Middlewares`                 | `WebResultExceptionMiddleware`, `WebResultExceptionMiddlewareOptions` |
-| `RzR.ResultMessage.Web.Models`                      | `ResultProblemDetailsContext`          |
+| `RzR.ResultMessage.Web.Middlewares`                 | `WebResultExceptionMiddleware`         |
+| `RzR.ResultMessage.Web.Models`                      | `ResultProblemDetailsContext`, `WebResultExceptionMiddlewareOptions` |
 | `RzR.ResultMessage.Web.Extensions.MinimalApi`       | `ResultToHttpResult`, `ResultMessageHttpResults` *(net6.0+)* |
 | `RzR.ResultMessage.Web.WebDependencyInjection`      | `ServiceCollectionExtensions`, `ApplicationBuilderExtensions` |
 
 ---
 
-## 9. Package references cleanup (net6.0+)
+## 9. Package references cleanup (net5.0+)
 
-If your v1 project explicitly referenced individual `Microsoft.AspNetCore.*` packages to work around netstandard2.1, remove those references when targeting net6.0+; they are now covered by the shared framework.
+If your v1 project explicitly referenced individual `Microsoft.AspNetCore.*` packages to work around netstandard2.1, remove those references when targeting net5.0+; they are now covered by the shared framework.
 
 ```diff
 - <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="..." />
@@ -172,7 +175,7 @@ If your v1 project explicitly referenced individual `Microsoft.AspNetCore.*` pac
 ## 10. Quick checklist
 
 1. Bump package to v2.
-2. Remove stray `Microsoft.AspNetCore.*` package refs on net6+ TFMs.
+2. Remove stray `Microsoft.AspNetCore.*` package refs on net5.0+ TFMs.
 3. `services.AddWebResultMessageMapper();` — or register a custom mapper.
 4. *(Optional)* `services.AddProblemDetailsResultFactory<MyProblemFactory>();` for global ProblemDetails shape.
 5. *(Optional)* `services.AddWebResultExceptionFilter();` **and/or** `services.AddResultExceptionMiddleware(...); app.UseResultExceptionMiddleware();`.

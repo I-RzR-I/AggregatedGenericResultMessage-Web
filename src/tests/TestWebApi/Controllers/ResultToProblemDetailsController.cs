@@ -57,7 +57,7 @@ namespace TestWebApi.Controllers
         {
             var res = await _weatherService.GetResultFailAsync();
 
-            res.WithError(new MessageDataModel("Error message", "Error code"))
+            res.WithError(new MessageDataModel("Error message"), "c-E001")
                 .WithMessage(new MessageDataModel("Message info", "Message detail"), MessageType.Error);
 
             return res.AsProblemDetails(HttpStatusCode.BadRequest);
@@ -69,7 +69,7 @@ namespace TestWebApi.Controllers
             var uri = HttpContext.Request.Path;
             var res = await _weatherService.GetResultFailAsync();
 
-            res.WithError(new MessageDataModel("Error message", "Error code"))
+            res.WithError(new MessageDataModel("Error message"), "c-E002")
                 .WithMessage(new MessageDataModel("Message info", "Message detail"), MessageType.Error);
 
             return res.AsProblemDetails(HttpStatusCode.BadRequest, accessedResourceUri: uri);

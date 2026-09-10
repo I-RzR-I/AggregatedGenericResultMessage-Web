@@ -28,6 +28,7 @@ using Newtonsoft.Json.Linq;
 using RzR.ResultMessage.Web.Extensions.Unified;
 using RzR.ResultMessage.Web.Factories;
 using RzR.ResultMessage.Web.Mappers;
+using RzR.ResultMessage.Web.Tests.Controllers;
 
 #endregion
 
@@ -88,10 +89,8 @@ namespace RzR.ResultMessage.Web.Tests
                 .StartAsync();
         }
 
-        #region Minimal-API host: proves the pipeline dispatches via Http.IResult.ExecuteAsync
-
         [TestMethod]
-        public async Task MinimalApi_GenericSuccess_Returns200_WithExactBody_NotSerializedEnvelope()
+        public async Task MinimalApi_GenericSuccess_Returns200_WithExactBody_NotSerializedEnvelope_Test()
         {
             using var host = await BuildMinimalHost(ep => ep.MapGet("/ok", () =>
                 Result<int>.Success(42).ToProblemResponse()));
@@ -105,7 +104,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task MinimalApi_Failure_DefaultFactory_Returns400_ProblemJson()
+        public async Task MinimalApi_Failure_DefaultFactory_Returns400_ProblemJson_Test()
         {
             using var host = await BuildMinimalHost(ep => ep.MapGet("/fail", () =>
             {
@@ -126,7 +125,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task MinimalApi_Failure_PerCallOverrides_Returns404_WithTitleDetailInstance()
+        public async Task MinimalApi_Failure_PerCallOverrides_Returns404_WithTitleDetailInstance_Test()
         {
             using var host = await BuildMinimalHost(ep => ep.MapGet("/orders/{id:int}", (int id) =>
             {
@@ -151,7 +150,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task MinimalApi_NonGenericSuccess_Returns204_NoBody()
+        public async Task MinimalApi_NonGenericSuccess_Returns204_NoBody_Test()
         {
             using var host = await BuildMinimalHost(ep => ep.MapGet("/nocontent", () =>
                 new Result { IsSuccess = true }.ToProblemResponse()));
@@ -164,12 +163,8 @@ namespace RzR.ResultMessage.Web.Tests
             Assert.AreEqual(string.Empty, body);
         }
 
-        #endregion
-
-        #region MVC controllers host: proves the pipeline dispatches via IActionResult.ExecuteResultAsync
-
         [TestMethod]
-        public async Task Mvc_GenericSuccess_Returns200_WithExactBody_ViaRealControllerDispatch()
+        public async Task Mvc_GenericSuccess_Returns200_WithExactBody_ViaRealControllerDispatch_Test()
         {
             using var host = await BuildMvcHost();
 
@@ -182,7 +177,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task Mvc_Failure_Returns400_ProblemJson_ViaRealControllerDispatch()
+        public async Task Mvc_Failure_Returns400_ProblemJson_ViaRealControllerDispatch_Test()
         {
             using var host = await BuildMvcHost();
 
@@ -198,7 +193,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task Mvc_NonGenericSuccess_Returns204_NoBody_ViaRealControllerDispatch()
+        public async Task Mvc_NonGenericSuccess_Returns204_NoBody_ViaRealControllerDispatch_Test()
         {
             using var host = await BuildMvcHost();
 
@@ -208,31 +203,6 @@ namespace RzR.ResultMessage.Web.Tests
 
             var body = (await response.Content.ReadAsStringAsync()).Trim();
             Assert.IsTrue(body.Length == 0 || body == "null", $"Expected an empty or null body, got: '{body}'");
-        }
-
-        #endregion
-    }
-
-    [ApiController]
-    [Route("api/problem-response")]
-    public class ProblemResponseTestController : ControllerBase
-    {
-        [HttpGet("ok")]
-        public IActionResult Ok42()
-        {
-            return Result<int>.Success(42).ToProblemResponse();
-        }
-
-        [HttpGet("fail")]
-        public IActionResult Fail()
-        {
-            return new Result { IsSuccess = false }.WithError("invalid").ToProblemResponse();
-        }
-
-        [HttpGet("nocontent")]
-        public IActionResult NoBody()
-        {
-            return new Result { IsSuccess = true }.ToProblemResponse();
         }
     }
 }

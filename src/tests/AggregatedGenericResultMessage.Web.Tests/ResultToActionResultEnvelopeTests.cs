@@ -20,7 +20,7 @@ namespace RzR.ResultMessage.Web.Tests
     public class ResultToActionResultEnvelopeTests
     {
         [TestMethod]
-        public void AsEnvelopeActionResult_IResultSuccess_DefaultsTo200_WithFullEnvelope()
+        public void AsEnvelopeActionResult_IResultSuccess_DefaultsTo200_WithFullEnvelope_Test()
         {
             IResult sut = new Result { IsSuccess = true };
 
@@ -32,7 +32,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsEnvelopeActionResult_IResultFailure_DefaultsTo400_WithFullEnvelope()
+        public void AsEnvelopeActionResult_IResultFailure_DefaultsTo400_WithFullEnvelope_Test()
         {
             IResult sut = new Result { IsSuccess = false }.WithError("oops");
 
@@ -44,7 +44,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsEnvelopeActionResult_GenericSuccess_With201_ReturnsEnvelope()
+        public void AsEnvelopeActionResult_GenericSuccess_With201_ReturnsEnvelope_Test()
         {
             IResult<int> sut = Result<int>.Success(123);
 
@@ -56,7 +56,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsEnvelopeIActionResult_GenericFailure_With422_ReturnsEnvelopeWithMessages()
+        public void AsEnvelopeIActionResult_GenericFailure_With422_ReturnsEnvelopeWithMessages_Test()
         {
             IResult<int> sut =
                 Result<int>.Failure("e1").WithError("e2");
@@ -72,7 +72,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsEnvelopeActionResult_InvalidStatusCode_FallsBackTo400()
+        public void AsEnvelopeActionResult_InvalidStatusCode_FallsBackTo400_Test()
         {
             // 999 is not a valid HTTP status; CheckStatusCode considers it not successful.
             IResult sut = new Result { IsSuccess = true };

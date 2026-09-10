@@ -51,7 +51,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task NonResultException_RendersAs500ProblemDetailsByDefault()
+        public async Task NonResultException_RendersAs500ProblemDetailsByDefault_Test()
         {
             using var host = await BuildHost(ctx => throw new InvalidOperationException("boom"));
             var client = host.GetTestClient();
@@ -70,7 +70,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task NonResultException_IncludeMessageOption_ExposesExceptionMessageInDetail()
+        public async Task NonResultException_IncludeMessageOption_ExposesExceptionMessageInDetail_Test()
         {
             using var host = await BuildHost(
                 ctx => throw new InvalidOperationException("boom-from-test"),
@@ -83,7 +83,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task NonResultException_IncludeDetailsOption_AddsExceptionExtensions()
+        public async Task NonResultException_IncludeDetailsOption_AddsExceptionExtensions_Test()
         {
             using var host = await BuildHost(
                 ctx => throw new InvalidOperationException("boom"),
@@ -100,7 +100,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task NonResultException_CustomStatusCodeOption_IsHonored()
+        public async Task NonResultException_CustomStatusCodeOption_IsHonored_Test()
         {
             using var host = await BuildHost(
                 ctx => throw new InvalidOperationException("boom"),
@@ -113,7 +113,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task OnException_CallbackIsInvokedForBothFlows()
+        public async Task OnException_CallbackIsInvokedForBothFlows_Test()
         {
             var captured = new List<Exception>();
 
@@ -129,7 +129,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ResultException_WithoutStatusCode_RendersMappedProblemDetails()
+        public async Task ResultException_WithoutStatusCode_RendersMappedProblemDetails_Test()
         {
             using var host = await BuildHost(ctx =>
             {
@@ -149,7 +149,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ResultException_WithExplicitStatus_AndOverrides_FlowThrough()
+        public async Task ResultException_WithExplicitStatus_AndOverrides_FlowThrough_Test()
         {
             using var host = await BuildHost(ctx =>
             {
@@ -173,7 +173,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ResultException_RoutedThroughCustomFactory()
+        public async Task ResultException_RoutedThroughCustomFactory_Test()
         {
             ProblemDetailsResultFactory.Current = new StampingFactory();
 
@@ -191,7 +191,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ResultException_AutoPopulates_TraceId_FromHttpContext()
+        public async Task ResultException_AutoPopulates_TraceId_FromHttpContext_Test()
         {
             using var host = await BuildHost(ctx =>
             {
@@ -207,7 +207,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task UnhandledException_AutoPopulates_TraceId_FromHttpContext()
+        public async Task UnhandledException_AutoPopulates_TraceId_FromHttpContext_Test()
         {
             using var host = await BuildHost(ctx =>
             {
@@ -222,7 +222,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task TraceId_NotOverridden_When_CallerSuppliesItInAdditionalInformation()
+        public async Task TraceId_NotOverridden_When_CallerSuppliesItInAdditionalInformation_Test()
         {
             using var host = await BuildHost(ctx =>
             {

@@ -19,13 +19,14 @@
 		<Summary>This library is an aggregate of some extensions to use more comfortable `Result lib`. In other words, transform from `Result` to `IActionResult`.</Summary>
 		<PackageTitle>RzR.Shared.ResultMessage (AggregatedGenericResultMessage.Web)</PackageTitle>
 		<Title>RzR.Shared.ResultMessage (AggregatedGenericResultMessage.Web)</Title>
-		<LangVersion>latest</LangVersion><!--9.0-->
+		<LangVersion>latest</LangVersion>
+		<!--9.0-->
 		<RepositoryType>GIT</RepositoryType>
 		<Language>en-US</Language>
-		
+
 		<RootNamespace>RzR.ResultMessage.Web</RootNamespace>
 		<AssemblyName>RzR.ResultMessage.Web</AssemblyName>
-		
+
 		<PackageReleaseNotes>
 
 		</PackageReleaseNotes>
@@ -47,8 +48,8 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-		<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.32" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.3.13" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 	</ItemGroup>
 
 	<ItemGroup Condition="

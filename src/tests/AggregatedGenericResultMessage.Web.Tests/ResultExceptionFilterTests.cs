@@ -47,7 +47,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void NonResultException_IsIgnored()
+        public void NonResultException_IsIgnored_Test()
         {
             var filter = new WebResultExceptionFilter();
             var context = NewExceptionContext(new InvalidOperationException("boom"));
@@ -59,7 +59,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void ResultException_WithoutStatusCode_UsesMapper()
+        public void ResultException_WithoutStatusCode_UsesMapper_Test()
         {
             var filter = new WebResultExceptionFilter();
             var result = new Result { IsSuccess = false }.WithError("bad");
@@ -75,7 +75,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void ResultException_WithExplicitStatusCode_Wins()
+        public void ResultException_WithExplicitStatusCode_Wins_Test()
         {
             var filter = new WebResultExceptionFilter();
             var result = new Result { IsSuccess = false }.WithError("missing");
@@ -88,7 +88,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void ResultException_PerCallOverrides_FlowToProblemDetails()
+        public void ResultException_PerCallOverrides_FlowToProblemDetails_Test()
         {
             var filter = new WebResultExceptionFilter();
             var result = new Result { IsSuccess = false }.WithError("conflict");
@@ -108,7 +108,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void ResultException_FillsInstanceFromHttpContextWhenMissing()
+        public void ResultException_FillsInstanceFromHttpContextWhenMissing_Test()
         {
             var filter = new WebResultExceptionFilter();
             var result = new Result { IsSuccess = false }.WithError("oops");
@@ -123,7 +123,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void ResultException_GoesThroughCustomFactory()
+        public void ResultException_GoesThroughCustomFactory_Test()
         {
             ProblemDetailsResultFactory.Current = new StampingFactory();
             var filter = new WebResultExceptionFilter();

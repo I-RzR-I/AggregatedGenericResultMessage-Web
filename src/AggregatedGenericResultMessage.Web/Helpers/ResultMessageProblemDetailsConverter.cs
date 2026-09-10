@@ -36,6 +36,8 @@ namespace RzR.ResultMessage.Web.Helpers
     ///     <c>[JsonConverter]</c>) so that all entries in <c>Extensions</c> are written under a
     ///     single nested <c>"extensions"</c> JSON property rather than as top-level properties.
     ///     This matches the structure expected by consumers and by the test suite.
+    ///     It also emits the top-level <c>"code"</c> member carrying
+    ///     <see cref="ResultMessageProblemDetails.Code" />.
     /// </summary>
     /// <seealso cref="T:System.Text.Json.Serialization.JsonConverter{ResultMessageProblemDetails}" />
     /// =================================================================================================
@@ -52,8 +54,8 @@ namespace RzR.ResultMessage.Web.Helpers
                 $"{nameof(ResultMessageProblemDetails)} is a response-only type; deserialization is not supported.");
 
         /// <inheritdoc />
-        public override void Write(
-            Utf8JsonWriter writer, ResultMessageProblemDetails value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, 
+            ResultMessageProblemDetails value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
 
@@ -71,6 +73,9 @@ namespace RzR.ResultMessage.Web.Helpers
 
             if (value.Instance.IsNotNull())
                 writer.WriteString("instance", value.Instance);
+
+            if (value.Code.IsMissing().IsFalse())
+                writer.WriteString("code", value.Code);
 
             if (value.Extensions is { Count: > 0 })
             {
