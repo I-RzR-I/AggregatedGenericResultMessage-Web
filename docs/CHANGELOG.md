@@ -1,3 +1,7 @@
+### **v4.0.0.7735** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 10-09-2026
+* [75bcde9] (RzR) -> Auto commit uncommited files
+* [42d9eae] (RzR) -> Add problem-details `code` member and upgrade reference packages version.
+
 ### **v3.1.0.7713** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 02-07-2026
 * [a092d01] (RzR) -> Auto commit uncommited files
 * [6138651] (RzR) -> Unify MVC and Minimal-API problem-details responses.
