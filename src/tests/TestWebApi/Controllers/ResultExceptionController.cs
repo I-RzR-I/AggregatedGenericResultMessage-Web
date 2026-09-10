@@ -47,7 +47,7 @@ namespace TestWebApi.Controllers
         public async Task<IActionResult> ThrowDefault(CancellationToken cancellationToken)
         {
             var res = await _weatherService.GetResultFailAsync();
-            res.WithError(new MessageDataModel("Validation failed", "E001-Validation failed"))
+            res.WithError(new MessageDataModel("Validation failed"), "E001-ValidationFailed")
                 .WithMessage(new MessageDataModel("Field 'name' is required", "E001-Field name required"),
                     MessageType.Error);
 
@@ -58,7 +58,7 @@ namespace TestWebApi.Controllers
         public async Task<IActionResult> ThrowNotFound(CancellationToken cancellationToken)
         {
             var res = await _weatherService.GetResultFailAsync();
-            res.WithError(new MessageDataModel("Order not found", "E404-OrderNotFound"));
+            res.WithError(new MessageDataModel("Order not found"), "E404-OrderNotFound");
 
             throw new WebResultException(res, HttpStatusCode.NotFound);
         }
@@ -67,7 +67,7 @@ namespace TestWebApi.Controllers
         public async Task<IActionResult> ThrowWithOverrides(CancellationToken cancellationToken)
         {
             var res = await _weatherService.GetResultFailAsync();
-            res.WithError(new MessageDataModel("Conflict on resource", "E409-Conflict"));
+            res.WithError(new MessageDataModel("Conflict on resource"), "E409-Conflict");
 
             throw new WebResultException(
                 res,
@@ -94,4 +94,4 @@ namespace TestWebApi.Controllers
                 additionalInformation: extras);
         }
     }
-}
+}

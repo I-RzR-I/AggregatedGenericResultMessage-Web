@@ -21,7 +21,7 @@ namespace RzR.ResultMessage.Web.Tests
     public class ResultToObjectResultTests
     {
         [TestMethod]
-        public void AsSuccessObjectResult_NonGenericResult_Returns204_WithNullBody()
+        public void AsSuccessObjectResult_NonGenericResult_Returns204_WithNullBody_Test()
         {
             var sut = new Result { IsSuccess = true };
 
@@ -32,7 +32,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsSuccessObjectResult_NonGenericIResult_Returns204_WithNullBody()
+        public void AsSuccessObjectResult_NonGenericIResult_Returns204_WithNullBody_Test()
         {
             IResult sut = new Result { IsSuccess = true };
 
@@ -43,7 +43,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsSuccessObjectResult_ResultOfT_With200_ReturnsResponseAsBody()
+        public void AsSuccessObjectResult_ResultOfT_With200_ReturnsResponseAsBody_Test()
         {
             var sut = Result<string>.Success("payload");
 
@@ -54,7 +54,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsSuccessObjectResult_ResultOfT_With204_ReturnsNullBody()
+        public void AsSuccessObjectResult_ResultOfT_With204_ReturnsNullBody_Test()
         {
             var sut = Result<string>.Success("payload");
 
@@ -65,7 +65,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsSuccessObjectResult_IResultOfT_With200_ReturnsResponseAsBody()
+        public void AsSuccessObjectResult_IResultOfT_With200_ReturnsResponseAsBody_Test()
         {
             IResult<int> sut = Result<int>.Success(99);
 
@@ -76,7 +76,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsSuccessObjectResult_ResultOfT_WithIntStatusCode_ReturnsBody()
+        public void AsSuccessObjectResult_ResultOfT_WithIntStatusCode_ReturnsBody_Test()
         {
             var sut = Result<string>.Success("value");
 
@@ -87,7 +87,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsSuccessObjectResult_ResultOfT_WithIntStatusCode200_ReturnsResponseAsBody()
+        public void AsSuccessObjectResult_ResultOfT_WithIntStatusCode200_ReturnsResponseAsBody_Test()
         {
             var sut = Result<string>.Success("payload");
 
@@ -98,7 +98,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsSuccessObjectResult_IResultOfT_WithHttpStatusCode_NullResult_ReturnsNullBody()
+        public void AsSuccessObjectResult_IResultOfT_WithHttpStatusCode_NullResult_ReturnsNullBody_Test()
         {
             IResult<int> sut = null;
 

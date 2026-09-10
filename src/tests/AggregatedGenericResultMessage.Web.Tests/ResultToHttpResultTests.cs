@@ -7,7 +7,7 @@
 //  Last Modified On : 2026-04-23 12:26
 // ***********************************************************************
 //  <copyright file="ResultToHttpResultTests.cs" company="RzR SOFT & TECH">
-//   Copyright ï¿½ RzR. All rights reserved.
+//   Copyright © RzR. All rights reserved.
 //  </copyright>
 // 
 //  <summary>
@@ -51,7 +51,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToHttpResult_Failure_DefaultFactory_Returns400ProblemJson()
+        public async Task ToHttpResult_Failure_DefaultFactory_Returns400ProblemJson_Test()
         {
             using var host = await BuildHost(ep => ep.MapGet("/orders", () =>
             {
@@ -72,7 +72,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToHttpResult_Generic_Success_Returns200WithBody()
+        public async Task ToHttpResult_Generic_Success_Returns200WithBody_Test()
         {
             using var host = await BuildHost(ep => ep.MapGet("/orders/1", () =>
             {
@@ -88,7 +88,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToHttpResult_PerCallOverrides_WinOverFactoryDefaults()
+        public async Task ToHttpResult_PerCallOverrides_WinOverFactoryDefaults_Test()
         {
             using var host = await BuildHost(ep => ep.MapGet("/orders/{id:int}", (int id) =>
             {
@@ -112,7 +112,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToHttpResult_CustomFactory_BrandsTheResponse()
+        public async Task ToHttpResult_CustomFactory_BrandsTheResponse_Test()
         {
             ProblemDetailsResultFactory.Current = new StampingFactory();
 
@@ -131,7 +131,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ResultMessageResults_From_MirrorsExtension()
+        public async Task ResultMessageResults_From_MirrorsExtension_Test()
         {
             using var host = await BuildHost(ep => ep.MapGet("/x", () =>
             {
@@ -147,7 +147,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToHttpResult_AutoPopulates_TraceId_When_HttpContext_Provided()
+        public async Task ToHttpResult_AutoPopulates_TraceId_When_HttpContext_Provided_Test()
         {
             using var host = await BuildHost(ep => ep.MapGet("/x", (HttpContext http) =>
             {
@@ -164,7 +164,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToHttpResult_WithoutHttpContext_DoesNotEmit_TraceId()
+        public async Task ToHttpResult_WithoutHttpContext_DoesNotEmit_TraceId_Test()
         {
             using var host = await BuildHost(ep => ep.MapGet("/x", () =>
             {

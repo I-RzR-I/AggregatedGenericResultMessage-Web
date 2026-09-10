@@ -42,7 +42,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void Default_FailureProblem_KeepsBaselineShape()
+        public void Default_FailureProblem_KeepsBaselineShape_Test()
         {
             var sut = new Result { IsSuccess = false }.WithError("oops");
 
@@ -55,7 +55,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void CustomFactory_AppliesGlobalDefaults()
+        public void CustomFactory_AppliesGlobalDefaults_Test()
         {
             ProblemDetailsResultFactory.Current = new BrandedFactory();
 
@@ -72,7 +72,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void CustomFactory_PerCallOverridesWinOverDefaults()
+        public void CustomFactory_PerCallOverridesWinOverDefaults_Test()
         {
             ProblemDetailsResultFactory.Current = new BrandedFactory();
 
@@ -94,7 +94,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void CustomFactory_GenericSuccess_StillReturnsResponseBody()
+        public void CustomFactory_GenericSuccess_StillReturnsResponseBody_Test()
         {
             ProblemDetailsResultFactory.Current = new BrandedFactory();
 
@@ -107,7 +107,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void Current_AssigningNull_RestoresDefault()
+        public void Current_AssigningNull_RestoresDefault_Test()
         {
             ProblemDetailsResultFactory.Current = new BrandedFactory();
             ProblemDetailsResultFactory.Current = null!;
@@ -116,7 +116,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AddProblemDetailsResultFactory_GenericRegistersAndSetsCurrent()
+        public void AddProblemDetailsResultFactory_GenericRegistersAndSetsCurrent_Test()
         {
             var services = new ServiceCollection();
 
@@ -130,7 +130,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AddProblemDetailsResultFactory_InstanceRegistersAndSetsCurrent()
+        public void AddProblemDetailsResultFactory_InstanceRegistersAndSetsCurrent_Test()
         {
             var services = new ServiceCollection();
             var factory = new BrandedFactory();

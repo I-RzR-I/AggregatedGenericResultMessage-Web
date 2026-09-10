@@ -166,9 +166,11 @@ namespace RzR.ResultMessage.Web.Middlewares
         private async Task WriteUnhandledExceptionAsync(HttpContext context, Exception ex)
         {
             var failureResult = new Result { IsSuccess = false }
-                .WithError(_options.IncludeExceptionMessageInDetail
-                    ? ex.Message
-                    : _options.DefaultUnhandledTitle);
+                .WithError(
+                    _options.IncludeExceptionMessageInDetail
+                        ? ex.Message
+                        : _options.DefaultUnhandledTitle,
+                    _options.DefaultUnhandledErrorCode);
 
             var detail = _options.IncludeExceptionMessageInDetail
                 ? ex.Message

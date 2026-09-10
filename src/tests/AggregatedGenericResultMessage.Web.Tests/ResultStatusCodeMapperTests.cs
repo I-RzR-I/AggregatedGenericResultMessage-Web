@@ -42,7 +42,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void Default_NonGenericSuccess_Returns204()
+        public void Default_NonGenericSuccess_Returns204_Test()
         {
             var sut = new Result { IsSuccess = true };
 
@@ -53,7 +53,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void Default_GenericSuccess_Returns200_WithResponseBody()
+        public void Default_GenericSuccess_Returns200_WithResponseBody_Test()
         {
             var sut = Result<int>.Success(42);
 
@@ -65,7 +65,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void CustomMapper_FailureReturns404_WhenInspectingMessages()
+        public void CustomMapper_FailureReturns404_WhenInspectingMessages_Test()
         {
             ResultStatusCodeMapper.Current = new NotFoundOnMissingMapper();
 
@@ -85,7 +85,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void CustomMapper_FailureReturns409_WhenInspectingMessages()
+        public void CustomMapper_FailureReturns409_WhenInspectingMessages_Test()
         {
             ResultStatusCodeMapper.Current = new ConflictOnDuplicateMapper();
 
@@ -97,7 +97,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void CustomMapper_AppliesToEnvelopeDefault()
+        public void CustomMapper_AppliesToEnvelopeDefault_Test()
         {
             ResultStatusCodeMapper.Current = new ConflictOnDuplicateMapper();
 
@@ -111,7 +111,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void Current_AssigningNull_RestoresDefault()
+        public void Current_AssigningNull_RestoresDefault_Test()
         {
             ResultStatusCodeMapper.Current = new ConflictOnDuplicateMapper();
             ResultStatusCodeMapper.Current = null!;
@@ -120,7 +120,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AddWebResultMessageMapper_GenericRegistersAndSetsCurrent()
+        public void AddWebResultMessageMapper_GenericRegistersAndSetsCurrent_Test()
         {
             var services = new ServiceCollection();
 
@@ -134,7 +134,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AddWebResultMessageMapper_InstanceOverloadRegistersAndSetsCurrent()
+        public void AddWebResultMessageMapper_InstanceOverloadRegistersAndSetsCurrent_Test()
         {
             var services = new ServiceCollection();
             var mapper = new ConflictOnDuplicateMapper();

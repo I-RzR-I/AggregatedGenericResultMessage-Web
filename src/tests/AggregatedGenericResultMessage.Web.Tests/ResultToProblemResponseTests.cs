@@ -49,7 +49,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToProblemResponse_NonGenericSuccess_ExecuteResultAsync_Returns204()
+        public async Task ToProblemResponse_NonGenericSuccess_ExecuteResultAsync_Returns204_Test()
         {
             var actionContext = NewActionContext(out var bodyStream);
             var sut = new Result { IsSuccess = true };
@@ -66,7 +66,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToProblemResponse_GenericSuccess_ExecuteResultAsync_Returns200_WithBody()
+        public async Task ToProblemResponse_GenericSuccess_ExecuteResultAsync_Returns200_WithBody_Test()
         {
             var actionContext = NewActionContext(out var bodyStream);
             var sut = Result<int>.Success(42);
@@ -80,7 +80,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToProblemResponse_Failure_ExecuteResultAsync_Returns400_WithProblemDetailsBody()
+        public async Task ToProblemResponse_Failure_ExecuteResultAsync_Returns400_WithProblemDetailsBody_Test()
         {
             var actionContext = NewActionContext(out var bodyStream);
             var sut = new Result { IsSuccess = false }.WithError("invalid");
@@ -97,7 +97,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void ToProblemResponse_Returns_DualInterfaceResponse()
+        public void ToProblemResponse_Returns_DualInterfaceResponse_Test()
         {
             var sut = new Result { IsSuccess = true };
 
@@ -110,7 +110,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToProblemResponse_ResultVsResultOfT_NonGenericIsNotHijackedByGenericOverload()
+        public async Task ToProblemResponse_ResultVsResultOfT_NonGenericIsNotHijackedByGenericOverload_Test()
         {
             var nonGenericContext = NewActionContext(out _);
             var genericContext = NewActionContext(out var genericBody);
@@ -127,7 +127,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToProblemResponse_WithHttpContext_PropagatesTraceId_OnFailure()
+        public async Task ToProblemResponse_WithHttpContext_PropagatesTraceId_OnFailure_Test()
         {
             var actionContext = NewActionContext(out var bodyStream);
             actionContext.HttpContext.TraceIdentifier = "mvc-trace-1";
@@ -168,7 +168,7 @@ namespace RzR.ResultMessage.Web.Tests
 
 #if NET6_0_OR_GREATER
         [TestMethod]
-        public async Task ToProblemResponse_Failure_ExecuteAsync_MinimalApiPath_Returns400_ProblemJson()
+        public async Task ToProblemResponse_Failure_ExecuteAsync_MinimalApiPath_Returns400_ProblemJson_Test()
         {
             var httpContext = NewHttpContext(out var bodyStream);
             var sut = new Result { IsSuccess = false }.WithError("bad");
@@ -185,7 +185,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public async Task ToProblemResponse_GenericSuccess_ExecuteAsync_MinimalApiPath_Returns200_WithBody()
+        public async Task ToProblemResponse_GenericSuccess_ExecuteAsync_MinimalApiPath_Returns200_WithBody_Test()
         {
             var httpContext = NewHttpContext(out var bodyStream);
             var sut = Result<int>.Success(42);

@@ -20,7 +20,7 @@ namespace RzR.ResultMessage.Web.Tests
     public class ResultToActionResultByCodeTests
     {
         [TestMethod]
-        public void AsActionResult_ResultSuccess_With200_ReturnsStatus200()
+        public void AsActionResult_ResultSuccess_With200_ReturnsStatus200_Test()
         {
             var sut = new Result { IsSuccess = true };
 
@@ -31,7 +31,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_ResultSuccess_With201_ReturnsStatus201()
+        public void AsActionResult_ResultSuccess_With201_ReturnsStatus201_Test()
         {
             var sut = new Result { IsSuccess = true };
 
@@ -42,7 +42,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_ResultFailure_WithErrorStatus_ReturnsThatStatusAndAllMessages()
+        public void AsActionResult_ResultFailure_WithErrorStatus_ReturnsThatStatusAndAllMessages_Test()
         {
             var sut = new Result { IsSuccess = false }
                 .WithError("e1")
@@ -60,7 +60,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_ResultOfTSuccess_With200_ReturnsBody()
+        public void AsActionResult_ResultOfTSuccess_With200_ReturnsBody_Test()
         {
             var sut = Result<int>.Success(7);
 
@@ -72,7 +72,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsActionResult_ResultOfTSuccess_With404_ReturnsAllMessages()
+        public void AsActionResult_ResultOfTSuccess_With404_ReturnsAllMessages_Test()
         {
             // Caller supplies an error status code for a successful result -> failure branch is taken.
             var sut = Result<int>.Success(7);
@@ -84,7 +84,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsIActionResult_IResultOfTFailure_With422_ReturnsThatStatusAndAllMessages()
+        public void AsIActionResult_IResultOfTFailure_With422_ReturnsThatStatusAndAllMessages_Test()
         {
             IResult<string> sut =
                 Result<string>.Failure("first")

@@ -58,6 +58,18 @@ namespace RzR.ResultMessage.Web.Models
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
+        ///     Error code applied to the synthesized failure result when the middleware catches an
+        ///     exception that is NOT a <see cref="Exceptions.WebResultException" />. Defaults to
+        ///     <c>null</c>, in which case no code is emitted for unhandled exceptions.
+        /// </summary>
+        /// <value>
+        ///     The default unhandled error code.
+        /// </value>
+        /// =================================================================================================
+        public string DefaultUnhandledErrorCode { get; set; }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
         ///     When <c>true</c>, the exception's <see cref="Exception.Message" /> is propagated to the
         ///     ProblemDetails <c>detail</c> field. When <c>false</c> (default — safer for production)
         ///     a generic message is used instead.

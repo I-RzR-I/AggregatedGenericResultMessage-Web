@@ -87,7 +87,7 @@ namespace TestWebApiNet8.MinimalApi
             group.MapGet("/throws", http =>
                 {
                     var result = new Result { IsSuccess = false }
-                        .WithError(new MessageDataModel("Conflict", "E409-duplicate"));
+                        .WithError(new MessageDataModel("Conflict"), "E409-duplicate");
 
                     throw new WebResultException(
                         result,

@@ -72,7 +72,7 @@ namespace TestWebApi.Controllers
         {
             var res = await _weatherService.GetResultFailAsync();
 
-            res.WithError(new MessageDataModel("Validation failed", "E001-Validation failed"))
+            res.WithError(new MessageDataModel("Validation failed"), "E001-ValidationFailed")
                 .WithMessage(new MessageDataModel("Field 'name' is required", "E001-Field name required"),
                     MessageType.Error);
 
@@ -87,7 +87,7 @@ namespace TestWebApi.Controllers
         public async Task<IActionResult> FailurePerCallOverrides(CancellationToken cancellationToken)
         {
             var res = await _weatherService.GetResultFailAsync();
-            res.WithError(new MessageDataModel("Conflict on resource", "E409-Conflict"));
+            res.WithError(new MessageDataModel("Conflict on resource"), "E409-Conflict");
 
             return res.AsProblemDetails(
                 HttpStatusCode.Conflict,
@@ -123,7 +123,7 @@ namespace TestWebApi.Controllers
         public async Task<IActionResult> FailureInternal(CancellationToken cancellationToken)
         {
             var res = await _weatherService.GetResultFailAsync();
-            res.WithError(new MessageDataModel("Upstream service unavailable", "E503-Upstream"));
+            res.WithError(new MessageDataModel("Upstream service unavailable"), "E503-Upstream");
 
             return res.AsProblemDetails(
                 HttpStatusCode.InternalServerError,
@@ -142,4 +142,4 @@ namespace TestWebApi.Controllers
             return res.AsProblemDetails(HttpStatusCode.BadRequest);
         }
     }
-}
+}

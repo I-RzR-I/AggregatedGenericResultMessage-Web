@@ -42,7 +42,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_NonGenericFailure_Returns400_WithProblemDetails()
+        public void AsProblemDetails_NonGenericFailure_Returns400_WithProblemDetails_Test()
         {
             var sut = new Result { IsSuccess = false }
                 .WithError("first")
@@ -59,7 +59,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_NonGenericFailure_WithCustomMessageAndDetail_PopulatesProblem()
+        public void AsProblemDetails_NonGenericFailure_WithCustomMessageAndDetail_PopulatesProblem_Test()
         {
             var sut = new Result { IsSuccess = false }.WithError("oops");
 
@@ -77,7 +77,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_GenericSuccess_With200_ReturnsResponseBody()
+        public void AsProblemDetails_GenericSuccess_With200_ReturnsResponseBody_Test()
         {
             var sut = Result<int>.Success(42);
 
@@ -88,7 +88,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_GenericFailure_PopulatesAdditionalInformation()
+        public void AsProblemDetails_GenericFailure_PopulatesAdditionalInformation_Test()
         {
             var sut = Result<string>.Failure("e1");
 
@@ -106,7 +106,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_UnknownStatusCode_FallsBackToAboutBlank()
+        public void AsProblemDetails_UnknownStatusCode_FallsBackToAboutBlank_Test()
         {
             // Status code 418 has no entry in the RFC dictionary; lookup should default to "about:blank".
             var sut = new Result { IsSuccess = false }.WithError("teapot");
@@ -119,7 +119,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_NonGenericSuccess_NoStatusCode_ResolvesTo204_WithNullBody()
+        public void AsProblemDetails_NonGenericSuccess_NoStatusCode_ResolvesTo204_WithNullBody_Test()
         {
             var sut = new Result { IsSuccess = true };
 
@@ -130,7 +130,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_GenericSuccess_NoStatusCode_ResolvesTo200_WithResponseBody()
+        public void AsProblemDetails_GenericSuccess_NoStatusCode_ResolvesTo200_WithResponseBody_Test()
         {
             var sut = Result<int>.Success(42);
 
@@ -141,7 +141,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_Failure_NoStatusCode_ResolvesTo400_WithProblemDetails()
+        public void AsProblemDetails_Failure_NoStatusCode_ResolvesTo400_WithProblemDetails_Test()
         {
             var sut = new Result { IsSuccess = false }.WithError("mapped");
 
@@ -152,7 +152,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_Failure_ExplicitStatusCode_OverridesMapper()
+        public void AsProblemDetails_Failure_ExplicitStatusCode_OverridesMapper_Test()
         {
             var sut = new Result { IsSuccess = false }.WithError("missing");
 
@@ -162,7 +162,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_WithHttpContext_PopulatesTraceId()
+        public void AsProblemDetails_WithHttpContext_PopulatesTraceId_Test()
         {
             var httpContext = new DefaultHttpContext { TraceIdentifier = "unit-trace-1" };
             var sut = new Result { IsSuccess = false }.WithError("nope");
@@ -174,7 +174,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_WithoutHttpContext_DoesNotPopulateTraceId()
+        public void AsProblemDetails_WithoutHttpContext_DoesNotPopulateTraceId_Test()
         {
             var sut = new Result { IsSuccess = false }.WithError("nope");
 
@@ -185,7 +185,7 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
-        public void AsProblemDetails_GenericSuccess_ExplicitCreatedStatusCode_ReturnsResponseBody_NotProblemDetails()
+        public void AsProblemDetails_GenericSuccess_ExplicitCreatedStatusCode_ReturnsResponseBody_NotProblemDetails_Test()
         {
             var sut = Result<int>.Success(99);
 
