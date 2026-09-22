@@ -1,3 +1,12 @@
+### **v5.0.0.7894** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 22-09-2026
+* [d278a79] (RzR) -> Auto commit uncommited files
+* [4542b76] (RzR) -> **[BREAKING]** `ResultBaseApiController` now derives from `ControllerBase` instead of `Controller`, on every target framework.
+* [4542b76] (RzR) -> **[BREAKING]** Replace the `Microsoft.AspNetCore.Mvc` metapackage on `netstandard2.1` with the minimum set actually used: `Microsoft.AspNetCore.Mvc.Core 2.1.38`, `Microsoft.AspNetCore.Http 2.1.34`, `Microsoft.Extensions.DependencyModel 3.1.25`, `Microsoft.Extensions.Options 3.1.32` and `Microsoft.Extensions.DependencyInjection.Abstractions 3.1.32`. 
+* [4542b76] (RzR) -> The four `Json*Result*` helpers on `ResultBaseApiController` route through a private `AsJson` helper. On `net5.0`+ it is `new JsonResult(value)`, identical to what `Controller.Json(value)` produced. On `netstandard2.1`, where `JsonResult` would drag in a vulnerable `Newtonsoft.Json`, it is an `OkObjectResult` restricted to `application/json`, so the payload still cannot be content-negotiated to another media type. One behaviour difference on that target: a `null` payload yields `204 No Content` rather than `200` with a `null` body.
+* [4542b76] (RzR) -> Fix `DefaultProblemDetailsResultFactory.ResolveCode`: select inside a `try/catch` and return `null` on failure, matching the behaviour `ResolveTitle` and `ResolveDetail` already inherit from the upstream `GetFirstMessageWithDetails`. Previously a throw while enumerating `Messages` escaped from inside the exception middleware's own `catch` block, discarding the original exception and returning a bodiless `500`.
+* [4542b76] (RzR) -> Add first test coverage for `ResultBaseApiController` (6 tests), including two that register XML formatters and send `Accept: application/xml` to prove the helpers still return JSON.
+* [4542b76] (RzR) -> Add `docs/migration-v5.md` for the v4.0 to v5.0 upgrade, with a section for anyone coming straight from v3.1. Correct `docs/usage.md` and `docs/migration-v2.md`, which cited `Microsoft.AspNetCore.Mvc` package versions that were never shipped.
+
 ### **v4.0.0.7735** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 10-09-2026
 * [75bcde9] (RzR) -> Auto commit uncommited files
 * [42d9eae] (RzR) -> Add problem-details `code` member and upgrade reference packages version.
@@ -7,12 +16,12 @@
 * [6138651] (RzR) -> Unify MVC and Minimal-API problem-details responses.
 
 ### **v3.0.0.7978** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 24-05-2026
-* [80d1431] (RzR) -> **[BREAKING]** Rename `additionInformation` → `additionalInformation` across all public APIs: `ResultProblemDetailsContext.AdditionalInformation`, `WebResultException.AdditionalInformation`, `ResultToProblemDetails` overloads, `ResultToHttpResult` overloads, `ResultMessageHttpResults.From` overloads, `ResultProblemDetailsHelper` overloads, `DefaultProblemDetailsResultFactory`, `WebResultExceptionFilter`, `WebResultExceptionMiddleware` (14 files total).
+* [80d1431] (RzR) -> **[BREAKING]** Rename `additionInformation` to `additionalInformation` across all public APIs: `ResultProblemDetailsContext.AdditionalInformation`, `WebResultException.AdditionalInformation`, `ResultToProblemDetails` overloads, `ResultToHttpResult` overloads, `ResultMessageHttpResults.From` overloads, `ResultProblemDetailsHelper` overloads, `DefaultProblemDetailsResultFactory`, `WebResultExceptionFilter`, `WebResultExceptionMiddleware` (14 files total).
 * [80d1431] (RzR) -> Fix `ResultMessageProblemDetails.Extensions` shadow property: guard the property declaration with `#if NETSTANDARD2_1` since `Microsoft.AspNetCore.Mvc 2.1.3` (netstandard2.1 target) does not expose `ProblemDetails.Extensions`; net5.0+ already has it on the base class.
-* [80d1431] (RzR) -> Add `net5.0` target framework: add `net5.0` to `<TargetFrameworks>` with `<FrameworkReference Include="Microsoft.AspNetCore.App" />` alongside the existing net6.0–net9.0 targets.
+* [80d1431] (RzR) -> Add `net5.0` target framework: add `net5.0` to `<TargetFrameworks>` with `<FrameworkReference Include="Microsoft.AspNetCore.App" />` alongside the existing net6.0-net9.0 targets.
 * [80d1431] (RzR) -> Add `ResultMessageProblemDetailsConverter` (net5.0+): custom `System.Text.Json` `JsonConverter<ResultMessageProblemDetails>` that serializes `Extensions` entries under a nested `"extensions"` JSON property instead of the top-level promotion performed by the inherited `ProblemDetailsJsonConverter`. Applied via `[JsonConverter]` attribute on `ResultMessageProblemDetails` for net5.0+.
 * [80d1431] (RzR) -> `WebResultExceptionFilter`: implement `IAsyncExceptionFilter` alongside `IExceptionFilter`. Extracted handling logic into `private static HandleException`; ASP.NET Core always dispatches the async path when both interfaces are present, avoiding unnecessary thread-pool blocking in high-throughput scenarios.
-* [80d1431] (RzR) -> Fix docs: rename `additionInformation` → `additionalInformation` in `docs/usage.md` (4 occurrences) and `docs/migration-v2.md` (2 occurrences).
+* [80d1431] (RzR) -> Fix docs: rename `additionInformation` to `additionalInformation` in `docs/usage.md` (4 occurrences) and `docs/migration-v2.md` (2 occurrences).
 
 ### **v2.0.0.7588** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 23-04-2026
 * [525a26a] (RzR) -> Auto commit uncommited files
