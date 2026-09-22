@@ -150,7 +150,7 @@ namespace RzR.ResultMessage.Web.Factories
             {
                 var messages = context.Result?.Messages;
 
-                if (messages.IsNull())
+                if (messages.IsNullOrEmptyEnumerable())
                     return null;
 
                 foreach (var message in messages!)
