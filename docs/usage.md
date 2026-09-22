@@ -1,8 +1,8 @@
 # Generic result message(Web) - USING
 
-This is an extension lib for `AggregatedGenericResultMessage` that can help you to use into web application.
+An extension library for `AggregatedGenericResultMessage`, built for web applications.
 
-From the beginning in the current repository, I create an extension for `Controller` to use a more comfortable `Result` to `I/ActionResult` and the available methods are:
+The starting point in this repository is `ResultBaseApiController`, an abstract `ControllerBase` you inherit from to turn a `Result` into an `I/ActionResult` with less ceremony. It gives you:
 ```csharp
 JsonResult<T>(IResult<T> response)
 JsonResultWithNullCheck<T>(IResult<T> response)
@@ -13,7 +13,7 @@ JsonWholeResult(IResult response)
 ```
 <hr/>
 
-Available extensions for repository `I/Result` and `I/Result<T>`:
+Extensions available on `I/Result` and `I/Result<T>`:
 * `AsActionResult/<T>`
 * `AsIActionResult/<T>`
 * `AsSuccessObjectResult/<T>`
@@ -82,12 +82,12 @@ Everything is configurable; nothing is mandatory. Pick only what you need.
 
 ```csharp
 services
-    // Status-code resolution — used by AsActionResult / ToHttpResult when no status is passed.
+    // Status-code resolution: used by AsActionResult / ToHttpResult when no status is passed.
     .AddWebResultMessageMapper() // DefaultResultStatusCodeMapper
     .AddWebResultMessageMapper<MyStatusCodeMapper>() // or a custom one
     .AddWebResultMessageMapper(new MyStatusCodeMapper()) // or an instance
 
-    // ProblemDetails shaping — title/type/detail/instance/code defaults + extensions.
+    // ProblemDetails shaping: title/type/detail/instance/code defaults plus extensions.
     .AddProblemDetailsResultFactory<MyProblemFactory>()
     .AddProblemDetailsResultFactory(new MyProblemFactory())
 
@@ -103,8 +103,8 @@ services
         o.DefaultUnhandledStatusCode = HttpStatusCode.InternalServerError; // default
         o.DefaultUnhandledTitle = "Unhandled exception";                   // default
         o.DefaultUnhandledErrorCode = "SRV.UNEXPECTED";      // opt-in; null (default) emits no code; an invalid value is dropped silently (see "Unhandled exceptions")
-        o.IncludeExceptionMessageInDetail = false;      // default — keep false in production
-        o.IncludeExceptionDetailsInExtensions = false;  // default — stack trace under extensions.exception
+        o.IncludeExceptionMessageInDetail = false;      // default; keep it false in production
+        o.IncludeExceptionDetailsInExtensions = false;  // default; stack trace under extensions.exception
         o.OnException = (ex, http) => logger.LogError(ex, "Unhandled {Path}", http.Request.Path);
     });
 ```
@@ -115,7 +115,7 @@ services
 app.UseResultExceptionMiddleware();   // before UseRouting()
 ```
 
-The filter (MVC-only) and the middleware (whole pipeline, incl. middleware-level exceptions) overlap intentionally — use one or both depending on where you want the safety net.
+The filter (MVC only) and the middleware (whole pipeline, including middleware-level exceptions) overlap on purpose. Use one or both, depending on where you want the safety net.
 
 ### Custom `IResultStatusCodeMapper`
 
@@ -127,7 +127,7 @@ public sealed class MyStatusCodeMapper : IResultStatusCodeMapper
         if (result.IsSuccess) return hasResponseBody ? HttpStatusCode.OK : HttpStatusCode.NoContent;
 
         // Promote a caller-supplied error code to a specific status. The code lives on the
-        // message Key — the same value the `code` member is sourced from. Mirror the `code`
+        // message Key, the same value the `code` member is sourced from. Mirror the `code`
         // selection rule here (first non-Exception message, else the first) and the status
         // and the body's `code` cannot disagree.
         var selected = result.Messages?.FirstOrDefault(m => m.MessageType != MessageType.Exception)
@@ -146,9 +146,9 @@ public sealed class MyStatusCodeMapper : IResultStatusCodeMapper
 
 ### Custom `IProblemDetailsResultFactory`
 
-Subclass `DefaultProblemDetailsResultFactory` and override the `Resolve*` hooks — `ResolveType`, `ResolveTitle`, `ResolveDetail`, `ResolveInstance`, `ResolveCode` — or `ApplyExtensions`, or implement `IProblemDetailsResultFactory` from scratch.
+Subclass `DefaultProblemDetailsResultFactory` and override the `Resolve*` hooks (`ResolveType`, `ResolveTitle`, `ResolveDetail`, `ResolveInstance`, `ResolveCode`), or `ApplyExtensions`, or implement `IProblemDetailsResultFactory` from scratch.
 
-Per-call values from `ResultProblemDetailsContext` win over the resolved defaults for `title`, `detail` and `instance`. `code` is the exception: it has no per-call argument, so `ResolveCode` is the only way to change it, and returning `null` from that hook suppresses the member. Whatever an override returns is still validated ([see below](#error-code)) — the check runs at the call site and again after `ApplyExtensions` returns, so neither a `ResolveCode` nor an `ApplyExtensions` override can bypass it. A subclass that replaces `Create()` wholesale does bypass it and owns validation itself.
+Per-call values from `ResultProblemDetailsContext` win over the resolved defaults for `title`, `detail` and `instance`. `code` is the exception: it has no per-call argument, so `ResolveCode` is the only way to change it, and returning `null` from that hook suppresses the member. Whatever an override returns is still validated ([see below](#error-code)). The check runs at the call site and again after `ApplyExtensions` returns, so neither a `ResolveCode` nor an `ApplyExtensions` override can bypass it. A subclass that replaces `Create()` wholesale does bypass it and owns validation itself.
 
 `traceId` is auto-added from `HttpContext.TraceIdentifier` unless the caller supplied one via `AdditionalInformation`.
 
@@ -156,7 +156,7 @@ Per-call values from `ResultProblemDetailsContext` win over the resolved default
 
 ## Exceptions
 
-* `WebResultException(IResult result, HttpStatusCode? statusCode = null)` — throw from any layer; the filter/middleware convert it to a ProblemDetails response using the configured factory.
+* `WebResultException(IResult result, HttpStatusCode? statusCode = null)`: throw it from any layer. The filter and the middleware convert it to a ProblemDetails response using the configured factory.
 
 ```csharp
 if (order == null)
@@ -208,7 +208,7 @@ When an `HttpContext` is available (filter, middleware, or passed explicitly to 
 }
 ```
 
-…into the ProblemDetails `Extensions` dictionary, but only if the caller has not already supplied a `traceId` via `additionalInformation`. Caller-supplied values always win.
+That entry goes into the ProblemDetails `Extensions` dictionary, but only if the caller has not already supplied a `traceId` via `additionalInformation`. Caller-supplied values always win.
 
 ---
 
@@ -241,9 +241,9 @@ Result<Order>.Failure("E404-OrderNotFound", "Order not found")
 }
 ```
 
-Message entries are abbreviated above; each carries the full `IMessageModel` shape (`key`, `message`, `messageType`) and its property casing follows the host's serializer naming policy. `extensions.ResultMessages` stays the canonical, per-message record — `code` is a scalar re-projection of the selected message's `key`, not a replacement for the array.
+Message entries are abbreviated above. Each one carries the full `IMessageModel` shape (`key`, `message`, `messageType`), and its property casing follows the host's serializer naming policy. `extensions.ResultMessages` stays the canonical, per-message record. `code` is a scalar re-projection of the selected message's `key`, not a replacement for the array.
 
-On `net5.0`+ the member name is the literal `"code"`, written by the library's own `System.Text.Json` converter. On `netstandard2.1` (`Microsoft.AspNetCore.Mvc 2.3.13`, which predates `System.Text.Json`) and on any `net5.0`+ host that calls `AddNewtonsoftJson()`, that converter never runs and the host serializes the body, so the member name follows the host's naming strategy — camelCase by default in ASP.NET Core, hence `"code"` out of the box. Only a non-default contract resolver changes it; omission of a blank or invalid `code` is unaffected and holds on every path.
+On `net5.0`+ the member name is the literal `"code"`, written by the library's own `System.Text.Json` converter. Two paths skip that converter: `netstandard2.1` (`Microsoft.AspNetCore.Mvc.Core 2.1.38`, a 2.1-era stack that predates `System.Text.Json`), and any `net5.0`+ host that calls `AddNewtonsoftJson()`. On those paths the host serializes the body, so the member name follows the host's naming strategy. ASP.NET Core defaults to camelCase, so you still get `"code"` out of the box, and only a non-default contract resolver changes that. Omission of a blank or invalid `code` is unaffected and holds on every path.
 
 ### Authoring a code
 
@@ -260,11 +260,11 @@ Result<Order>.Failure("E404-OrderNotFound", "Order not found");   // Failure(cod
 
 `code` always describes the **same message as `title` and `detail`**. That is a guarantee of the wire contract, not an implementation detail.
 
-One message is selected — the **first whose `MessageType` is not `MessageType.Exception`**, falling back to the **first message** when every message is an exception message — and `title`, `detail` and `code` are all taken from it. `code` is that message's `Key`.
+One message is selected: the **first whose `MessageType` is not `MessageType.Exception`**, falling back to the **first message** when every message is an exception message. `title`, `detail` and `code` all come from that one message, and `code` is its `Key`.
 
 If the selected message has no `Key`, `code` is **omitted**. No later message is consulted, even when one of them carries a perfectly valid key. `extensions.ResultMessages` remains the full canonical record, and is where a client finds the keys carried by the other messages.
 
-**Case 1 — the selected message is unkeyed, a later one is keyed. `code` is absent:**
+**Case 1: the selected message is unkeyed, a later one is keyed. `code` is absent.**
 
 ```json
 {
@@ -279,9 +279,9 @@ If the selected message has no `Key`, `code` is **omitted**. No later message is
 }
 ```
 
-The `code` property is **not present in the body at all** — it is not emitted as `null`. `c-E404` belongs to the second message and stays readable in `extensions.ResultMessages`.
+The `code` property is **not present in the body at all**; it is not emitted as `null`. `c-E404` belongs to the second message and stays readable in `extensions.ResultMessages`.
 
-**Case 2 — the selected message is keyed. `code` is *its* key, never a later one:**
+**Case 2: the selected message is keyed. `code` is *its* key, never a later one.**
 
 ```json
 {
@@ -307,14 +307,14 @@ The selected value is **validated, never transformed**. It reaches the wire unch
 
 Anything else and the member is **omitted entirely**. It is never truncated, stripped or rewritten: `extensions.ResultMessages[*].key` carries the original key, so a rewritten `code` would put two disagreeing copies of the same identifier into one response body.
 
-Selection runs before validation. A malformed key on the **selected** message therefore suppresses `code` — it does not fall through to another message's valid key. Validation narrows the single selected key to "emit" or "omit"; it never re-opens the choice of message.
+Selection runs before validation. A malformed key on the **selected** message therefore suppresses `code`; it does not fall through to another message's valid key. Validation narrows the single selected key to "emit" or "omit". It never re-opens the choice of message.
 
 ### When `code` is absent
 
 Clients must treat it as optional: branch on it when present, fall back to `status`. It is omitted when
 
-* the response is a success — no problem body is built at all;
-* the message that supplied `title` / `detail` has no `Key` — a later keyed message does **not** fill the gap;
+* the response is a success, so no problem body is built at all;
+* the message that supplied `title` / `detail` has no `Key` (a later keyed message does **not** fill the gap);
 * no message on the result carries a non-blank `Key` at all;
 * the selected key fails validation;
 * `ResolveCode` returned `null` (the supported way to suppress it);
@@ -347,9 +347,9 @@ The middleware synthesizes its failure result from the caught exception, so that
 services.AddResultExceptionMiddleware(o => o.DefaultUnhandledErrorCode = "SRV.UNEXPECTED");
 ```
 
-It defaults to `null` on purpose: the library mints no code of its own, because a shipped value would immediately become something consumers branch on. Whatever you set becomes part of **your** public API contract — choose it once and keep it stable.
+It defaults to `null` on purpose: the library mints no code of its own, because a shipped value would immediately become something consumers branch on. Whatever you set becomes part of **your** public API contract. Choose it once and keep it stable.
 
-The value is subject to the same [validation](#validation) as any other code: non-blank, at most 64 characters, only `[A-Za-z0-9._-]`. An invalid value — a space is the usual culprit, e.g. `"Internal Server Error"` — is silently omitted from every unhandled-500 response: no exception, no log entry, no startup failure. Verify the member is present in one unhandled response before you rely on it.
+The value is subject to the same [validation](#validation) as any other code: non-blank, at most 64 characters, only `[A-Za-z0-9._-]`. An invalid value (a space is the usual culprit, as in `"Internal Server Error"`) is silently omitted from every unhandled-500 response: no exception, no log entry, no startup failure. Check that the member is present in one unhandled response before you rely on it.
 
 ### Security
 
@@ -358,7 +358,7 @@ The value is subject to the same [validation](#validation) as any other code: no
 
 Encoding a distinction you do not want enumerable makes that distinction cheaply and reliably enumerable. The classic cases are `AUTH.USER_NOT_FOUND` vs `AUTH.WRONG_PASSWORD`, and `AUTH.ACCOUNT_LOCKED` vs `AUTH.ACCOUNT_NOT_FOUND`: either pair hands an attacker a user-enumeration oracle. Emit a single shared code for every authentication failure.
 
-`title` and `detail` already leak the same distinctions as prose. `code` is the sharper edge: it upgrades a brittle text-scraping heuristic — one that breaks on rewording and on localization — into a reliable programmatic oracle you have promised to keep stable.
+`title` and `detail` already leak the same distinctions as prose. `code` is the sharper edge: it upgrades a brittle text-scraping heuristic, one that breaks on rewording and on localization, into a reliable programmatic oracle you have promised to keep stable.
 
 Because `.`, `_` and `-` are unbounded within the 64-character limit, `..` and `...` are valid codes. Never use `code` directly as a filesystem or URL path segment (`locales/{code}.json`, `/errors/{code}`). Treat it as an opaque lookup key and resolve it through a map you control.
 
@@ -368,8 +368,8 @@ Because `.`, `_` and `-` are unbounded within the 64-character limit, `..` and `
 
 | Scenario                           | HTTP status           | Content-Type                  | Body                                                  |
 |------------------------------------|-----------------------|-------------------------------|-------------------------------------------------------|
-| Success, `IResult`                 | 204 (or mapper value) | —                             | empty                                                 |
+| Success, `IResult`                 | 204 (or mapper value) | none                          | empty                                                 |
 | Success, `IResult<T>`              | 200 (or mapper value) | `application/json`            | `T`                                                   |
-| Failure (`AsActionResult` /<br/>`AsIActionResult`) | 4xx/5xx (mapper)      | `application/json`            | `result.Messages` array — **not** ProblemDetails, so no `code` and no `traceId` |
+| Failure (`AsActionResult` /<br/>`AsIActionResult`) | 4xx/5xx (mapper)      | `application/json`            | `result.Messages` array, **not** ProblemDetails, so no `code` and no `traceId` |
 | Failure (`AsProblemDetails` /<br/>`ToHttpResult` / `ResultMessageHttpResults.From`) | 4xx/5xx (mapper)      | `application/problem+json`    | `ResultMessageProblemDetails` with `ResultMessages`, optional `code` + optional `traceId` |
 

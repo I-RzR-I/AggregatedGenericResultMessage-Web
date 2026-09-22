@@ -64,13 +64,13 @@ Result<Order>.Failure("E404-OrderNotFound", "Order not found"); // code is the 1
 
 ## The error code
 
-`code` is a short, stable, machine-readable identifier for the specific failure —
+`code` is a short, stable, machine-readable identifier for the specific failure,
 distinct from the HTTP status, and from the human-readable `title` / `detail`.
 
 It is taken from the `Key` of **the same message that supplies `title` and
 `detail`**, so a response can never pair a code with an unrelated message. It is
 validated against `[A-Za-z0-9._-]` with a 64-character limit, and **omitted**
-rather than truncated or rewritten when it does not match — the unmodified value
+rather than truncated or rewritten when it does not match. The unmodified value
 always remains in `extensions.ResultMessages`.
 
 > `code` is visible to any caller who can see the error response. Do not encode
@@ -82,7 +82,7 @@ always remains in `extensions.ResultMessages`.
 
 | Method | Body on failure |
 |---|---|
-| `ToProblemResponse()` | RFC 7807 ProblemDetails — **works in MVC *and* Minimal APIs** |
+| `ToProblemResponse()` | RFC 7807 ProblemDetails. **Works in MVC *and* Minimal APIs** |
 | `AsProblemDetails()` | RFC 7807 ProblemDetails (MVC) |
 | `ToHttpResult()` / `ResultMessageHttpResults.From()` | RFC 7807 ProblemDetails (Minimal API, net6.0+) |
 | `AsActionResult()` / `AsIActionResult()` | the `Messages` collection |
@@ -103,7 +103,7 @@ services.AddWebResultExceptionFilter();          // MVC
 services.AddResultExceptionMiddleware(o =>
 {
     o.DefaultUnhandledStatusCode = HttpStatusCode.InternalServerError;
-    o.IncludeExceptionMessageInDetail = false;   // default — keep false in production
+    o.IncludeExceptionMessageInDetail = false;   // default, keep false in production
 });
 app.UseResultExceptionMiddleware();
 ```
@@ -122,7 +122,7 @@ services.AddProblemDetailsResultFactory<MyProblemFactory>();  // IProblemDetails
 
 `IResultStatusCodeMapper` decides which HTTP status a `Result` maps to.
 `IProblemDetailsResultFactory` controls `type`, `title`, `detail`, `instance`,
-`code` and extensions in one place — override the `Resolve*` hooks to brand every
+`code` and extensions in one place. Override the `Resolve*` hooks to brand every
 response without touching a single controller.
 
 ## Correlation
@@ -132,6 +132,7 @@ ambient context is available, unless the caller supplies one explicitly.
 
 ## Content
 1. [USING](docs/usage.md)
-2. [MIGRATION v1.x → v2.x](docs/migration-v2.md)
-3. [CHANGELOG](docs/CHANGELOG.md)
-4. [BRANCH-GUIDE](docs/branch-guide.md)
+2. [MIGRATION v1.x to v2.x](docs/migration-v2.md)
+3. [MIGRATION v4.0 to v5.0](docs/migration-v5.md)
+4. [CHANGELOG](docs/CHANGELOG.md)
+5. [BRANCH-GUIDE](docs/branch-guide.md)

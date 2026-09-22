@@ -1,6 +1,6 @@
-# Migration guide — v1.x → v2.x
+# Migration guide: v1.x to v2.x
 
-v2 focuses on three things: **multi-target frameworks**, **pluggable strategies** (status-code mapper + ProblemDetails factory), and **Minimal-API parity**. All existing v1 extension methods remain source-compatible; bump the new version can be done without code changes and adopt the new surfaces incrementally.
+v2 brings **multi-target frameworks**, **pluggable strategies** (status-code mapper plus ProblemDetails factory) and **Minimal-API parity**. Every v1 extension method stays source-compatible, so you can bump the version without touching code and pick up the new surfaces later, one at a time.
 
 ---
 
@@ -10,13 +10,15 @@ v2 focuses on three things: **multi-target frameworks**, **pluggable strategies*
 |-----------------|--------------------------------------------------------------|
 | `netstandard2.1` only | `netstandard2.1`, `net5.0`, `net6.0`, `net7.0`, `net8.0`, `net9.0` |
 
-The `netstandard2.1` TFM still depends on `Microsoft.AspNetCore.Mvc`, but the pin moves from `2.1.3` to `2.3.13`. The `net5.0+` TFMs use `<FrameworkReference Include="Microsoft.AspNetCore.App" />` — **do not** add explicit `Microsoft.AspNetCore.*` package references on those target frameworks; remove them from your `.csproj` if present.
+The `netstandard2.1` TFM still depends on the `Microsoft.AspNetCore.Mvc` metapackage, pinned at `2.1.3`. v2 does not move that pin. The `net5.0+` TFMs use `<FrameworkReference Include="Microsoft.AspNetCore.App" />` instead, so **do not** add explicit `Microsoft.AspNetCore.*` package references on those target frameworks. Remove them from your `.csproj` if they are already there.
+
+v4 moved that pin to `2.3.13`; v5 drops the metapackage from `netstandard2.1` entirely in favour of narrow package references. If you are moving on to v5, see the [v5 migration guide](migration-v5.md).
 
 ---
 
 ## 2. `AsToProblemDetails` to `AsProblemDetails`
 
-Already renamed in v1.2.0.8001, but call out for anyone jumping from earlier v1 releases.
+This rename already landed in v1.2.0.8001. It is listed here for anyone jumping from an earlier v1 release.
 
 ```diff
 - result.AsToProblemDetails(HttpStatusCode.BadRequest);
@@ -27,7 +29,7 @@ Already renamed in v1.2.0.8001, but call out for anyone jumping from earlier v1 
 
 ## 3. Registering status-code mapping
 
-**v1.x** — hand-crafted in every call:
+**v1.x** hand-crafted the status in every call:
 
 ```csharp
 return result.IsSuccess
@@ -35,7 +37,7 @@ return result.IsSuccess
     : result.AsProblemDetails(HttpStatusCode.BadRequest);
 ```
 
-**v2.x** — register once, then the extension methods resolve the status automatically:
+**v2.x** resolves it from a mapper you register once:
 
 ```csharp
 // Startup / Program.cs
@@ -59,9 +61,9 @@ Per-call status codes still win if you pass them explicitly.
 
 ## 4. Customizing ProblemDetails
 
-**v1.x** — override title/type/etc. per call via method arguments.
+**v1.x** set title, type and the rest through per-call method arguments.
 
-**v2.x** — register a factory once:
+**v2.x** takes a factory you register once:
 
 ```csharp
 public sealed class MyProblemFactory : DefaultProblemDetailsResultFactory
@@ -88,9 +90,9 @@ Per-call arguments to `AsProblemDetails(...)` / `ToHttpResult(...)` still overri
 
 ## 5. Automatic exception translation
 
-**v1.x** — manual `try/catch` (or a bespoke filter) to translate failures into ProblemDetails.
+**v1.x** needed a manual `try/catch`, or a bespoke filter, to translate failures into ProblemDetails.
 
-**v2.x** — two opt-in surfaces ship out of the box:
+**v2.x** ships two opt-in surfaces:
 
 ```csharp
 // MVC-only filter
@@ -103,7 +105,7 @@ services.AddResultExceptionMiddleware(o =>
 {
     o.DefaultUnhandledStatusCode = HttpStatusCode.InternalServerError; // default
     o.DefaultUnhandledTitle = "Unhandled exception";                   // default
-    o.IncludeExceptionMessageInDetail = false; // default — keep false in production
+    o.IncludeExceptionMessageInDetail = false; // default; keep it false in production
 });
 
 app.UseResultExceptionMiddleware(); // before UseRouting()
@@ -139,7 +141,7 @@ New in v2, zero configuration.
 
 If you previously carried correlation on your own, either:
 * Remove your bespoke injection and let the library handle it, **or**
-* Pre-populate `additionalInformation["traceId"]` yourself — the library will not overwrite it.
+* Pre-populate `additionalInformation["traceId"]` yourself. The library will not overwrite it.
 
 ---
 
@@ -176,7 +178,7 @@ If your v1 project explicitly referenced individual `Microsoft.AspNetCore.*` pac
 
 1. Bump package to v2.
 2. Remove stray `Microsoft.AspNetCore.*` package refs on net5.0+ TFMs.
-3. `services.AddWebResultMessageMapper();` — or register a custom mapper.
+3. `services.AddWebResultMessageMapper();` (or register a custom mapper).
 4. *(Optional)* `services.AddProblemDetailsResultFactory<MyProblemFactory>();` for global ProblemDetails shape.
 5. *(Optional)* `services.AddWebResultExceptionFilter();` **and/or** `services.AddResultExceptionMiddleware(...); app.UseResultExceptionMiddleware();`.
 6. *(Optional)* Replace Minimal-API hand-rolled `Results.Json(...)` with `.ToHttpResult(http)`.

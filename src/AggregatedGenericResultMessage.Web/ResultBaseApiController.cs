@@ -31,9 +31,12 @@ namespace RzR.ResultMessage.Web
     ///     Result controller base.
     ///     Return as JSON
     /// </summary>
-    /// <remarks></remarks>
+    /// <remarks>
+    ///     Derives from <see cref="ControllerBase" /> (not <see cref="T:Microsoft.AspNetCore.Mvc.Controller" />) so the
+    ///     netstandard2.1 target only needs Microsoft.AspNetCore.Mvc.Core.
+    /// </remarks>
     [ApiController]
-    public abstract class ResultBaseApiController : Controller
+    public abstract class ResultBaseApiController : ControllerBase
     {
         /// <summary>
         ///     Return API response in JSON format.
@@ -47,7 +50,7 @@ namespace RzR.ResultMessage.Web
         /// </returns>
         protected virtual IActionResult JsonResult<T>(IResult<T> response)
             => response.IsSuccess.IsTrue()
-                ? (IActionResult)Json(response.Response)
+                ? AsJson(response.Response)
                 : BadRequest(response.Messages);
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace RzR.ResultMessage.Web
         /// </returns>
         protected virtual IActionResult JsonResultWithNullCheck<T>(IResult<T> response)
             => response.IsSuccess.IsTrue()
-                ? response.Response.IsNull() ? (IActionResult)NoContent() : Json(response.Response)
+                ? response.Response.IsNull() ? (IActionResult)NoContent() : AsJson(response.Response)
                 : BadRequest(response.Messages);
 
         /// <summary>
@@ -93,7 +96,7 @@ namespace RzR.ResultMessage.Web
         /// <remarks></remarks>
         protected virtual IActionResult JsonWholeResult<T>(IResult<T> response)
             => response.IsSuccess.IsTrue()
-                ? (IActionResult)Json(response)
+                ? AsJson(response)
                 : (IActionResult)BadRequest(response.Messages);
 
         /// <summary>
@@ -109,7 +112,7 @@ namespace RzR.ResultMessage.Web
         /// <remarks></remarks>
         protected virtual IActionResult JsonWholeResultWithNullCheck<T>(IResult<T> response)
             => response.IsSuccess.IsTrue()
-                ? response.Response.IsNull() ? (IActionResult)NoContent() : Json(response)
+                ? response.Response.IsNull() ? (IActionResult)NoContent() : AsJson(response)
                 : (IActionResult)BadRequest(response.Messages);
 
         /// <summary>
@@ -126,5 +129,17 @@ namespace RzR.ResultMessage.Web
             => response.IsSuccess.IsTrue()
                 ? (IActionResult)NoContent()
                 : (IActionResult)BadRequest(response.Messages);
+
+        /// <summary>
+        ///     Wraps <paramref name="value" /> in a result that is always serialized as JSON.
+        /// </summary>
+        /// <param name="value">The payload to serialize.</param>
+        /// <returns>An action result that always produces JSON.</returns>
+        private static IActionResult AsJson(object value)
+#if NETSTANDARD2_1
+            => new OkObjectResult(value) { ContentTypes = { "application/json" } };
+#else
+            => new Microsoft.AspNetCore.Mvc.JsonResult(value);
+#endif
     }
 }
