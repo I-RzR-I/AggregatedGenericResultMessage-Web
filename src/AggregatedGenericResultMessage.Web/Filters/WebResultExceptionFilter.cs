@@ -16,7 +16,10 @@
 
 #region U S A G E S
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
+using RzR.ResultMessage.Web.Abstractions;
 using RzR.ResultMessage.Web.Exceptions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Factories;
@@ -31,8 +34,9 @@ namespace RzR.ResultMessage.Web.Filters
     /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     MVC exception filter that auto-converts an unhandled <see cref="WebResultException" />
-    ///     into a ProblemDetails response built by the configured
-    ///     <see cref="ProblemDetailsResultFactory.Current" />. Users can simply
+    ///     into a ProblemDetails response built by the registered
+    ///     <see cref="IProblemDetailsResultFactory" />, or by
+    ///     <see cref="ProblemDetailsResultFactory.Current" /> when the container has none. Users can simply
     ///     <c>throw new WebResultException(result)</c> from any controller action and the filter
     ///     handles the conversion — no per-call <c>.AsProblemDetails()</c> call needed.
     ///     <para>
@@ -73,7 +77,7 @@ namespace RzR.ResultMessage.Web.Filters
             var instance = resultException.AccessedResourceUri.IfIsMissing(
                 context.HttpContext?.Request?.Path.Value);
 
-            var objectResult = ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
+            var objectResult = ResolveFactory(context.HttpContext).Create(new ResultProblemDetailsContext
             {
                 Result = resultException.Result,
                 StatusCode = statusCode,
@@ -89,5 +93,19 @@ namespace RzR.ResultMessage.Web.Filters
             context.Result = objectResult;
             context.ExceptionHandled = true;
         }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Resolves the factory from the request container and falls back to
+        ///     <see cref="ProblemDetailsResultFactory.Current" /> when none is registered.
+        /// </summary>
+        /// <param name="httpContext">The HTTP context.</param>
+        /// <returns>
+        ///     A never null <see cref="IProblemDetailsResultFactory" />.
+        /// </returns>
+        /// =================================================================================================
+        private static IProblemDetailsResultFactory ResolveFactory(HttpContext httpContext)
+            => httpContext?.RequestServices?.GetService<IProblemDetailsResultFactory>()
+               ?? ProblemDetailsResultFactory.Current;
     }
 }

@@ -212,9 +212,31 @@ That entry goes into the ProblemDetails `Extensions` dictionary, but only if the
 
 ---
 
+## Response contracts
+
+The library ships **two** failure wire contracts. Which one you get is decided by the extension you call, not by configuration.
+
+| Family | Entry points | Contract | `code` |
+|--------|--------------|----------|--------|
+| ProblemDetails | `AsProblemDetails` / `AsProblemDetails<T>` | RFC 7807 | yes |
+| Unified | `ToProblemResponse` | RFC 7807 | yes |
+| Minimal API | `ToHttpResult` / `ToHttpResult<T>`, `ResultMessageHttpResults.From` | RFC 7807 | yes |
+| Exception handling | `UseResultExceptionMiddleware`, `AddWebResultExceptionFilter` | RFC 7807 | yes |
+| ActionResult | `AsActionResult` / `AsIActionResult`, with or without an `HttpStatusCode` | pre-RFC 7807 | no |
+| Envelope | `AsEnvelopeActionResult` / `AsEnvelopeIActionResult` | pre-RFC 7807 | no |
+| Base controller | `ResultBaseApiController.JsonResult` / `JsonWholeResult` and their null-check variants | pre-RFC 7807 | no |
+
+Every RFC 7807 family routes through `IProblemDetailsResultFactory`, which is what populates `code` and `traceId`. The pre-RFC 7807 families never reach that factory: they serialize `result.Messages` or the whole `IResult` envelope as-is, the shape they shipped with before problem details existed and keep for backward compatibility.
+
+Both contracts are deliberate. A failure body without a `code` is not a defect; it means the call site belongs to the older contract. To put a call site on `code`, change the call (`AsActionResult()` to `AsProblemDetails()`, for example). No configuration switch adds `code` to the pre-RFC 7807 families.
+
+---
+
 ## Error `code`
 
-Failure bodies carry a top-level `code`: a short, machine-readable identifier for the **specific** failure condition, as opposed to the HTTP status (which identifies the *class* of failure) and to `title` / `detail` (which are human-readable prose).
+Failure bodies **rendered as problem details** carry a top-level `code`: a short, machine-readable identifier for the **specific** failure condition, as opposed to the HTTP status (which identifies the *class* of failure) and to `title` / `detail` (which are human-readable prose).
+
+That covers the `AsProblemDetails`, unified, Minimal-API and exception-handling families. The `AsActionResult` / `AsIActionResult`, envelope and `ResultBaseApiController` families never emit `code`, because they never build a problem body ([see Response contracts](#response-contracts)).
 
 ```csharp
 Result<Order>.Failure("E404-OrderNotFound", "Order not found")
@@ -309,10 +331,13 @@ Anything else and the member is **omitted entirely**. It is never truncated, str
 
 Selection runs before validation. A malformed key on the **selected** message therefore suppresses `code`; it does not fall through to another message's valid key. Validation narrows the single selected key to "emit" or "omit". It never re-opens the choice of message.
 
+`code` and `extensions.ResultMessages` are two views of the same data, not two copies of it: `code` is the sanitised scalar to branch on, `extensions.ResultMessages[*].key` is the unfiltered record. They can legitimately disagree. A key that fails validation, or one carried by an exception-typed message that selection skipped, still appears in the array while being withheld from `code`. That is intended: branch on `code`, read the array to diagnose.
+
 ### When `code` is absent
 
 Clients must treat it as optional: branch on it when present, fall back to `status`. It is omitted when
 
+* the call site never rendered a problem body at all. This is by far the largest class: `AsActionResult` / `AsIActionResult` (with or without an `HttpStatusCode`), the `AsEnvelope*` overloads and `ResultBaseApiController`'s `Json*` helpers serialise the raw message collection or the whole result envelope, so there is no problem body to carry a `code` ([see Response contracts](#response-contracts));
 * the response is a success, so no problem body is built at all;
 * the message that supplied `title` / `detail` has no `Key` (a later keyed message does **not** fill the gap);
 * no message on the result carries a non-blank `Key` at all;

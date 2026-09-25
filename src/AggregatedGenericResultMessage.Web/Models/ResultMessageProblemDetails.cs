@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 #endif
 
-#if NET5_0_OR_GREATER
+#if NETSTANDARD2_1 || NET5_0_OR_GREATER
 using System.Text.Json.Serialization;
 #endif
 
@@ -41,7 +41,7 @@ namespace RzR.ResultMessage.Web.Models
     /// </summary>
     /// <seealso cref="T:Microsoft.AspNetCore.Mvc.ProblemDetails"/>
     /// =================================================================================================
-#if NET5_0_OR_GREATER
+#if NETSTANDARD2_1 || NET5_0_OR_GREATER
     [JsonConverter(typeof(ResultMessageProblemDetailsConverter))]
 #endif
     public class ResultMessageProblemDetails : ProblemDetails
@@ -78,8 +78,9 @@ namespace RzR.ResultMessage.Web.Models
         /// </returns>
         /// <remarks>
         ///     This is a Newtonsoft.Json naming convention resolved by reflection, so it requires no reference to
-        ///     that package. Together with the net5.0+ converter's own guard it makes omission of a blank
-        ///     <see cref="Code" /> guaranteed on every serialization path.
+        ///     that package. It covers the Newtonsoft path; the System.Text.Json path is covered by the
+        ///     <see cref="ResultMessageProblemDetailsConverter" />, which is compiled on every target.
+        ///     Together they make omission of a blank <see cref="Code" /> guaranteed on every serialization path.
         /// </remarks>
         /// =================================================================================================
         [EditorBrowsable(EditorBrowsableState.Never)]

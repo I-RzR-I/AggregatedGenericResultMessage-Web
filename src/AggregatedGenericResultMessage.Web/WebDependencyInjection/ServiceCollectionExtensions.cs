@@ -123,7 +123,11 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         ///     <see cref="ProblemDetailsResultFactory.Current" /> so the static
         ///     <c>AsProblemDetails</c> extensions can use it without DI plumbing. This lets callers
         ///     configure <c>type</c> / <c>title</c> / <c>instance</c> / extension defaults globally.
-        /// 
+        ///     <para>
+        ///         The container registration is authoritative for the exception middleware and the MVC
+        ///         exception filter; <see cref="ProblemDetailsResultFactory.Current" /> is the non-DI
+        ///         escape hatch used when nothing is registered.
+        ///     </para>
         /// </summary>
         /// <exception cref="ArgumentNullException">
         ///     Thrown when one or more required arguments are null.
@@ -151,6 +155,11 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         ///     Registers a caller-provided <paramref name="factory" /> instance as the singleton
         ///     <see cref="IProblemDetailsResultFactory" /> and wires it into
         ///     <see cref="ProblemDetailsResultFactory.Current" />.
+        ///     <para>
+        ///         The container registration is authoritative for the exception middleware and the MVC
+        ///         exception filter; <see cref="ProblemDetailsResultFactory.Current" /> is the non-DI
+        ///         escape hatch used when nothing is registered.
+        ///     </para>
         /// </summary>
         /// <exception cref="ArgumentNullException">
         ///     Thrown when one or more required arguments are null.

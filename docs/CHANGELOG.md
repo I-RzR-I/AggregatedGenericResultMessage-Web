@@ -1,3 +1,12 @@
+### **v6.0.0.4426** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 25-09-2026
+* [545f4b2] (RzR) -> **[BREAKING]** Compile `ResultMessageProblemDetailsConverter` on `netstandard2.1` and declare `System.Text.Json 6.0.10` there, so a blank `code` is omitted and `Extensions` nests as on `net5.0`+.
+* [545f4b2] (RzR) -> **[BREAKING]** `UseResultExceptionMiddleware` throws at startup when MVC services are absent, instead of failing on the first exception.
+* [545f4b2] (RzR) -> Contain a failing render in `WebResultExceptionMiddleware` so the original exception is never discarded into a bodiless `500`.
+* [545f4b2] (RzR) -> Resolve `IProblemDetailsResultFactory` from the container in the middleware and filter, with `ProblemDetailsResultFactory.Current` as fallback.
+* [545f4b2] (RzR) -> Open `SanitizeCode` and `MaxCodeLength` to subclasses as `protected virtual`.
+* [545f4b2] (RzR) -> Document the two failure response contracts in `docs/usage.md`.
+* [545f4b2] (RzR) -> Add `ProblemDetailsCodeContractBoundaryTests` pinning that contract boundary.
+
 ### **v5.0.0.7894** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 22-09-2026
 * [d278a79] (RzR) -> Auto commit uncommited files
 * [4542b76] (RzR) -> **[BREAKING]** `ResultBaseApiController` now derives from `ControllerBase` instead of `Controller`, on every target framework.
