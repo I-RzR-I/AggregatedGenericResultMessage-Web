@@ -17,13 +17,11 @@
 #region U S A G E S
 
 using Microsoft.AspNetCore.Mvc;
-using RzR.ResultMessage.Abstractions.Models;
 using RzR.ResultMessage.Enums;
 using RzR.ResultMessage.Web.Abstractions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Helpers.Store;
 using RzR.ResultMessage.Web.Models;
-using System.Collections.Generic;
 using System.Linq;
 
 #endregion
@@ -42,6 +40,9 @@ namespace RzR.ResultMessage.Web.Factories
     ///     <see cref="ResultProblemDetailsContext.AdditionalInformation" /> - that value always wins over
     ///     the resolved default. <c>code</c> is the exception: the context carries no per-call override
     ///     for it, so it is always factory-resolved through <see cref="ResolveCode" />.
+    ///     Whatever <see cref="ResolveCode" /> or <see cref="ApplyExtensions" /> produce is then passed
+    ///     through <see cref="SanitizeCode" />, which a subclass overrides to accept its own vocabulary.
+    ///     Overriding <see cref="Create" /> wholesale replaces that pipeline and applies no sanitisation.
     /// </summary>
     /// <seealso cref="T:RzR.ResultMessage.Web.Abstractions.IProblemDetailsResultFactory"/>
     /// =================================================================================================
@@ -49,10 +50,14 @@ namespace RzR.ResultMessage.Web.Factories
     {
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     (Immutable) the maximum accepted length of the <c>code</c> member.
+        ///     Gets the maximum accepted length of the <c>code</c> member. Override to widen or narrow the
+        ///     bound enforced by <see cref="SanitizeCode" />.
         /// </summary>
+        /// <value>
+        ///     The maximum accepted length. Defaults to 64.
+        /// </value>
         /// =================================================================================================
-        private const int MaxCodeLength = 64;
+        protected virtual int MaxCodeLength => 64;
 
         /// <inheritdoc/>
         public virtual ObjectResult Create(ResultProblemDetailsContext context)
@@ -200,13 +205,16 @@ namespace RzR.ResultMessage.Web.Factories
         ///     Validates a resolved <c>code</c> candidate. Accepts it unchanged when it is non-blank, at
         ///     most <see cref="MaxCodeLength" /> characters long and composed only of <c>[A-Za-z0-9._-]</c>;
         ///     otherwise returns <see langword="null" /> so the member is omitted from the response.
+        ///     Override to accept a different vocabulary, for example a branded prefix separated by a
+        ///     character outside the built-in allowlist. Implementations should validate rather than
+        ///     transform, so that a rejected candidate is dropped instead of silently reshaped.
         /// </summary>
         /// <param name="code">The resolved code candidate.</param>
         /// <returns>
         ///     A string.
         /// </returns>
         /// =================================================================================================
-        private static string SanitizeCode(string code)
+        protected virtual string SanitizeCode(string code)
         {
             if (code.IsMissing() || code.Length > MaxCodeLength)
                 return null;

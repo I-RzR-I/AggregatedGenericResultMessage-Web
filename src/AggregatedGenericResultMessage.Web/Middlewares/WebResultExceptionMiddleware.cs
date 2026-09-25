@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RzR.ResultMessage.Extensions.Result;
+using RzR.ResultMessage.Web.Abstractions;
 using RzR.ResultMessage.Web.Exceptions;
 using RzR.ResultMessage.Web.Extensions.Internal.DataType;
 using RzR.ResultMessage.Web.Factories;
@@ -40,8 +41,9 @@ namespace RzR.ResultMessage.Web.Middlewares
     /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     ASP.NET Core middleware that catches <strong>any</strong> unhandled exception in the
-    ///     request pipeline and renders a ProblemDetails response built by the configured
-    ///     <see cref="ProblemDetailsResultFactory.Current" />.
+    ///     request pipeline and renders a ProblemDetails response built by the registered
+    ///     <see cref="IProblemDetailsResultFactory" />, or by
+    ///     <see cref="ProblemDetailsResultFactory.Current" /> when the container has none.
     ///     <list type="bullet">
     ///         <item>
     ///             <see cref="WebResultException" /> - the wrapped result drives status code
@@ -59,6 +61,14 @@ namespace RzR.ResultMessage.Web.Middlewares
     /// =================================================================================================
     public sealed class WebResultExceptionMiddleware
     {
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Message reported when the host has no MVC services available to render the response.
+        /// </summary>
+        /// =================================================================================================
+        internal const string MvcServicesRequiredMessage =
+            "WebResultExceptionMiddleware requires MVC services. Call services.AddControllers() (or AddMvcCore) before UseResultExceptionMiddleware().";
+
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Immutable) the next.
@@ -93,7 +103,8 @@ namespace RzR.ResultMessage.Web.Middlewares
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Invokes the middleware.
+        ///     Invokes the middleware. A failure while rendering the ProblemDetails response is
+        ///     contained and degraded to a bare status code instead of escaping the pipeline.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns>
@@ -113,10 +124,18 @@ namespace RzR.ResultMessage.Web.Middlewares
 
                 _options.OnException?.Invoke(ex, context);
 
-                if (ex is WebResultException resultException)
-                    await WriteResultExceptionAsync(context, resultException).ConfigureAwait(false);
-                else
-                    await WriteUnhandledExceptionAsync(context, ex).ConfigureAwait(false);
+                try
+                {
+                    if (ex is WebResultException resultException)
+                        await WriteResultExceptionAsync(context, resultException).ConfigureAwait(false);
+                    else
+                        await WriteUnhandledExceptionAsync(context, ex).ConfigureAwait(false);
+                }
+                catch (Exception renderException)
+                {
+                    NotifyRenderFailure(context, renderException);
+                    WriteFallbackStatusCode(context, ResolveFallbackStatusCode(ex));
+                }
             }
         }
 
@@ -137,7 +156,7 @@ namespace RzR.ResultMessage.Web.Middlewares
 
             var instance = ex.AccessedResourceUri.IfIsMissing(context.Request?.Path.Value);
 
-            var objectResult = ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
+            var objectResult = ResolveFactory(context).Create(new ResultProblemDetailsContext
             {
                 Result = ex.Result,
                 StatusCode = statusCode,
@@ -186,7 +205,7 @@ namespace RzR.ResultMessage.Web.Middlewares
                 };
             }
 
-            var objectResult = ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
+            var objectResult = ResolveFactory(context).Create(new ResultProblemDetailsContext
             {
                 Result = failureResult,
                 StatusCode = _options.DefaultUnhandledStatusCode,
@@ -221,10 +240,7 @@ namespace RzR.ResultMessage.Web.Middlewares
 
             var executor = context.RequestServices?.GetService<IActionResultExecutor<ObjectResult>>();
             if (executor.IsNull())
-            {
-                throw new InvalidOperationException(
-                    "WebResultExceptionMiddleware requires MVC services. Call services.AddControllers() (or AddMvcCore) before UseResultExceptionMiddleware().");
-            }
+                throw new InvalidOperationException(MvcServicesRequiredMessage);
 
             var actionContext = new ActionContext(
                 context,
@@ -232,6 +248,74 @@ namespace RzR.ResultMessage.Web.Middlewares
                 new ActionDescriptor());
 
             await executor!.ExecuteAsync(actionContext, objectResult).ConfigureAwait(false);
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Resolves the factory from the request container and falls back to
+        ///     <see cref="ProblemDetailsResultFactory.Current" /> when none is registered.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>
+        ///     A never null <see cref="IProblemDetailsResultFactory" />.
+        /// </returns>
+        /// =================================================================================================
+        private static IProblemDetailsResultFactory ResolveFactory(HttpContext context)
+            => context?.RequestServices?.GetService<IProblemDetailsResultFactory>()
+               ?? ProblemDetailsResultFactory.Current;
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Determines the status code written when the ProblemDetails render fails.
+        /// </summary>
+        /// <param name="ex">The originally caught exception.</param>
+        /// <returns>
+        ///     The fallback status code.
+        /// </returns>
+        /// =================================================================================================
+        private int ResolveFallbackStatusCode(Exception ex)
+            => (int)((ex as WebResultException)?.StatusCode ?? _options.DefaultUnhandledStatusCode);
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Reports a render failure to the observability hook without letting it escape.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="renderException">The exception thrown while rendering the response.</param>
+        /// =================================================================================================
+        private void NotifyRenderFailure(HttpContext context, Exception renderException)
+        {
+            try
+            {
+                _options.OnException?.Invoke(renderException, context);
+            }
+            catch
+            {
+                // A failing hook must not prevent the fallback status code below from being written.
+            }
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        ///     Writes a bodiless response carrying <paramref name="statusCode" /> as a last resort.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="statusCode">The status code to write.</param>
+        /// =================================================================================================
+        private static void WriteFallbackStatusCode(HttpContext context, int statusCode)
+        {
+            try
+            {
+                if (context.Response.HasStarted)
+                    return;
+
+                context.Response.Clear();
+                context.Response.StatusCode = statusCode;
+            }
+            catch
+            {
+                // The response is no longer writable, so nothing can be emitted for this request.
+            }
         }
     }
 }
