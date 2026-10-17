@@ -23,7 +23,6 @@ using System.Net;
 
 namespace RzR.ResultMessage.Web.Abstractions
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Strategy that maps an <see cref="IResult" /> envelope to an <see cref="HttpStatusCode" />
     ///     for transport. Implement and register via
@@ -31,10 +30,8 @@ namespace RzR.ResultMessage.Web.Abstractions
     ///     (200 / 204 on success, 400 on failure) and unlock semantics like 404 / 409 / 422 without
     ///     touching call sites.
     /// </summary>
-    /// =================================================================================================
     public interface IResultStatusCodeMapper
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Returns the HTTP status code for the given <paramref name="result" />.
         /// </summary>
@@ -47,7 +44,6 @@ namespace RzR.ResultMessage.Web.Abstractions
         /// <returns>
         ///     The HTTP status code to apply to the outgoing response.
         /// </returns>
-        /// =================================================================================================
         HttpStatusCode Map(IResult result, bool hasResponseBody);
     }
 }

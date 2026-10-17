@@ -28,7 +28,6 @@ using System.Linq;
 
 namespace RzR.ResultMessage.Web.Factories
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Default <see cref="IProblemDetailsResultFactory" /> that mirrors the historical per-call
     ///     behavior. Subclass and override the protected <c>Resolve*</c> hooks to set global
@@ -37,26 +36,25 @@ namespace RzR.ResultMessage.Web.Factories
     ///     carries a per-call value - <see cref="ResultProblemDetailsContext.Message" />,
     ///     <see cref="ResultProblemDetailsContext.DetailMessage" />,
     ///     <see cref="ResultProblemDetailsContext.AccessedResourceUri" /> and
-    ///     <see cref="ResultProblemDetailsContext.AdditionalInformation" /> - that value always wins over
-    ///     the resolved default. <c>code</c> is the exception: the context carries no per-call override
-    ///     for it, so it is always factory-resolved through <see cref="ResolveCode" />.
-    ///     Whatever <see cref="ResolveCode" /> or <see cref="ApplyExtensions" /> produce is then passed
-    ///     through <see cref="SanitizeCode" />, which a subclass overrides to accept its own vocabulary.
-    ///     Overriding <see cref="Create" /> wholesale replaces that pipeline and applies no sanitisation.
+    ///     <see cref="ResultProblemDetailsContext.AdditionalInformation" /> - that value always wins
+    ///     over
+    ///     the resolved default. <c>code</c> is the exception: the context carries no per-call
+    ///     override for it, so it is always factory-resolved through <see cref="ResolveCode" />.
+    ///     Whatever <see cref="ResolveCode" /> or <see cref="ApplyExtensions" /> produce is then
+    ///     passed through <see cref="SanitizeCode" />, which a subclass overrides to accept its own
+    ///     vocabulary. Overriding <see cref="Create" /> wholesale replaces that pipeline and applies
+    ///     no sanitisation.
     /// </summary>
     /// <seealso cref="T:RzR.ResultMessage.Web.Abstractions.IProblemDetailsResultFactory"/>
-    /// =================================================================================================
     public class DefaultProblemDetailsResultFactory : IProblemDetailsResultFactory
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Gets the maximum accepted length of the <c>code</c> member. Override to widen or narrow the
-        ///     bound enforced by <see cref="SanitizeCode" />.
+        ///     Gets the maximum accepted length of the <c>code</c> member. Override to widen or narrow
+        ///     the bound enforced by <see cref="SanitizeCode" />.
         /// </summary>
         /// <value>
         ///     The maximum accepted length. Defaults to 64.
         /// </value>
-        /// =================================================================================================
         protected virtual int MaxCodeLength => 64;
 
         /// <inheritdoc/>
@@ -84,7 +82,6 @@ namespace RzR.ResultMessage.Web.Factories
             return new ObjectResult(problem) { StatusCode = httpCode };
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Resolves the <c>type</c> URI for the current status code. Defaults to the RFC dictionary
         ///     lookup with an <c>about:blank</c> fallback.
@@ -93,7 +90,6 @@ namespace RzR.ResultMessage.Web.Factories
         /// <returns>
         ///     A string.
         /// </returns>
-        /// =================================================================================================
         protected virtual string ResolveType(ResultProblemDetailsContext context)
         {
             var key = context.StatusCode.ToString();
@@ -103,7 +99,6 @@ namespace RzR.ResultMessage.Web.Factories
                 : "about:blank";
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Resolves the default title. Defaults to the first message <c>Info</c> on the result.
         /// </summary>
@@ -111,11 +106,9 @@ namespace RzR.ResultMessage.Web.Factories
         /// <returns>
         ///     A string.
         /// </returns>
-        /// =================================================================================================
         protected virtual string ResolveTitle(ResultProblemDetailsContext context)
             => context.Result?.GetFirstMessageWithDetails()?.Info;
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Resolves the default detail. Defaults to the first message's <c>ToString()</c>.
         /// </summary>
@@ -123,11 +116,9 @@ namespace RzR.ResultMessage.Web.Factories
         /// <returns>
         ///     A string.
         /// </returns>
-        /// =================================================================================================
         protected virtual string ResolveDetail(ResultProblemDetailsContext context)
             => context.Result?.GetFirstMessageWithDetails()?.ToString();
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Resolves the default <c>instance</c> URI. Defaults to <see langword="null" />.
         /// </summary>
@@ -135,20 +126,17 @@ namespace RzR.ResultMessage.Web.Factories
         /// <returns>
         ///     A string.
         /// </returns>
-        /// =================================================================================================
         protected virtual string ResolveInstance(ResultProblemDetailsContext context) => null;
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Resolves the default machine-readable <c>code</c>. Defaults to the <c>Key</c> of the very
-        ///     same message that supplies <c>title</c> and <c>detail</c>, and to <see langword="null" />
-        ///     when that message carries no key.
+        ///     Resolves the default machine-readable <c>code</c>. Defaults to the <c>Code</c> of the
+        ///     very same message that supplies <c>title</c> and <c>detail</c>, and to <see langword="null" />
+        ///     when that message carries no code.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns>
         ///     A string.
         /// </returns>
-        /// =================================================================================================
         protected virtual string ResolveCode(ResultProblemDetailsContext context)
         {
             try
@@ -161,10 +149,10 @@ namespace RzR.ResultMessage.Web.Factories
                 foreach (var message in messages!)
                 {
                     if (message?.MessageType != MessageType.Exception)
-                        return message?.Key;
+                        return message?.Code;
                 }
 
-                return messages.FirstOrDefault()?.Key;
+                return messages.FirstOrDefault()?.Code;
             }
             catch
             {
@@ -172,16 +160,14 @@ namespace RzR.ResultMessage.Web.Factories
             }
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        ///     Merges caller-supplied <see cref="ResultProblemDetailsContext.AdditionalInformation" /> and
-        ///     the canonical <c>ResultMessages</c> entry into the problem-details
+        ///     Merges caller-supplied <see cref="ResultProblemDetailsContext.AdditionalInformation" />
+        ///     and the canonical <c>ResultMessages</c> entry into the problem-details
         ///     <c>Extensions</c> dictionary. Override to inject additional global extensions
         ///     (e.g. <c>traceId</c>).
         /// </summary>
         /// <param name="problem">The problem.</param>
         /// <param name="context">The context.</param>
-        /// =================================================================================================
         protected virtual void ApplyExtensions(ResultMessageProblemDetails problem, ResultProblemDetailsContext context)
         {
             if (context.AdditionalInformation.IsNullOrEmptyEnumerable().IsFalse())
@@ -200,7 +186,6 @@ namespace RzR.ResultMessage.Web.Factories
             }
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Validates a resolved <c>code</c> candidate. Accepts it unchanged when it is non-blank, at
         ///     most <see cref="MaxCodeLength" /> characters long and composed only of <c>[A-Za-z0-9._-]</c>;
@@ -213,7 +198,6 @@ namespace RzR.ResultMessage.Web.Factories
         /// <returns>
         ///     A string.
         /// </returns>
-        /// =================================================================================================
         protected virtual string SanitizeCode(string code)
         {
             if (code.IsMissing() || code.Length > MaxCodeLength)

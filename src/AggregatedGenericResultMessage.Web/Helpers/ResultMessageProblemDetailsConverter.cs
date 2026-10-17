@@ -29,20 +29,21 @@ using System.Text.Json.Serialization;
 
 namespace RzR.ResultMessage.Web.Helpers
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
-    ///     Custom STJ converter for <see cref="ResultMessageProblemDetails" />.
-    ///     Overrides the base <c>ProblemDetailsJsonConverter</c> where the platform supplies one, so that
-    ///     all entries in <c>Extensions</c> are written under a single nested <c>"extensions"</c> JSON
-    ///     property rather than as top-level properties.
-    ///     This matches the structure expected by consumers and by the test suite.
-    ///     It also emits the top-level <c>"code"</c> member carrying
-    ///     <see cref="ResultMessageProblemDetails.Code" />, and omits that member when the code is blank.
-    ///     Compiled on every target so the omission holds on netstandard2.1 hosts too, which serialize
-    ///     with System.Text.Json and honor no <c>ShouldSerialize</c> convention.
+    ///     Custom STJ converter for <see cref="ResultMessageProblemDetails" />. Overrides the base <c>
+    ///     ProblemDetailsJsonConverter</c> where the platform supplies one, so that all entries in <c>
+    ///     Extensions</c> are written under a single nested <c>"extensions"</c> JSON property rather
+    ///     than as top-level properties. This matches the structure expected by consumers and by the
+    ///     test suite. It also emits the top-level <c>"code"</c> member carrying
+    ///     <see cref="ResultMessageProblemDetails.Code" />, and omits that member when the code is
+    ///     blank.
+    ///     Compiled on every target so the omission holds on netstandard2.1 hosts too, which
+    ///     serialize with System.Text.Json and honor no <c>ShouldSerialize</c> convention.
     /// </summary>
-    /// <seealso cref="T:System.Text.Json.Serialization.JsonConverter{ResultMessageProblemDetails}" />
-    /// =================================================================================================
+    /// <seealso cref="T:System.Text.Json.Serialization.JsonConverter{RzR.ResultMessage.Web.Models.ResultMessageProblemDetails}"/>
+    /// <seealso cref="T:System.Text.Json.Serialization.JsonConverter{ResultMessageProblemDetails}">
+    ///     =================================================================================================
+    /// </seealso>
     internal sealed class ResultMessageProblemDetailsConverter : JsonConverter<ResultMessageProblemDetails>
     {
         /// <inheritdoc />

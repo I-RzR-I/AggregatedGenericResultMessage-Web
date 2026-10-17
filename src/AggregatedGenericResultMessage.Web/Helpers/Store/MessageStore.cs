@@ -16,25 +16,19 @@
 
 namespace RzR.ResultMessage.Web.Helpers.Store
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Messages to return from validation.
     /// </summary>
-    /// =================================================================================================
     internal static class MessageStore
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Immutable) the HTTP status code not in successfully range.
         /// </summary>
-        /// =================================================================================================
         internal const string HttpStatusCodeNotInSuccessfullyRange = "The current status code is not in the successful status range!";
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Immutable) the HTTP status code not in error range.
         /// </summary>
-        /// =================================================================================================
         internal const string HttpStatusCodeNotInErrorRange = "The current status code is not in the Client/Server error status range!";
     }
 }

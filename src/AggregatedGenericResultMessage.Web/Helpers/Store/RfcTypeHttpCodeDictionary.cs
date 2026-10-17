@@ -23,18 +23,14 @@ using System.Net;
 
 namespace RzR.ResultMessage.Web.Helpers.Store
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Dictionary of rfc type HTTP codes.
     /// </summary>
-    /// =================================================================================================
     internal static class RfcTypeHttpCodeDictionary
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Immutable) information describing the rfc HTTP status code.
         /// </summary>
-        /// =================================================================================================
         internal static readonly Dictionary<string, string> RfcHttpStatusCodeInfo =
             new Dictionary<string, string>
             {

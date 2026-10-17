@@ -22,14 +22,11 @@ using RzR.Core.CodeSource;
 
 namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     A string extensions.
     /// </summary>
-    /// =================================================================================================
     internal static class StringExtensions
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     A string extension method that if is missing.
         /// </summary>
@@ -38,7 +35,6 @@ namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
         /// <returns>
         ///     A string.
         /// </returns>
-        /// =================================================================================================
         internal static string IfIsMissing(this string source, string defaultValue)
         {
             if (source.IsNull() || source.IsMissing())
@@ -47,7 +43,6 @@ namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
             return source;
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     A string extension method that query if 'source' is missing.
         /// </summary>
@@ -55,7 +50,6 @@ namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
         /// <returns>
         ///     True if missing, false if not.
         /// </returns>
-        /// =================================================================================================
         [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR",
             "DomainCommonExtensions.DataTypeExtensions.StringExtensions.IsMissing", "1.0")]
         internal static bool IsMissing(this string source) => string.IsNullOrWhiteSpace(source);

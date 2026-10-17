@@ -35,30 +35,25 @@ using System.Text.Json.Serialization;
 
 namespace RzR.ResultMessage.Web.Models
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Information about the result message problem.
     /// </summary>
     /// <seealso cref="T:Microsoft.AspNetCore.Mvc.ProblemDetails"/>
-    /// =================================================================================================
 #if NETSTANDARD2_1 || NET5_0_OR_GREATER
     [JsonConverter(typeof(ResultMessageProblemDetailsConverter))]
 #endif
     public class ResultMessageProblemDetails : ProblemDetails
     {
 #if NETSTANDARD2_1
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Gets the extensions.
         /// </summary>
         /// <value>
         ///     The extensions.
         /// </value>
-        /// =================================================================================================
         public IDictionary<string, object> Extensions { get; } = new Dictionary<string, object>(StringComparer.Ordinal);
 #endif
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Gets or sets a short machine-readable error code that identifies the specific failure
         ///     condition, as opposed to the HTTP status which identifies the class of failure.
@@ -66,23 +61,22 @@ namespace RzR.ResultMessage.Web.Models
         /// <value>
         ///     The machine-readable error code, or <see langword="null" /> when the result carries none.
         /// </value>
-        /// =================================================================================================
         public string Code { get; set; }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Determines whether <see cref="Code" /> is written to the serialized payload.
         /// </summary>
+        /// <remarks>
+        ///     This is a Newtonsoft.Json naming convention resolved by reflection, so it requires no
+        ///     reference to that package. It covers the Newtonsoft path; the System.Text.Json path is
+        ///     covered by the
+        ///     <see cref="ResultMessageProblemDetailsConverter" />, which is compiled on every target.
+        ///     Together they make omission of a blank <see cref="Code" /> guaranteed on every
+        ///     serialization path.
+        /// </remarks>
         /// <returns>
         ///     True if <see cref="Code" /> should be serialized, false if it should be omitted.
         /// </returns>
-        /// <remarks>
-        ///     This is a Newtonsoft.Json naming convention resolved by reflection, so it requires no reference to
-        ///     that package. It covers the Newtonsoft path; the System.Text.Json path is covered by the
-        ///     <see cref="ResultMessageProblemDetailsConverter" />, which is compiled on every target.
-        ///     Together they make omission of a blank <see cref="Code" /> guaranteed on every serialization path.
-        /// </remarks>
-        /// =================================================================================================
         [EditorBrowsable(EditorBrowsableState.Never)]
         public bool ShouldSerializeCode() => !string.IsNullOrWhiteSpace(Code);
     }

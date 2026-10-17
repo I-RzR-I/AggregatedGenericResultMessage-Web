@@ -35,7 +35,6 @@ using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 namespace RzR.ResultMessage.Web.Extensions.MinimalApi
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Minimal-API adapters that convert a library <see cref="IResult" /> /
     ///     <see cref="IResult{T}" /> envelope into a
@@ -44,10 +43,8 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
     ///     <see cref="ResultStatusCodeMapper.Current" /> for status-code resolution when
     ///     none is provided.
     /// </summary>
-    /// =================================================================================================
     public static class ResultToHttpResult
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Converts a non-generic <see cref="IResult" /> into a Minimal-API
         ///     <see cref="Microsoft.AspNetCore.Http.IResult" />. Success returns
@@ -76,31 +73,16 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <returns>
         ///     The given data converted to a HttpIResult.
         /// </returns>
-        /// =================================================================================================
-        public static HttpIResult ToHttpResult(
-            this IResult result,
-            HttpStatusCode? statusCode = null,
-            string message = null,
-            string detailMessage = null,
-            string accessedResourceUri = null,
-            IDictionary<string, object> additionalInformation = null,
-            HttpContext httpContext = null)
+        public static HttpIResult ToHttpResult(this IResult result, HttpStatusCode? statusCode = null,
+            string message = null, string detailMessage = null, string accessedResourceUri = null,
+            IDictionary<string, object> additionalInformation = null, HttpContext httpContext = null)
         {
             var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, false);
 
-            return BuildHttpResult(
-                result,
-                resolvedStatus,
-                false,
-                null,
-                message,
-                detailMessage,
-                accessedResourceUri,
-                additionalInformation,
-                httpContext);
+            return BuildHttpResult(result, resolvedStatus, false, null,
+                message, detailMessage, accessedResourceUri, additionalInformation, httpContext);
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Generic overload that carries <c>IResult&lt;T&gt;.Response</c> on the success path.
         ///     Success returns <c>200 OK</c> with the response body by default.
@@ -111,7 +93,9 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="message">(Optional) The message.</param>
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
+        /// <param name="additionalInformation">
+        ///     (Optional) Additional extension members to merge into the ProblemDetails response.
+        /// </param>
         /// <param name="httpContext">
         ///     (Optional) Ambient <see cref="HttpContext" /> for correlation. See the non-generic
         ///     overload for details.
@@ -119,31 +103,17 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <returns>
         ///     The given data converted to a HttpIResult.
         /// </returns>
-        /// =================================================================================================
-        public static HttpIResult ToHttpResult<T>(
-            this IResult<T> result,
-            HttpStatusCode? statusCode = null,
-            string message = null,
-            string detailMessage = null,
-            string accessedResourceUri = null,
-            IDictionary<string, object> additionalInformation = null,
-            HttpContext httpContext = null)
+        public static HttpIResult ToHttpResult<T>(this IResult<T> result, HttpStatusCode? statusCode = null,
+            string message = null, string detailMessage = null, string accessedResourceUri = null,
+            IDictionary<string, object> additionalInformation = null, HttpContext httpContext = null)
         {
             var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, true);
 
-            return BuildHttpResult(
-                result,
-                resolvedStatus,
-                true,
-                result == null ? null : result.Response,
-                message,
-                detailMessage,
-                accessedResourceUri,
-                additionalInformation,
-                httpContext);
+            return BuildHttpResult(result, resolvedStatus, true,
+                result == null ? null : result.Response, message, detailMessage,
+                accessedResourceUri, additionalInformation, httpContext);
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Shared builder. Delegates ProblemDetails shape to the configured
         ///     <see cref="ProblemDetailsResultFactory.Current" /> so Minimal-API and MVC paths render
@@ -156,22 +126,16 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="message">The message.</param>
         /// <param name="detailMessage">Message describing the detail.</param>
         /// <param name="accessedResourceUri">URI of the accessed resource.</param>
-        /// <param name="additionalInformation">Additional extension members to merge into the ProblemDetails response.</param>
+        /// <param name="additionalInformation">
+        ///     Additional extension members to merge into the ProblemDetails response.
+        /// </param>
         /// <param name="httpContext">Ambient HttpContext for correlation (can be null).</param>
         /// <returns>
         ///     A HttpIResult.
         /// </returns>
-        /// =================================================================================================
-        private static HttpIResult BuildHttpResult(
-            IResult result,
-            HttpStatusCode statusCode,
-            bool hasResponseBody,
-            object response,
-            string message,
-            string detailMessage,
-            string accessedResourceUri,
-            IDictionary<string, object> additionalInformation,
-            HttpContext httpContext)
+        private static HttpIResult BuildHttpResult(IResult result, HttpStatusCode statusCode,
+            bool hasResponseBody, object response, string message, string detailMessage,
+            string accessedResourceUri, IDictionary<string, object> additionalInformation, HttpContext httpContext)
         {
             var objectResult = ProblemDetailsResultFactory.Current.Create(new ResultProblemDetailsContext
             {

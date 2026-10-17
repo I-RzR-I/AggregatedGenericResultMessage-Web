@@ -31,11 +31,9 @@ using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 namespace RzR.ResultMessage.Web.Helpers
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     A result problem details helper.
     /// </summary>
-    /// =================================================================================================
     internal static class ResultProblemDetailsHelper
     {
         /// <summary>
@@ -70,9 +68,6 @@ namespace RzR.ResultMessage.Web.Helpers
                 HttpContext = httpContext
             });
 
-            // Guarantee the resolved status is carried on the ObjectResult so every downstream
-            // consumer (MVC ExecuteResultAsync, Minimal-API wrap) agrees on the status even when a
-            // custom factory returns an ObjectResult without setting StatusCode.
             objectResult.StatusCode ??= (int)resolvedStatus;
 
             return objectResult;
@@ -84,14 +79,24 @@ namespace RzR.ResultMessage.Web.Helpers
         ///     <paramref name="statusCode" /> is <see langword="null" />,
         ///     <see cref="ResultStatusCodeMapper.Current" /> resolves it.
         /// </summary>
-        internal static ObjectResult BuildObjectResult<T>(
-            IResult<T> result,
-            HttpStatusCode? statusCode = null,
-            string message = null,
-            string detailMessage = null,
-            string accessedResourceUri = null,
-            IDictionary<string, object> additionalInformation = null,
-            HttpContext httpContext = null)
+        /// <typeparam name="T">Generic type parameter.</typeparam>
+        /// <param name="result">The result.</param>
+        /// <param name="statusCode">(Optional) The status code.</param>
+        /// <param name="message">(Optional) The message.</param>
+        /// <param name="detailMessage">(Optional) Message describing the detail.</param>
+        /// <param name="accessedResourceUri">
+        ///     (Optional) , <paramref name="additionalInformation" />)
+        ///         still win over the factory defaults. When <paramref name="statusCode" /> is
+        ///         <see langword="null" />, <see cref="ResultStatusCodeMapper.Current" /> resolves it.
+        /// </param>
+        /// <param name="additionalInformation">(Optional) Information describing the additional.</param>
+        /// <param name="httpContext">(Optional) Context for the HTTP.</param>
+        /// <returns>
+        ///     An ObjectResult.
+        /// </returns>
+        internal static ObjectResult BuildObjectResult<T>(IResult<T> result, HttpStatusCode? statusCode = null,
+            string message = null, string detailMessage = null, string accessedResourceUri = null,
+            IDictionary<string, object> additionalInformation = null, HttpContext httpContext = null)
         {
             var resolvedStatus = statusCode ?? ResultStatusCodeMapper.Current.Map(result, true);
 
@@ -108,9 +113,6 @@ namespace RzR.ResultMessage.Web.Helpers
                 HttpContext = httpContext
             });
 
-            // Guarantee the resolved status is carried on the ObjectResult so every downstream
-            // consumer (MVC ExecuteResultAsync, Minimal-API wrap) agrees on the status even when a
-            // custom factory returns an ObjectResult without setting StatusCode.
             objectResult.StatusCode ??= (int)resolvedStatus;
 
             return objectResult;

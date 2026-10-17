@@ -28,29 +28,29 @@ using HttpIResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace RzR.ResultMessage.Web.Extensions.Unified
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Single source of truth for the terminal Minimal-API wrap step: turning a resolved
     ///     response body/status pair into a <see cref="HttpIResult" />. Reused by
     ///     <see cref="RzR.ResultMessage.Web.Extensions.MinimalApi.ResultToHttpResult" /> and by
     ///     <see cref="ResultMessageResponse" /> so both entry points render byte-identical responses.
+    /// 
     /// </summary>
-    /// =================================================================================================
     internal static class MinimalApiResultWrapper
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Wraps an already-resolved response body and HTTP status code into a Minimal-API
         ///     <see cref="HttpIResult" />. A <see langword="null" /> body short-circuits to
         ///     <see cref="Results.StatusCode(int)" />; a <see cref="ProblemDetails" /> body is written
-        ///     with the <c>application/problem+json</c> content type so spec-aware clients see it correctly.
+        ///     with the <c>application/problem+json</c> content type so spec-aware clients see it
+        ///     correctly.
         /// </summary>
-        /// <param name="body">The resolved response body, or <see langword="null" /> for an empty body.</param>
+        /// <param name="body">
+        ///     The resolved response body, or <see langword="null" /> for an empty body.
+        /// </param>
         /// <param name="resolvedStatus">The resolved HTTP status code to write on the response.</param>
         /// <returns>
         ///     A HttpIResult.
         /// </returns>
-        /// =================================================================================================
         internal static HttpIResult Wrap(object body, int resolvedStatus)
         {
             if (body.IsNull())

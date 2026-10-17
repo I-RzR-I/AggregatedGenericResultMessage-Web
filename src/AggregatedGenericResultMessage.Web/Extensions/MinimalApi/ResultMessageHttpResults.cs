@@ -30,15 +30,12 @@ using IResult = RzR.ResultMessage.Abstractions.IResult;
 
 namespace RzR.ResultMessage.Web.Extensions.MinimalApi
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Static facade mirroring <see cref="Microsoft.AspNetCore.Http.Results" />: allows callers
     ///     write <c>ResultMessageResults.From(result)</c> instead of an extension call.
     /// </summary>
-    /// =================================================================================================
     public static class ResultMessageHttpResults
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Equivalent to
         ///     <see cref="ResultToHttpResult.ToHttpResult(IResult, HttpStatusCode?, string, string, string, IDictionary{string, object}, HttpContext)" />
@@ -49,23 +46,18 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="message">(Optional) The message.</param>
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
+        /// <param name="additionalInformation">
+        ///     (Optional) Additional extension members to merge into the ProblemDetails response.
+        /// </param>
         /// <param name="httpContext">(Optional) Context for the HTTP.</param>
         /// <returns>
         ///     A HttpIResult.
         /// </returns>
-        /// =================================================================================================
-        public static HttpIResult From(
-            IResult result,
-            HttpStatusCode? statusCode = null,
-            string message = null,
-            string detailMessage = null,
-            string accessedResourceUri = null,
-            IDictionary<string, object> additionalInformation = null,
-            HttpContext httpContext = null)
+        public static HttpIResult From(IResult result, HttpStatusCode? statusCode = null,
+            string message = null, string detailMessage = null, string accessedResourceUri = null,
+            IDictionary<string, object> additionalInformation = null, HttpContext httpContext = null)
             => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionalInformation, httpContext);
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Generic overload of
         ///     <see cref="From(IResult, HttpStatusCode?, string, string, string, IDictionary{string, object}, HttpContext)" />
@@ -77,20 +69,16 @@ namespace RzR.ResultMessage.Web.Extensions.MinimalApi
         /// <param name="message">(Optional) The message.</param>
         /// <param name="detailMessage">(Optional) Message describing the detail.</param>
         /// <param name="accessedResourceUri">(Optional) URI of the accessed resource.</param>
-        /// <param name="additionalInformation">(Optional) Additional extension members to merge into the ProblemDetails response.</param>
+        /// <param name="additionalInformation">
+        ///     (Optional) Additional extension members to merge into the ProblemDetails response.
+        /// </param>
         /// <param name="httpContext">(Optional) Context for the HTTP.</param>
         /// <returns>
         ///     A HttpIResult.
         /// </returns>
-        /// =================================================================================================
-        public static HttpIResult From<T>(
-            IResult<T> result,
-            HttpStatusCode? statusCode = null,
-            string message = null,
-            string detailMessage = null,
-            string accessedResourceUri = null,
-            IDictionary<string, object> additionalInformation = null,
-            HttpContext httpContext = null)
+        public static HttpIResult From<T>(IResult<T> result, HttpStatusCode? statusCode = null,
+            string message = null, string detailMessage = null, string accessedResourceUri = null,
+            IDictionary<string, object> additionalInformation = null, HttpContext httpContext = null)
             => result.ToHttpResult(statusCode, message, detailMessage, accessedResourceUri, additionalInformation, httpContext);
     }
 }

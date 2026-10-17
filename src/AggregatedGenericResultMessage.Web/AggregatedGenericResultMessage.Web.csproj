@@ -43,8 +43,20 @@
 	<ItemGroup>
 		<Compile Include="..\shared\GeneralAssemblyInfo.cs" Link="Properties\GeneralAssemblyInfo.cs" />
 	</ItemGroup>
+	
+	<PropertyGroup>
+		<EmitCodeSource Condition="'$(EmitCodeSource)' == ''">false</EmitCodeSource>
+		<DefineConstants Condition="'$(EmitCodeSource)' == 'true'">$(DefineConstants);CODESOURCE</DefineConstants>
+	</PropertyGroup>
+
 	<ItemGroup>
-		<PackageReference Include="RzR.ResultMessage" Version="3.0.0.6928" />
+		<PackageReference Include="RzR.Core.CodeSource" Version="7.0.0.8329">
+			<PrivateAssets Condition="'$(EmitCodeSource)' != 'true'">all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="RzR.ResultMessage" Version="4.0.0.0" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">

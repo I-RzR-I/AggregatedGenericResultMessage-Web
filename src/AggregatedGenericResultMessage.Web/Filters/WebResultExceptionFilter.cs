@@ -31,12 +31,12 @@ using System.Threading.Tasks;
 
 namespace RzR.ResultMessage.Web.Filters
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     MVC exception filter that auto-converts an unhandled <see cref="WebResultException" />
     ///     into a ProblemDetails response built by the registered
     ///     <see cref="IProblemDetailsResultFactory" />, or by
-    ///     <see cref="ProblemDetailsResultFactory.Current" /> when the container has none. Users can simply
+    ///     <see cref="ProblemDetailsResultFactory.Current" /> when the container has none. Users can
+    ///     simply
     ///     <c>throw new WebResultException(result)</c> from any controller action and the filter
     ///     handles the conversion — no per-call <c>.AsProblemDetails()</c> call needed.
     ///     <para>
@@ -48,7 +48,6 @@ namespace RzR.ResultMessage.Web.Filters
     /// </summary>
     /// <seealso cref="T:Microsoft.AspNetCore.Mvc.Filters.IAsyncExceptionFilter"/>
     /// <seealso cref="T:Microsoft.AspNetCore.Mvc.Filters.IExceptionFilter"/>
-    /// =================================================================================================
     public sealed class WebResultExceptionFilter : IAsyncExceptionFilter, IExceptionFilter
     {
         /// <inheritdoc />
@@ -94,7 +93,6 @@ namespace RzR.ResultMessage.Web.Filters
             context.ExceptionHandled = true;
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Resolves the factory from the request container and falls back to
         ///     <see cref="ProblemDetailsResultFactory.Current" /> when none is registered.
@@ -103,7 +101,6 @@ namespace RzR.ResultMessage.Web.Filters
         /// <returns>
         ///     A never null <see cref="IProblemDetailsResultFactory" />.
         /// </returns>
-        /// =================================================================================================
         private static IProblemDetailsResultFactory ResolveFactory(HttpContext httpContext)
             => httpContext?.RequestServices?.GetService<IProblemDetailsResultFactory>()
                ?? ProblemDetailsResultFactory.Current;
