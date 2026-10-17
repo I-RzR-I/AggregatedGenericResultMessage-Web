@@ -1,3 +1,9 @@
+### **v7.0.0.0** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 17-10-2026
+* [cadeac6] (RzR) -> Auto commit uncommited files
+* [f6ae577] (RzR) -> update the documentation and add migration guide.
+* [4d1ec9c] (RzR) -> adapt the test to new reference result structure.
+* [f1ab7f4] (RzR) -> Upgrade reference packages, adapt code execution and methods summary.
+
 ### **v6.0.0.4426** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 25-09-2026
 * [545f4b2] (RzR) -> **[BREAKING]** Compile `ResultMessageProblemDetailsConverter` on `netstandard2.1` and declare `System.Text.Json 6.0.10` there, so a blank `code` is omitted and `Extensions` nests as on `net5.0`+.
 * [545f4b2] (RzR) -> **[BREAKING]** `UseResultExceptionMiddleware` throws at startup when MVC services are absent, instead of failing on the first exception.
