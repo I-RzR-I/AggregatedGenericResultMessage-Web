@@ -81,10 +81,7 @@ namespace RzR.ResultMessage.Web.Tests
 
             Assert.IsFalse(
                 ProblemDetailsCodeFixture.HasCodeMember(problem),
-                "A 65-character configured code is one over the inclusive bound. Body: " + Escape(raw));
-            Assert.IsFalse(
-                raw.Contains("\"code\":\"" + MaxLengthCode + "\""),
-                "A truncated-to-64 projection must never be emitted. Body: " + Escape(raw));
+                "A 65-character configured code is one over the inclusive bound, so no top-level 'code' member may appear, truncated to 64 or otherwise. Body: " + Escape(raw));
         }
 
         [TestMethod]

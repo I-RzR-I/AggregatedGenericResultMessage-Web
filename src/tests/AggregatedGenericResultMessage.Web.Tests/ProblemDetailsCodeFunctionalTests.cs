@@ -197,7 +197,7 @@ namespace RzR.ResultMessage.Web.Tests
                 "The message supplying Title and Detail is unkeyed, so Code must stay null rather than "
                 + $"take the later message's key. Title was: '{problem.Title}'");
             Assert.AreEqual(
-                sut.Messages.Last().Key,
+                sut.Messages.Last().Code,
                 ProblemDetailsCodeFixture.LateKey,
                 "Test data guard: the second message really does carry the later key.");
         }

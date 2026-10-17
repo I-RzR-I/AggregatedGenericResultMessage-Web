@@ -298,11 +298,11 @@ namespace RzR.ResultMessage.Web.Tests
 
             Assert.AreEqual(
                 ProblemDetailsCodePairingFixture.SingleKey,
-                viaFailure.Messages.First().Key,
+                viaFailure.Messages.First().Code,
                 "Failure(code, error) takes the code first.");
             Assert.AreEqual(
-                viaFailure.Messages.First().Key,
-                viaWithError.Messages.First().Key,
+                viaFailure.Messages.First().Code,
+                viaWithError.Messages.First().Code,
                 "WithError(error, code) takes the code second but must reach the same Key slot.");
             Assert.AreEqual(
                 viaFailure.Messages.First().Message?.Info,

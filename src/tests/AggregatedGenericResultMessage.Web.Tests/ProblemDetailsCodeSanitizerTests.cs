@@ -10,6 +10,7 @@ using RzR.ResultMessage.Abstractions.Models;
 using RzR.ResultMessage.Web.Factories;
 using RzR.ResultMessage.Web.Mappers;
 using RzR.ResultMessage.Web.Tests.Factories;
+using RzR.ResultMessage.Web.Tests.Fixtures;
 
 #endregion
 
@@ -57,8 +58,8 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderProblemForKeyAsync(overlongKey);
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"], "65 characters is one over the bound and the member must be omitted.");
-            Assert.IsFalse(body.Contains("\"code\""), "No 'code' member may appear in the payload at all.");
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
+                "65 characters is one over the bound, so no top-level 'code' member may appear.");
             CollectionAssert.DoesNotContain(TopLevelPropertyNames(problem), "code");
         }
 
@@ -70,11 +71,10 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderProblemForKeyAsync(overlongKey);
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"]);
-            Assert.AreEqual(overlongKey, NestedMessageKeys(problem).Single(),
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
+                "No top-level 'code' member may appear, truncated to 64 or otherwise; the sanitizer validates, it does not transform.");
+            Assert.AreEqual(overlongKey, ProblemDetailsCodeFixture.ReadRequiredResultMessageKeys(problem).Single(),
                 "The canonical nested key must still carry the full 65-character original.");
-            Assert.IsFalse(body.Contains("\"code\":\"" + MaxLengthKey + "\""),
-                "A truncated-to-64 projection must never be emitted; the sanitizer validates, it does not transform.");
         }
 
         [DataTestMethod]
@@ -99,11 +99,9 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderProblemForKeyAsync(key);
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"],
-                $"A key containing U+{codePoint:X4} must be rejected outright.");
-            Assert.IsFalse(body.Contains("\"code\""),
-                "No partial, stripped or escaped variant of the key may be emitted as 'code'.");
-            Assert.AreEqual(key, NestedMessageKeys(problem).Single(),
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
+                $"A key containing U+{codePoint:X4} must be rejected outright; no partial, stripped or escaped variant may be emitted as the top-level 'code'.");
+            Assert.AreEqual(key, ProblemDetailsCodeFixture.ReadRequiredResultMessageKeys(problem).Single(),
                 "The canonical nested key must still carry the original, unmodified value.");
         }
 
@@ -125,12 +123,8 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderProblemForKeyAsync(key);
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"],
-                $"Unicode leniency must not be present: a key containing U+{codePoint:X4} must be rejected.");
-            Assert.IsFalse(body.Contains("\"code\""),
-                "The allowed ASCII prefix must not be stripped out and emitted on its own.");
-            Assert.IsFalse(body.Contains("\"code\":\"CODE\""),
-                "A prefix-truncated projection must never be emitted; the sanitizer validates, it does not transform.");
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
+                $"Unicode leniency must not be present: a key containing U+{codePoint:X4} must be rejected, and the allowed ASCII prefix must not be emitted on its own as the top-level 'code'.");
         }
 
         [TestMethod]
@@ -141,11 +135,9 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderProblemForKeyAsync(hostileKey);
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"],
-                "Half one: the rejected value must not be projected to the top level.");
-            Assert.IsFalse(body.Contains("\"code\""),
-                "Half one: not even an edited version of the rejected value may appear as 'code'.");
-            Assert.AreEqual(hostileKey, NestedMessageKeys(problem).Single(),
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
+                "Half one: neither the rejected value nor an edited version of it may be projected to the top-level 'code'.");
+            Assert.AreEqual(hostileKey, ProblemDetailsCodeFixture.ReadRequiredResultMessageKeys(problem).Single(),
                 "Half two: the canonical nested key must be the original, unmodified value.");
         }
 
@@ -157,7 +149,7 @@ namespace RzR.ResultMessage.Web.Tests
             var problem = JObject.Parse(await RenderProblemForKeyAsync(validKey));
 
             Assert.AreEqual(validKey, problem.Value<string>("code"));
-            Assert.AreEqual(problem.Value<string>("code"), NestedMessageKeys(problem).Single());
+            Assert.AreEqual(problem.Value<string>("code"), ProblemDetailsCodeFixture.ReadRequiredResultMessageKeys(problem).Single());
         }
 
         [TestMethod]
@@ -171,9 +163,9 @@ namespace RzR.ResultMessage.Web.Tests
             var problem = JObject.Parse(body);
 
             Assert.IsNull(problem["code"],
-                "The selected message's key is rejected, so no code is emitted; later messages are never consulted.");
+                "The selected message's key is rejected, so no top-level code is emitted; later messages are never consulted.");
 
-            var nestedKeys = NestedMessageKeys(problem);
+            var nestedKeys = ProblemDetailsCodeFixture.ReadRequiredResultMessageKeys(problem);
             CollectionAssert.Contains(nestedKeys, "HAS SPACE");
             CollectionAssert.Contains(nestedKeys, "ORDER_NOT_FOUND");
         }
@@ -193,9 +185,8 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderProblemForKeyAsync(key);
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"], "A blank key must never surface as a code.");
-            Assert.IsFalse(body.Contains("\"code\""),
-                "An empty or whitespace 'code' would make the two serializer paths disagree; the member must be absent.");
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
+                "A blank key must never surface as the top-level 'code'; an empty or whitespace member would make the two serializer paths disagree, so it must be absent.");
         }
 
         [TestMethod]
@@ -206,8 +197,7 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderProblemForKeyAsync(key);
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"]);
-            Assert.IsFalse(body.Contains("\"code\""));
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem));
         }
 
         [TestMethod]
@@ -226,8 +216,7 @@ namespace RzR.ResultMessage.Web.Tests
             var problem = JObject.Parse(body);
 
             Assert.IsNull(((ResultMessageProblemDetails)objectResult.Value).Code);
-            Assert.IsNull(problem["code"]);
-            Assert.IsFalse(body.Contains("\"code\""));
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem));
         }
 
         [TestMethod]
@@ -239,8 +228,7 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderAsync(sut.AsProblemDetails(HttpStatusCode.BadRequest));
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"]);
-            Assert.IsFalse(body.Contains("\"code\""));
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem));
         }
 
         [TestMethod]
@@ -252,8 +240,7 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderAsync(sut.AsProblemDetails(HttpStatusCode.BadRequest));
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"]);
-            Assert.IsFalse(body.Contains("\"code\""));
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem));
         }
 
         [TestMethod]
@@ -264,9 +251,8 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderAsync(sut.AsProblemDetails(HttpStatusCode.BadRequest));
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"]);
-            Assert.IsFalse(body.Contains("\"code\""));
-            Assert.IsNull(NestedMessageKeys(problem).Single(),
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem));
+            Assert.IsNull(ProblemDetailsCodeFixture.ReadRequiredResultMessageKeys(problem).Single(),
                 "Test data guard: the message really does carry a null key.");
         }
 
@@ -279,8 +265,7 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderAsync(sut.AsProblemDetails(HttpStatusCode.BadRequest));
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"]);
-            Assert.IsFalse(body.Contains("\"code\""));
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem));
         }
 
         [TestMethod]
@@ -296,7 +281,7 @@ namespace RzR.ResultMessage.Web.Tests
             Assert.IsNull(sut.GetFirstMessageWithDetails(),
                 "Test data guard: upstream selects the leading null element, so it supplies no title or "
                 + "detail. Code must reach the same verdict instead of skipping ahead to a later key.");
-            Assert.IsFalse(body.Contains("\"code\""),
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
                 $"A null element is the selected message, not a gap to be skipped. Body: {body}");
             Assert.IsNull(problem.Value<string>("title"),
                 $"Test data guard: title is absent for the same reason code is. Body: {body}");
@@ -321,9 +306,8 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderAsync(CreateProblem(factory));
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"],
-                "Sanitization is applied at the Create call site, so overriding ResolveCode must not bypass it.");
-            Assert.IsFalse(body.Contains("\"code\""));
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
+                "Sanitization is applied at the Create call site, so overriding ResolveCode must not bypass it and no top-level 'code' member may appear.");
             Assert.IsFalse(body.Contains(new string('a', 65)),
                 "No truncated remainder of the 200-character value may reach the wire.");
         }
@@ -352,8 +336,7 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderAsync(CreateProblem(factory));
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"]);
-            Assert.IsFalse(body.Contains("\"code\""));
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem));
         }
 
         [TestMethod]
@@ -364,9 +347,8 @@ namespace RzR.ResultMessage.Web.Tests
             var body = await RenderAsync(CreateProblem(factory));
             var problem = JObject.Parse(body);
 
-            Assert.IsNull(problem["code"],
-                "A value stamped from ApplyExtensions must be sanitized like any other, not passed through.");
-            Assert.IsFalse(body.Contains("\"code\""), "The rejected member must be absent, not blank.");
+            Assert.IsFalse(ProblemDetailsCodeFixture.HasCodeMember(problem),
+                "A value stamped from ApplyExtensions must be sanitized like any other, so the top-level 'code' member must be absent, not blank.");
             Assert.IsFalse(body.Contains("script"), "No fragment of the injected payload may reach the wire.");
             Assert.IsFalse(body.Contains("alert"));
         }
@@ -424,22 +406,6 @@ namespace RzR.ResultMessage.Web.Tests
 
         private static List<string> TopLevelPropertyNames(JObject problem)
             => problem.Properties().Select(property => property.Name).ToList();
-
-        private static List<string> NestedMessageKeys(JObject problem)
-        {
-            var messages = problem["extensions"]?["ResultMessages"] as JArray;
-
-            Assert.IsNotNull(messages,
-                "extensions.ResultMessages is the canonical message record and must be present for this assertion.");
-
-            return messages
-                .OfType<JObject>()
-                .Select(message => message
-                    .Properties()
-                    .FirstOrDefault(property => string.Equals(property.Name, "key", StringComparison.OrdinalIgnoreCase))
-                    ?.Value?.Value<string>())
-                .ToList();
-        }
 
         private static async Task<string> RenderAsync(ObjectResult objectResult)
         {
