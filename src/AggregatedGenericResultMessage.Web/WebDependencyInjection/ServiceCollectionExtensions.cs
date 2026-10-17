@@ -32,16 +32,13 @@ using System;
 
 namespace RzR.ResultMessage.Web.WebDependencyInjection
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     <see cref="IServiceCollection" /> extensions for registering a custom
     ///     <see cref="IResultStatusCodeMapper" /> consumed by the static
     ///     <c>AsActionResult</c> / <c>AsEnvelopeActionResult</c> extensions.
     /// </summary>
-    /// =================================================================================================
     public static class ServiceCollectionExtensions
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Registers <see cref="DefaultResultStatusCodeMapper" /> as the singleton
         ///     <see cref="IResultStatusCodeMapper" /> (idempotent) and wires it into
@@ -51,11 +48,9 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         /// <returns>
         ///     An IServiceCollection.
         /// </returns>
-        /// =================================================================================================
         public static IServiceCollection AddWebResultMessageMapper(this IServiceCollection services)
             => services.AddWebResultMessageMapper<DefaultResultStatusCodeMapper>();
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Registers <typeparamref name="TMapper" /> as the singleton
         ///     <see cref="IResultStatusCodeMapper" /> and immediately wires an instance into
@@ -70,7 +65,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         /// <returns>
         ///     An IServiceCollection.
         /// </returns>
-        /// =================================================================================================
         public static IServiceCollection AddWebResultMessageMapper<TMapper>(this IServiceCollection services)
             where TMapper : class, IResultStatusCodeMapper, new()
         {
@@ -87,7 +81,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
             return services;
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Registers a caller-provided <paramref name="mapper" /> instance as the singleton
         ///     <see cref="IResultStatusCodeMapper" /> and wires it into
@@ -101,7 +94,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         /// <returns>
         ///     An IServiceCollection.
         /// </returns>
-        /// =================================================================================================
         public static IServiceCollection AddWebResultMessageMapper(
             this IServiceCollection services, IResultStatusCodeMapper mapper)
         {
@@ -116,7 +108,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
             return services;
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Registers <typeparamref name="TFactory" /> as the singleton
         ///     <see cref="IProblemDetailsResultFactory" /> and immediately wires an instance into
@@ -137,7 +128,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         /// <returns>
         ///     An <see cref="IServiceCollection" /> for chaining.
         /// </returns>
-        /// =================================================================================================
         public static IServiceCollection AddProblemDetailsResultFactory<TFactory>(this IServiceCollection services)
             where TFactory : class, IProblemDetailsResultFactory, new()
         {
@@ -150,7 +140,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
             return services;
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Registers a caller-provided <paramref name="factory" /> instance as the singleton
         ///     <see cref="IProblemDetailsResultFactory" /> and wires it into
@@ -169,7 +158,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         /// <returns>
         ///     An <see cref="IServiceCollection" /> for chaining.
         /// </returns>
-        /// =================================================================================================
         public static IServiceCollection AddProblemDetailsResultFactory(
             this IServiceCollection services, IProblemDetailsResultFactory factory)
         {
@@ -184,7 +172,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
             return services;
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Registers <see cref="WebResultExceptionFilter" /> as a global MVC exception filter so any
         ///     unhandled <see cref="Exceptions.WebResultException" /> thrown from a controller action is
@@ -196,8 +183,9 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         ///     Thrown when <paramref name="services" /> is null.
         /// </exception>
         /// <param name="services">The services to act on.</param>
-        /// <returns>An <see cref="IServiceCollection" /> for chaining.</returns>
-        /// =================================================================================================
+        /// <returns>
+        ///     An <see cref="IServiceCollection" /> for chaining.
+        /// </returns>
         public static IServiceCollection AddWebResultExceptionFilter(this IServiceCollection services)
         {
             if (services.IsNull())
@@ -212,7 +200,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
             return services;
         }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Configures the <see cref="WebResultExceptionMiddleware" /> options used by
         ///     <c>UseResultExceptionMiddleware()</c> to render ProblemDetails responses for
@@ -224,8 +211,9 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         /// </exception>
         /// <param name="services">The services to act on.</param>
         /// <param name="configure">(Optional) options configuration callback.</param>
-        /// <returns>An <see cref="IServiceCollection" /> for chaining.</returns>
-        /// =================================================================================================
+        /// <returns>
+        ///     An <see cref="IServiceCollection" /> for chaining.
+        /// </returns>
         public static IServiceCollection AddResultExceptionMiddleware(
             this IServiceCollection services,
             Action<WebResultExceptionMiddlewareOptions> configure = null)

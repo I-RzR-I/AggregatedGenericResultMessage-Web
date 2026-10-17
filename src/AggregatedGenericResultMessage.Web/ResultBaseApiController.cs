@@ -32,11 +32,16 @@ namespace RzR.ResultMessage.Web
     ///     Return as JSON
     /// </summary>
     /// <remarks>
-    ///     Derives from <see cref="ControllerBase" /> (not <see cref="T:Microsoft.AspNetCore.Mvc.Controller" />) so the
-    ///     netstandard2.1 target only needs Microsoft.AspNetCore.Mvc.Core.
+    ///     Derives from <see cref="ControllerBase" /> for netstandard2.1 and
+    ///     from <see cref="Microsoft.AspNetCore.Mvc.Controller" /> for other.
     /// </remarks>
     [ApiController]
-    public abstract class ResultBaseApiController : ControllerBase
+    public abstract class ResultBaseApiController :
+#if NETSTANDARD2_1
+        ControllerBase
+#else
+        Microsoft.AspNetCore.Mvc.Controller
+#endif
     {
         /// <summary>
         ///     Return API response in JSON format.

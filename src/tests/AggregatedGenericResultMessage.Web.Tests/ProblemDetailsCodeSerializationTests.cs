@@ -102,6 +102,28 @@ namespace RzR.ResultMessage.Web.Tests
         }
 
         [TestMethod]
+        public async Task Payload_NestedResultMessageEntry_HasExactlyTheDocumentedMemberNames_Test()
+        {
+            var problem = JObject.Parse(await RenderAsync(BuildFullyPopulatedProblem("ORDER_NOT_FOUND")));
+            var entries = problem["extensions"]?["ResultMessages"] as JArray;
+
+            Assert.IsNotNull(entries, "Test data guard: extensions.ResultMessages must be present.");
+            Assert.AreEqual(1, entries.Count, "Test data guard: exactly one message was authored.");
+
+            var entry = entries[0] as JObject;
+
+            Assert.IsNotNull(entry, "Test data guard: a nested message must serialize as a JSON object.");
+            CollectionAssert.AreEquivalent(
+                new List<string> { "code", "message", "messageType", "logTraceId", "relatedObjects" },
+                entry.Properties().Select(property => property.Name).ToList(),
+                "The nested message member names are owned by the upstream RzR.ResultMessage model and reach "
+                + "clients unchanged. A difference here means an upstream package change altered the wire "
+                + "contract, so review it deliberately instead of adapting silently.");
+            Assert.AreEqual("ORDER_NOT_FOUND", entry.Value<string>("code"),
+                "The message identifier must be carried under 'code', and no longer under the retired 'key' name.");
+        }
+
+        [TestMethod]
         public async Task Payload_CodeMemberName_IsImmuneToAHostileMvcPropertyNamingPolicy_Test()
         {
             var problem = JObject.Parse(

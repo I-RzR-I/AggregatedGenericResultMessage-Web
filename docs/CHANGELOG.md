@@ -1,3 +1,14 @@
+### **v7.0.0.0** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 17-10-2026
+* [f1ab7f4] (RzR) -> **[BREAKING]** Upgrade `RzR.ResultMessage` from `3.0.0.6928` to `4.0.0`. Consumers pinning `3.x` directly hit `NU1605`; consumers using `MessageModel.Key` get `CS0618` but keep working.
+* [f1ab7f4] (RzR) -> **[BREAKING]** `extensions.ResultMessages[*].key` becomes `extensions.ResultMessages[*].code` in every response body that carries the message collection, and the `XmlSerializer` element moves from `<Key>` to `<Code>`. The top-level `code` is unchanged. See `docs/migration-v7.md`.
+* [f1ab7f4] (RzR) -> **[BREAKING]** `ResultBaseApiController` derives from `Controller` again on `net5.0`+ (`ControllerBase` stays on `netstandard2.1`), reversing the v5.0.0.7894 change. `Controller` implements `IAsyncActionFilter`, which MVC dispatches ahead of a derived class own `IActionFilter`, so a consumer filter declared that way stops running.
+* [f1ab7f4] (RzR) -> `ResolveCode` reads `IMessageModel.Code` instead of the obsolete `Key`. Identical for in-box types. A custom `IMessageModel` where the two are not aliases now resolves from `Code`.
+* [f1ab7f4] (RzR) -> Add `RzR.Core.CodeSource` 7.0.0.8329 as a build-time only reference (`PrivateAssets=all` unless `EmitCodeSource=true`).
+* [f1ab7f4] (RzR) -> Reflow parameter lists and drop redundant comment blocks across the library. No behaviour change.
+* [4d1ec9c] (RzR) -> Assert the problem-details `code` tests against the top-level member instead of scanning the raw body, which a nested `code` now also matches.
+* [4d1ec9c] (RzR) -> Add a regression test pinning the serialized member names of a nested `ResultMessages` entry, so a future upstream rename fails loudly.
+* [f6ae577] (RzR) -> Update `docs/usage.md` for the new nested member name and add `docs/migration-v7.md`.
+
 ### **v6.0.0.4426** [[RzR](mailto:108324929+I-RzR-I@users.noreply.github.com)] 25-09-2026
 * [545f4b2] (RzR) -> **[BREAKING]** Compile `ResultMessageProblemDetailsConverter` on `netstandard2.1` and declare `System.Text.Json 6.0.10` there, so a blank `code` is omitted and `Extensions` nests as on `net5.0`+.
 * [545f4b2] (RzR) -> **[BREAKING]** `UseResultExceptionMiddleware` throws at startup when MVC services are absent, instead of failing on the first exception.

@@ -29,22 +29,18 @@ using System;
 
 namespace RzR.ResultMessage.Web.WebDependencyInjection
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     An application builder extensions.
     /// </summary>
-    /// =================================================================================================
     public static class ApplicationBuilderExtensions
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Adds the <see cref="WebResultExceptionMiddleware" /> to the request pipeline so any
         ///     unhandled <see cref="WebResultException" /> is auto-converted to a ProblemDetails
-        ///     response. 
-        ///     Place it early in the pipeline (before <c>UseRouting</c>) so it covers
-        ///     middleware-level exceptions as well as MVC actions.
-        ///     Verifies at startup that MVC services are available, so a misconfigured host fails
-        ///     fast instead of at the first unhandled request exception.
+        ///     response. Place it early in the pipeline (before <c>UseRouting</c>) so it covers
+        ///     middleware-level exceptions as well as MVC actions. Verifies at startup that MVC services
+        ///     are available, so a misconfigured host fails fast instead of at the first unhandled
+        ///     request exception.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         ///     Thrown when <paramref name="app" /> is null.
@@ -56,7 +52,6 @@ namespace RzR.ResultMessage.Web.WebDependencyInjection
         /// <returns>
         ///     An IApplicationBuilder.
         /// </returns>
-        /// =================================================================================================
         public static IApplicationBuilder UseResultExceptionMiddleware(this IApplicationBuilder app)
         {
             if (app.IsNull())

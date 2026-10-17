@@ -29,17 +29,18 @@ using Microsoft.AspNetCore.Http;
 
 namespace RzR.ResultMessage.Web.Extensions.Unified
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
-    ///     A single response value that is simultaneously a valid MVC <see cref="IActionResult" /> and
-    ///     (net6+) a valid Minimal-API <c>Microsoft.AspNetCore.Http.IResult</c>, wrapping the same
+    ///     A single response value that is simultaneously a valid MVC <see cref="IActionResult" />
+    ///     and (net6+) a valid Minimal-API <c>Microsoft.AspNetCore.Http.IResult</c>, wrapping the
+    ///     same
     ///     <see cref="ObjectResult" /> produced by
-    ///     <see cref="RzR.ResultMessage.Web.Helpers.ResultProblemDetailsHelper" />. The hosting framework
+    ///     <see cref="RzR.ResultMessage.Web.Helpers.ResultProblemDetailsHelper" />. The hosting
+    ///     framework
     ///     dispatches to whichever interface member it understands (<see cref="ExecuteResultAsync" />
     ///     for MVC controllers, <c>ExecuteAsync</c> for Minimal-API endpoints) — no host detection
     ///     is performed here, so both code paths render byte-identical responses.
     /// </summary>
-    /// =================================================================================================
+    /// <seealso cref="T:Microsoft.AspNetCore.Mvc.IActionResult"/>
     public sealed class ResultMessageResponse : IActionResult
 #if NET6_0_OR_GREATER
         ,
@@ -48,16 +49,13 @@ namespace RzR.ResultMessage.Web.Extensions.Unified
     {
         private readonly ObjectResult _objectResult;
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Constructor.
         /// </summary>
         /// <param name="objectResult">The <see cref="ObjectResult" /> to wrap.</param>
-        /// =================================================================================================
         internal ResultMessageResponse(ObjectResult objectResult) 
             => _objectResult = objectResult ?? throw new ArgumentNullException(nameof(objectResult));
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     MVC dispatch: delegates to the wrapped <see cref="ObjectResult" /> so controller actions
         ///     render exactly as they would returning the <see cref="ObjectResult" /> directly.
@@ -66,23 +64,21 @@ namespace RzR.ResultMessage.Web.Extensions.Unified
         /// <returns>
         ///     A Task.
         /// </returns>
-        /// =================================================================================================
         public Task ExecuteResultAsync(ActionContext context) 
             => _objectResult.ExecuteResultAsync(context);
 
 #if NET6_0_OR_GREATER
-        /// -------------------------------------------------------------------------------------------------
+
         /// <summary>
         ///     Minimal-API dispatch: reuses <see cref="MinimalApiResultWrapper.Wrap" /> — the same
         ///     terminal-wrap logic used by <see cref="RzR.ResultMessage.Web.Extensions.MinimalApi.ResultToHttpResult" />
-        ///     — so a handler returning this value renders the same body/status as the dedicated
-        ///     Minimal-API extensions.
+        ///     — so a handler returning this value renders the same body/status as the dedicated Minimal-
+        ///     API extensions.
         /// </summary>
         /// <param name="httpContext">The HTTP context for the current request.</param>
         /// <returns>
         ///     A Task.
         /// </returns>
-        /// =================================================================================================
         public Task ExecuteAsync(HttpContext httpContext)
             => MinimalApiResultWrapper.Wrap(_objectResult.Value, _objectResult.StatusCode ?? StatusCodes.Status200OK)
                 .ExecuteAsync(httpContext);

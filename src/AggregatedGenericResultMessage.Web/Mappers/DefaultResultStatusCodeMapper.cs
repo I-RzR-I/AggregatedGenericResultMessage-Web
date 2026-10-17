@@ -25,7 +25,6 @@ using System.Net;
 
 namespace RzR.ResultMessage.Web.Mappers
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Default mapper preserving the historical behavior:
     ///     <list type="bullet">
@@ -35,7 +34,6 @@ namespace RzR.ResultMessage.Web.Mappers
     ///     </list>
     /// </summary>
     /// <seealso cref="T:RzR.ResultMessage.Web.Abstractions.IResultStatusCodeMapper"/>
-    /// =================================================================================================
     public sealed class DefaultResultStatusCodeMapper : IResultStatusCodeMapper
     {
         /// <inheritdoc/>

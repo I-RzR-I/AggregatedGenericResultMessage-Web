@@ -25,81 +25,68 @@ using System.Net;
 
 namespace RzR.ResultMessage.Web.Exceptions
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
-    ///     Custom exception that carries an <see cref="RzR.ResultMessage.Abstractions.IResult" /> together with optional
-    ///     ProblemDetails-shaping data. When thrown from controller code and the
+    ///     Custom exception that carries an <see cref="RzR.ResultMessage.Abstractions.IResult" />
+    ///     together with optional ProblemDetails-shaping data. When thrown from controller code and
+    ///     the
     ///     <c>WebResultExceptionFilter</c> is registered, the response is automatically
     ///     converted to a ProblemDetails payload via the configured
     ///     <see cref="RzR.ResultMessage.Web.Abstractions.IProblemDetailsResultFactory" />,
     ///     so no need to invoke <c>.AsProblemDetails()</c>.
     /// </summary>
     /// <seealso cref="T:Exception"/>
-    /// =================================================================================================
     public class WebResultException : Exception
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     The wrapped result.
         /// </summary>
         /// <value>
         ///     The result.
         /// </value>
-        /// =================================================================================================
         public IResult Result { get; }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Optional) Explicit HTTP status code. When <c>null</c>, the filter resolves the status
-        ///     code via <c>ResultStatusCodeMapper.Current.Map(Result, hasResponseBody:false)</c>. 
+        ///     code via <c>ResultStatusCodeMapper.Current.Map(Result, hasResponseBody:false)</c>.
+        /// 
         /// </summary>
         /// <value>
         ///     The status code.
         /// </value>
-        /// =================================================================================================
         public HttpStatusCode? StatusCode { get; }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Optional) Per-call problem-details title override.
         /// </summary>
         /// <value>
         ///     The problem title.
         /// </value>
-        /// =================================================================================================
         public string ProblemTitle { get; }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Optional) Per-call problem-details detail override.
         /// </summary>
         /// <value>
         ///     The problem detail.
         /// </value>
-        /// =================================================================================================
         public string ProblemDetail { get; }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Optional) Per-call problem-details instance (URI) override.
         /// </summary>
         /// <value>
         ///     The accessed resource URI.
         /// </value>
-        /// =================================================================================================
         public string AccessedResourceUri { get; }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     (Optional) Per-call additional ProblemDetails extensions.
         /// </summary>
         /// <value>
         ///     Additional extension members merged into the ProblemDetails response.
         /// </value>
-        /// =================================================================================================
         public IDictionary<string, object> AdditionalInformation { get; }
 
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Initializes a new <see cref="WebResultException" /> wrapping the given
         ///     <paramref name="result" />.
@@ -122,15 +109,9 @@ namespace RzR.ResultMessage.Web.Exceptions
         ///     (Optional) Additional extension members to merge into the ProblemDetails response.
         /// </param>
         /// <param name="innerException">(Optional) The inner exception.</param>
-        /// =================================================================================================
-        public WebResultException(
-            IResult result,
-            HttpStatusCode? statusCode = null,
-            string message = null,
-            string detailMessage = null,
-            string accessedResourceUri = null,
-            IDictionary<string, object> additionalInformation = null,
-            Exception innerException = null)
+        public WebResultException(IResult result, HttpStatusCode? statusCode = null,
+            string message = null, string detailMessage = null, string accessedResourceUri = null,
+            IDictionary<string, object> additionalInformation = null, Exception innerException = null)
             : base(message ?? "Result-bound failure raised as exception.", innerException)
         {
             Result = result ?? throw new ArgumentNullException(nameof(result));

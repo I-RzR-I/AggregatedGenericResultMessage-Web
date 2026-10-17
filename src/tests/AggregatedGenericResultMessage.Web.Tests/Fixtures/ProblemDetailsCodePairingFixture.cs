@@ -68,7 +68,7 @@ namespace RzR.ResultMessage.Web.Tests.Fixtures
         internal static string InfoOfMessageOwningKey(IResult result, string key)
         {
             var owner = result.Messages.FirstOrDefault(message =>
-                message != null && string.Equals(message.Key, key, StringComparison.Ordinal));
+                message != null && string.Equals(message.Code, key, StringComparison.Ordinal));
 
             return owner?.Message?.Info;
         }

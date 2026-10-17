@@ -15,6 +15,9 @@ namespace RzR.ResultMessage.Web.Tests.Fixtures
 
         internal const string LateKey = "c-E777";
 
+        // The nested member name is owned by the upstream package, while the top-level "code" is owned by this library's own converter, so do not unify the two.
+        internal const string NestedCodeMemberName = "code";
+
         internal static Result MultiMessageFailure()
         {
             var result = new Result { IsSuccess = false };
@@ -48,14 +51,26 @@ namespace RzR.ResultMessage.Web.Tests.Fixtures
         internal static bool HasCodeMember(JObject problem) => problem.Property("code") != null;
 
         internal static IReadOnlyList<string> ReadResultMessageKeys(JObject problem)
+            => ReadKeys(problem["extensions"]?["ResultMessages"] as JArray);
+
+        internal static List<string> ReadRequiredResultMessageKeys(JObject problem)
         {
             var messages = problem["extensions"]?["ResultMessages"] as JArray;
 
-            return messages == null
+            Assert.IsNotNull(messages,
+                "extensions.ResultMessages is the canonical message record and must be present for this assertion.");
+
+            return ReadKeys(messages);
+        }
+
+        private static List<string> ReadKeys(JArray messages)
+            => messages == null
                 ? new List<string>()
                 : messages
-                    .Select(message => message.Value<string>("key") ?? message.Value<string>("Key"))
+                    .OfType<JObject>()
+                    .Select(message => message
+                        .GetValue(NestedCodeMemberName, StringComparison.OrdinalIgnoreCase)
+                        ?.Value<string>())
                     .ToList();
-        }
     }
 }

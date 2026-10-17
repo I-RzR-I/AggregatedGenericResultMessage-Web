@@ -127,13 +127,13 @@ public sealed class MyStatusCodeMapper : IResultStatusCodeMapper
         if (result.IsSuccess) return hasResponseBody ? HttpStatusCode.OK : HttpStatusCode.NoContent;
 
         // Promote a caller-supplied error code to a specific status. The code lives on the
-        // message Key, the same value the `code` member is sourced from. Mirror the `code`
+        // message Code, the same value the `code` member is sourced from. Mirror the `code`
         // selection rule here (first non-Exception message, else the first) and the status
         // and the body's `code` cannot disagree.
         var selected = result.Messages?.FirstOrDefault(m => m.MessageType != MessageType.Exception)
                        ?? result.Messages?.FirstOrDefault();
 
-        return selected?.Key switch
+        return selected?.Code switch
         {
             "NOT_FOUND"  => HttpStatusCode.NotFound,
             "FORBIDDEN"  => HttpStatusCode.Forbidden,
@@ -165,7 +165,7 @@ if (order == null)
     HttpStatusCode.NotFound);
 ```
 
-`Failure` takes the code **first** (`Failure(code, error)`); `WithError` takes it **second** (`WithError(error, code)`). The code lands on the message `Key` either way and becomes the response's [`code`](#error-code).
+`Failure` takes the code **first** (`Failure(code, error)`); `WithError` takes it **second** (`WithError(error, code)`). The code lands on the message `Code` either way and becomes the response's [`code`](#error-code).
 
 ---
 
@@ -256,20 +256,53 @@ Result<Order>.Failure("E404-OrderNotFound", "Order not found")
     "code": "E404-OrderNotFound",
     "extensions": {
         "ResultMessages": [
-            { "key": "E404-OrderNotFound", "message": { "info": "Order not found" } }
+            { "code": "E404-OrderNotFound", "message": { "info": "Order not found" } }
         ],
         "traceId": "0HN3AC2BQ1L4M:00000001"
     }
 }
 ```
 
-Message entries are abbreviated above. Each one carries the full `IMessageModel` shape (`key`, `message`, `messageType`), and its property casing follows the host's serializer naming policy. `extensions.ResultMessages` stays the canonical, per-message record. `code` is a scalar re-projection of the selected message's `key`, not a replacement for the array.
+Message entries are abbreviated above. Each one carries the full message shape (`code`, `message`, `messageType`, and others), and its property casing follows the host's serializer naming policy. `extensions.ResultMessages` stays the canonical, per-message record. The top-level `code` is a scalar re-projection of the selected message's `Code`, not a replacement for the array. The array entries have a `code` member of their own, which is a different thing: see [Two members named `code`](#two-members-named-code).
 
 On `net5.0`+ the member name is the literal `"code"`, written by the library's own `System.Text.Json` converter. Two paths skip that converter: `netstandard2.1` (`Microsoft.AspNetCore.Mvc.Core 2.1.38`, a 2.1-era stack that predates `System.Text.Json`), and any `net5.0`+ host that calls `AddNewtonsoftJson()`. On those paths the host serializes the body, so the member name follows the host's naming strategy. ASP.NET Core defaults to camelCase, so you still get `"code"` out of the box, and only a non-default contract resolver changes that. Omission of a blank or invalid `code` is unaffected and holds on every path.
 
+### Two members named `code`
+
+The name `code` now appears at two levels of the same failure body, and the two are not the same thing. Before `RzR.ResultMessage` 4.0.0 the array entries called their member `key`, so the names never collided. They do now.
+
+| | Top-level `code` | `extensions.ResultMessages[*].code` |
+| --- | --- | --- |
+| Written by | This library | The upstream message model, placed in the body as-is |
+| Holds | One value, from the selected message | The code of every message, exactly as your application supplied it |
+| Validation | Non-blank, at most 64 characters, `[A-Za-z0-9._-]` | None |
+| On a rejected value | Omitted entirely, never truncated, stripped or escaped | Present, unchanged |
+| Use it to | Branch on | Diagnose |
+
+> **WARNING**
+> The two can disagree. A value the top-level member rejects is absent there and still present in the array. Never read the nested `code` as if it had passed the top-level checks. Treat it as untrusted text: do not render it as markup, and do not use it as a file name or URL path segment.
+
+A message authored with `WithError("Order not found", "bad code!")` shows the split. The space and the `!` both fall outside `[A-Za-z0-9._-]`, so the top level has no `code`, while the array keeps the original:
+
+```json
+{
+    "title": "Order not found",
+    "status": 400,
+    "extensions": {
+        "ResultMessages": [
+            { "code": "bad code!", "message": { "info": "Order not found" } }
+        ]
+    }
+}
+```
+
+The pre-RFC 7807 families (`AsActionResult`, the envelope helpers and the `ResultBaseApiController` `Json*` helpers) serialize the messages without building a problem body. Their message entries use `code` too, and there is no top-level `code` beside them. See [Response contracts](#response-contracts).
+
+Migrating a client from the old name? See [migration-v7.md](migration-v7.md).
+
 ### Authoring a code
 
-`code` is sourced from the message `Key`. Set it with the **second** argument of `WithError` or the **first** argument of `Failure`:
+The top-level `code` is sourced from the message `Code`. Set it with the **second** argument of `WithError` or the **first** argument of `Failure`:
 
 ```csharp
 new Result { IsSuccess = false }
@@ -282,38 +315,38 @@ Result<Order>.Failure("E404-OrderNotFound", "Order not found");   // Failure(cod
 
 `code` always describes the **same message as `title` and `detail`**. That is a guarantee of the wire contract, not an implementation detail.
 
-One message is selected: the **first whose `MessageType` is not `MessageType.Exception`**, falling back to the **first message** when every message is an exception message. `title`, `detail` and `code` all come from that one message, and `code` is its `Key`.
+One message is selected: the **first whose `MessageType` is not `MessageType.Exception`**, falling back to the **first message** when every message is an exception message. `title`, `detail` and `code` all come from that one message, and the top-level `code` is its `Code`.
 
-If the selected message has no `Key`, `code` is **omitted**. No later message is consulted, even when one of them carries a perfectly valid key. `extensions.ResultMessages` remains the full canonical record, and is where a client finds the keys carried by the other messages.
+If the selected message has no `Code`, the top-level `code` is **omitted**. No later message is consulted, even when one of them carries a perfectly valid code. `extensions.ResultMessages` remains the full canonical record, and is where a client finds the codes carried by the other messages.
 
-**Case 1: the selected message is unkeyed, a later one is keyed. `code` is absent.**
+**Case 1: the selected message has no code, a later one does. The top-level `code` is absent.**
 
 ```json
 {
-    "title": "UNKEYED-FIRST-INFO",
-    "detail": "Message: UNKEYED-FIRST-INFO",
+    "title": "FIRST-INFO",
+    "detail": "Message: FIRST-INFO",
     "extensions": {
         "ResultMessages": [
-            { "key": null,     "message": { "info": "UNKEYED-FIRST-INFO" } },
-            { "key": "c-E404", "message": { "info": "KEYED-SECOND-INFO"  } }
+            { "code": null,     "message": { "info": "FIRST-INFO"  } },
+            { "code": "c-E404", "message": { "info": "SECOND-INFO" } }
         ]
     }
 }
 ```
 
-The `code` property is **not present in the body at all**; it is not emitted as `null`. `c-E404` belongs to the second message and stays readable in `extensions.ResultMessages`.
+The top-level `code` property is **not present in the body at all**; it is not emitted as `null`. `c-E404` belongs to the second message and stays readable in `extensions.ResultMessages`.
 
-**Case 2: the selected message is keyed. `code` is *its* key, never a later one.**
+**Case 2: the selected message has a code. The top-level `code` is *its* code, never a later one.**
 
 ```json
 {
-    "title": "UNKEYED-FIRST-INFO",
-    "detail": "Message: UNKEYED-FIRST-INFO",
+    "title": "FIRST-INFO",
+    "detail": "Message: FIRST-INFO",
     "code": "c-E407",
     "extensions": {
         "ResultMessages": [
-            { "key": "c-E407", "message": { "info": "UNKEYED-FIRST-INFO" } },
-            { "key": "c-E404", "message": { "info": "KEYED-SECOND-INFO"  } }
+            { "code": "c-E407", "message": { "info": "FIRST-INFO"  } },
+            { "code": "c-E404", "message": { "info": "SECOND-INFO" } }
         ]
     }
 }
@@ -327,11 +360,11 @@ The selected value is **validated, never transformed**. It reaches the wire unch
 * at most **64 characters**,
 * composed only of `[A-Za-z0-9._-]`.
 
-Anything else and the member is **omitted entirely**. It is never truncated, stripped or rewritten: `extensions.ResultMessages[*].key` carries the original key, so a rewritten `code` would put two disagreeing copies of the same identifier into one response body.
+Anything else and the member is **omitted entirely**. It is never truncated, stripped or rewritten: `extensions.ResultMessages[*].code` carries the original value, so a rewritten top-level `code` would put two different values under the same name into one response body. Omitting it means the top-level `code` is either identical to the nested one or absent.
 
-Selection runs before validation. A malformed key on the **selected** message therefore suppresses `code`; it does not fall through to another message's valid key. Validation narrows the single selected key to "emit" or "omit". It never re-opens the choice of message.
+Selection runs before validation. A malformed code on the **selected** message therefore suppresses the top-level `code`; it does not fall through to another message's valid code. Validation narrows the single selected code to "emit" or "omit". It never re-opens the choice of message.
 
-`code` and `extensions.ResultMessages` are two views of the same data, not two copies of it: `code` is the sanitised scalar to branch on, `extensions.ResultMessages[*].key` is the unfiltered record. They can legitimately disagree. A key that fails validation, or one carried by an exception-typed message that selection skipped, still appears in the array while being withheld from `code`. That is intended: branch on `code`, read the array to diagnose.
+The top-level `code` and `extensions.ResultMessages` are two views of the same data, not two copies of it: the top-level `code` is the sanitised scalar to branch on, `extensions.ResultMessages[*].code` is the unfiltered record. Both members are called `code`, which makes them easy to confuse (see [Two members named `code`](#two-members-named-code)). They can legitimately disagree. A code that fails validation, or one carried by an exception-typed message that selection skipped, still appears in the array while being withheld from the top level. That is intended: branch on the top-level `code`, read the array to diagnose.
 
 ### When `code` is absent
 
@@ -339,9 +372,9 @@ Clients must treat it as optional: branch on it when present, fall back to `stat
 
 * the call site never rendered a problem body at all. This is by far the largest class: `AsActionResult` / `AsIActionResult` (with or without an `HttpStatusCode`), the `AsEnvelope*` overloads and `ResultBaseApiController`'s `Json*` helpers serialise the raw message collection or the whole result envelope, so there is no problem body to carry a `code` ([see Response contracts](#response-contracts));
 * the response is a success, so no problem body is built at all;
-* the message that supplied `title` / `detail` has no `Key` (a later keyed message does **not** fill the gap);
-* no message on the result carries a non-blank `Key` at all;
-* the selected key fails validation;
+* the message that supplied `title` / `detail` has no `Code` (a later message that has one does **not** fill the gap);
+* no message on the result carries a non-blank `Code` at all;
+* the selected code fails validation;
 * `ResolveCode` returned `null` (the supported way to suppress it);
 * the body came from a custom `IProblemDetailsResultFactory`, or from a subclass that overrides `Create()` wholesale. Population is best-effort and lives in the built-in factory.
 
@@ -362,11 +395,11 @@ public sealed class MyProblemFactory : DefaultProblemDetailsResultFactory
 }
 ```
 
-An override must read the message `Key` and nothing else. Do not fall back to `Info`, `Message`, `Details` or an exception message: the unhandled-exception path builds its result from the caught exception's message, so such a fallback routes raw exception text into a publicly exposed member on every 500 response, bypassing the default-off switch that gates exception detail.
+An override must read the message `Code` and nothing else (`Key` is obsolete upstream as of `RzR.ResultMessage` 4.0.0). Do not fall back to `Info`, `Message`, `Details` or an exception message: the unhandled-exception path builds its result from the caught exception's message, so such a fallback routes raw exception text into a publicly exposed member on every 500 response, bypassing the default-off switch that gates exception detail.
 
 ### Unhandled exceptions
 
-The middleware synthesizes its failure result from the caught exception, so that result has no key of its own. `WebResultExceptionMiddlewareOptions.DefaultUnhandledErrorCode` supplies one:
+The middleware synthesizes its failure result from the caught exception, so that result has no code of its own. `WebResultExceptionMiddlewareOptions.DefaultUnhandledErrorCode` supplies one:
 
 ```csharp
 services.AddResultExceptionMiddleware(o => o.DefaultUnhandledErrorCode = "SRV.UNEXPECTED");
@@ -379,7 +412,7 @@ The value is subject to the same [validation](#validation) as any other code: no
 ### Security
 
 > **WARNING**
-> `code` is a stable, localization-invariant, machine-readable value visible to every caller who can see the error response. Do not encode internal identifiers, schema or table names, or PII in message keys.
+> `code` is a stable, localization-invariant, machine-readable value visible to every caller who can see the error response. Do not encode internal identifiers, schema or table names, or PII in message codes. The same applies to the nested `extensions.ResultMessages[*].code`, which is visible to the same callers and is not validated.
 
 Encoding a distinction you do not want enumerable makes that distinction cheaply and reliably enumerable. The classic cases are `AUTH.USER_NOT_FOUND` vs `AUTH.WRONG_PASSWORD`, and `AUTH.ACCOUNT_LOCKED` vs `AUTH.ACCOUNT_NOT_FOUND`: either pair hands an attacker a user-enumeration oracle. Emit a single shared code for every authentication failure.
 

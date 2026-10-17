@@ -47,7 +47,7 @@ namespace RzR.ResultMessage.Web.Tests
                 + "otherwise none of the skip/fallback assertions below exercise the intended branch.");
             Assert.AreEqual(
                 ProblemDetailsCodeExceptionTypeFixture.ExceptionKey,
-                sut.Messages.First().Key,
+                sut.Messages.First().Code,
                 "Test data guard: the Exception-typed message really does carry a key that the selection "
                 + "rule is required to pass over.");
             Assert.AreNotEqual(
@@ -56,7 +56,7 @@ namespace RzR.ResultMessage.Web.Tests
                 "Test data guard: the second message must not be Exception-typed.");
             Assert.AreEqual(
                 ProblemDetailsCodeExceptionTypeFixture.ErrorKey,
-                sut.Messages.Last().Key,
+                sut.Messages.Last().Code,
                 "Test data guard: the second message carries the key the rule is expected to select.");
         }
 
@@ -87,11 +87,12 @@ namespace RzR.ResultMessage.Web.Tests
                 ProblemDetailsCodeExceptionTypeFixture.ExceptionKey,
                 problem.Value<string>("code"),
                 "The skipped Exception-typed message must never supply the code. Body: " + Escape(body));
-            Assert.IsFalse(
-                body.Contains("\"code\":\"" + ProblemDetailsCodeExceptionTypeFixture.ExceptionKey + "\""),
-                "No serialized form of the skipped key may appear as the code member. Body: " + Escape(body));
+            Assert.AreEqual(
+                ProblemDetailsCodeExceptionTypeFixture.ErrorKey,
+                ProblemDetailsCodeFixture.ReadCode(problem),
+                "The top-level code must be present and must come from the first non-Exception message. Body: " + Escape(body));
             CollectionAssert.Contains(
-                NestedMessageKeys(problem),
+                ProblemDetailsCodeFixture.ReadRequiredResultMessageKeys(problem),
                 ProblemDetailsCodeExceptionTypeFixture.ExceptionKey,
                 "Only the scalar code member skips the exception; its key must stay visible under "
                 + "extensions.ResultMessages. Body: " + Escape(body));
@@ -166,7 +167,7 @@ namespace RzR.ResultMessage.Web.Tests
                 "Test data guard: upstream also falls back to the first message for title. Body: "
                 + Escape(body));
             Assert.AreEqual(
-                sut.Messages.First().Key,
+                sut.Messages.First().Code,
                 problem.Value<string>("code"),
                 "The fallback branch must keep code and title on the same message. Body: " + Escape(body));
         }
@@ -213,7 +214,7 @@ namespace RzR.ResultMessage.Web.Tests
             sut.Messages = new List<IMessageModel> { new ThrowingKeyMessage() };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => sut.Messages.First().Key,
+                () => sut.Messages.First().Code,
                 "Test data guard: the stub's Key getter must throw, otherwise the guard is never exercised.");
             Assert.IsNotNull(
                 sut.GetFirstMessageWithDetails(),
@@ -300,23 +301,6 @@ namespace RzR.ResultMessage.Web.Tests
 
         private static string Escape(string raw) => ProblemDetailsCodePairingFixture.Escape(raw);
 
-        private static List<string> NestedMessageKeys(JObject problem)
-        {
-            var messages = problem["extensions"]?["ResultMessages"] as JArray;
-
-            Assert.IsNotNull(
-                messages,
-                "extensions.ResultMessages is the canonical message record and must be present.");
-
-            return messages
-                .OfType<JObject>()
-                .Select(message => message
-                    .Properties()
-                    .FirstOrDefault(property => string.Equals(property.Name, "key", StringComparison.OrdinalIgnoreCase))
-                    ?.Value?.Value<string>())
-                .ToList();
-        }
-
         private static async Task<string> RenderAsync(ObjectResult objectResult)
         {
             var services = new ServiceCollection();
@@ -342,10 +326,16 @@ namespace RzR.ResultMessage.Web.Tests
         {
             internal const string Info = "THROWING-KEY-INFO";
 
-            public string Key
+            public string Code
             {
                 get => throw new InvalidOperationException("Key getter deliberately throws.");
                 set => throw new NotSupportedException();
+            }
+
+            public string Key
+            {
+                get => Code;
+                set => Code = value;
             }
 
             public MessageDataModel Message { get; set; } = new MessageDataModel(Info);

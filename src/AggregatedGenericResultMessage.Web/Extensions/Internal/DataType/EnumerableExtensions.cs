@@ -24,14 +24,11 @@ using System.Linq;
 
 namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     An enumerable extensions.
     /// </summary>
-    /// =================================================================================================
     internal static class EnumerableExtensions
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     An IEnumerable&lt;T&gt; extension method that query if 'source' is null or empty
         ///     enumerable.
@@ -41,7 +38,6 @@ namespace RzR.ResultMessage.Web.Extensions.Internal.DataType
         /// <returns>
         ///     True if null or empty enumerable, false if not.
         /// </returns>
-        /// =================================================================================================
         [CodeSource("https://github.com/I-RzR-I/DomainCommonExtensions", "RzR",
             "DomainCommonExtensions.ArraysExtensions.EnumerableExtensions.IsNullOrEmptyEnumerable", "1.0")]
         internal static bool IsNullOrEmptyEnumerable<T>(this IEnumerable<T> source)

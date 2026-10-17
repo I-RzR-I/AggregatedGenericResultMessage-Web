@@ -23,7 +23,6 @@ using RzR.ResultMessage.Web.Models;
 
 namespace RzR.ResultMessage.Web.Abstractions
 {
-    /// -------------------------------------------------------------------------------------------------
     /// <summary>
     ///     Strategy that converts a <see cref="ResultProblemDetailsContext" /> into the
     ///     <see cref="ResultMessageProblemDetails" /> body and the wrapping
@@ -32,10 +31,8 @@ namespace RzR.ResultMessage.Web.Abstractions
     ///     <c>type</c> / <c>title</c> / <c>instance</c> / extension defaults globally instead of
     ///     supplying them at every call site.
     /// </summary>
-    /// =================================================================================================
     public interface IProblemDetailsResultFactory
     {
-        /// -------------------------------------------------------------------------------------------------
         /// <summary>
         ///     Builds the problem-details payload (or, on success-with-body, a payload-only
         ///     <see cref="ObjectResult" />) for the given <paramref name="context" />.
@@ -44,7 +41,6 @@ namespace RzR.ResultMessage.Web.Abstractions
         /// <returns>
         ///     An ObjectResult.
         /// </returns>
-        /// =================================================================================================
         ObjectResult Create(ResultProblemDetailsContext context);
     }
 }
